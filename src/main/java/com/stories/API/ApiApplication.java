@@ -16,8 +16,11 @@ public class ApiApplication {
 		SpringApplication.run(ApiApplication.class, args);
 		
 		 MongoClientURI connectionString = new MongoClientURI("mongodb+srv://db_user:vloUr7AakeTEdXDj@cluster0-nomfh.mongodb.net/test?retryWrites=true&w=majority");
-		 @SuppressWarnings("resource")
 		 MongoClient mongoClient = new MongoClient(connectionString);
+		 
+		 MongoDatabase database = mongoClient.getDatabase("InternHome");
+		 MongoCollection<Document> collection = database.getCollection("Sprints");
+		 
 		 
 	}
 
