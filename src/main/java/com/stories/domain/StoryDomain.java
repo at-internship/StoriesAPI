@@ -1,26 +1,35 @@
 package com.stories.domain;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Data
 public class StoryDomain {
-	
+
 	private String sprint_id;
-    private String technology;
-    private String name;
-    private String description;
-    private String acceptance_criteria;
-    private int points;
-    private int progress;
-    private String status;
-    private String notes;
-    private String comments;
-    private Date start_date;
-    private Date due_date;
-    private String priority;
-    private String assignee_id;
-    private ArrayList history;
+	private String technology;
+	@NotBlank(message = "name is required")
+	private String name;
+	private String description;
+	private String acceptance_criteria;
+	@Min(1)
+	private int points;
+	@Min(1)
+	private int progress;
+	@NotBlank(message = "Status is required")
+	private String status;
+	private String notes;
+	private String comments;
+	private LocalDate start_date;
+	private LocalDate due_date;
+	private String priority;
+	private String assignee_id;
+	private List<String> history;
 }

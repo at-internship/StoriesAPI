@@ -13,15 +13,15 @@ public class EntityNotFoundException extends Exception {
 	private Class<?> entityType;
 	private String message;
 	private Throwable cause;
-	
 
 	public EntityNotFoundException(String message) {
 		this.status = HttpStatus.NOT_FOUND;
 		this.message = message;
 	}
-	
+
 	public EntityNotFoundException(String message, Class<?> entityType) {
 		this(message);
+		this.status = HttpStatus.BAD_REQUEST;
 		this.entityType = entityType;
 	}
 }

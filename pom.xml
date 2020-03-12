@@ -54,12 +54,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>net.rakugakibox.spring.boot</groupId>
-			<artifactId>orika-spring-boot-starter</artifactId>
-			<version>1.9.0</version>
-		</dependency>
-		
-		<dependency>
 		    <groupId>ma.glasnost.orika</groupId>
 		    <artifactId>orika-core</artifactId>
 		    <version>1.5.4</version>
@@ -72,8 +66,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			
-			
 		</plugins>
 	</build>
 
