@@ -30,7 +30,7 @@ public class StoryServiceImpl implements StoryService {
 		String[] statusArray = { "Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted" };
 		boolean test = Arrays.asList(statusArray).contains(storystatus);
 
-		if (test == true) {
+		if (test) {
 			storiesRepository.save(storyModel);
 			System.err.println("Creating story with the status indicated....");
 		} else {
