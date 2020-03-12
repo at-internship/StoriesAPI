@@ -7,6 +7,5 @@ import com.stories.model.StoryModel;
 	
 @Repository
 public interface StoriesRepository extends MongoRepository<StoryModel, String> {
-	
 		
 }
