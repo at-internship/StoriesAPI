@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class StoryDomain {
-
+	
 	private String sprint_id;
     private String technology;
     private String name;

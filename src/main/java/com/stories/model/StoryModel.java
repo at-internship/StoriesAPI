@@ -3,20 +3,16 @@ package com.stories.model;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
-
 
 @Data
 @Document(collection = "stories")
 public class StoryModel {
 	@Id
-    private ObjectId _id;
+    private String _id;
 	private String sprint_id;
     private String technology;
     private String name;
@@ -32,6 +28,4 @@ public class StoryModel {
     private String priority;
     private String assignee_id;
     private ArrayList history;
-     
-    
 }

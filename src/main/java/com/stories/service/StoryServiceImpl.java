@@ -3,39 +3,38 @@ package com.stories.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.stories.domain.StoryDomain;
+import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
 import com.stories.repository.StoriesRepository;
 
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 
+@Slf4j
 @Service
 public class StoryServiceImpl implements StoryService {
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(StoryServiceImpl.class);
 	
 	@Autowired
-	StoriesRepository repository;
-
+	StoriesRepository storiesRepository;
+	
 	@Autowired
-	private MapperFacade orikaMapperFacade;
+	private MapperFacade mapperFacade;
 
 	@Override
-	public void createStory(com.stories.domain.StoryDomain request) {
+	public void createStory(StoryDomain request) {
 		StoryModel storyModel = new StoryModel();
-		storyModel = orikaMapperFacade.map(request, StoryModel.class);
-		log.debug("Entity pre-saving - " + storyModel);
-		repository.save(storyModel);
-		log.debug("Entity post-saving - " + storyModel);
+		storyModel = mapperFacade.map(request, StoryModel.class);
+		storiesRepository.save(storyModel);
 	}
 	
 	@Override
-	public void deleteStory(String id) {
-		if (repository.existsById(id)) {
-			log.debug("Deleting user with id: " + id);
-			repository.deleteById(id);
+	public void deleteStory(String id) throws Exception {
+		if (!storiesRepository.existsById(id)) {
+			throw new EntityNotFoundException("Story with the given id was not found"+StoryModel.class);
 		} else
-			log.error("No user was found for the given id.");
-	}
+			//System.err.print("No user was found for the given id.");
+			storiesRepository.deleteById(id);
+	}	
 
-	
-	
 }
