@@ -9,9 +9,11 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.ConfigurableMapper;
 
 @Configuration
-public class OrikaMapper extends ConfigurableMapper{
-	public MapperFactory mapper(MapperFactory factory){
-        factory.classMap(StoryModel.class, StoryDomain.class).byDefault().register();
-        return factory;
-    }
+public class OrikaMapper extends ConfigurableMapper {
+
+	public MapperFactory mapper(MapperFactory factory) {
+		factory.classMap(StoryModel.class, StoryDomain.class).byDefault().register();
+		return factory;
+	}
+
 }
