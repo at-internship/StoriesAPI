@@ -26,7 +26,7 @@ public class StoryServiceImpl implements StoryService {
         StoryModel storyModel = new StoryModel();
         storyModel = mapperFacade.map(request, StoryModel.class);
 
-        var storystatus = storyModel.getStatus();
+        String storystatus = storyModel.getStatus();
         String[] statusArray = {"Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted"};
         boolean test = Arrays.asList(statusArray).contains(storystatus);
 
