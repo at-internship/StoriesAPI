@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EntityNotFoundException extends Exception {
+
 	private static final long serialVersionUID = 1002819552332825026L;
 	private HttpStatus status;
 	private Class<?> entityType;
@@ -21,7 +22,6 @@ public class EntityNotFoundException extends Exception {
 
 	public EntityNotFoundException(String message, Class<?> entityType) {
 		this(message);
-		this.status = HttpStatus.BAD_REQUEST;
 		this.entityType = entityType;
 	}
 }

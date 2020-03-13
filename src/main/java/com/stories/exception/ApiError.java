@@ -61,4 +61,5 @@ public class ApiError {
 		this.debugMessage = debugMessage;
 		this.debugMessage = ex.getLocalizedMessage();
 	}
+
 }

@@ -48,4 +48,15 @@ public class StoryServiceImpl implements StoryService {
 			storiesRepository.deleteById(id);
 	}
 
+	public StoryDomain updateStory(StoryDomain request, String id) throws Exception {
+		StoryDomain storyDomain = new StoryDomain();
+		if (!storiesRepository.existsById(id))
+			throw new EntityNotFoundException("Story not found", StoryDomain.class);
+		StoryModel story = mapperFacade.map(request, StoryModel.class);
+		story.set_id(id);
+		storiesRepository.save(story);
+		storyDomain = mapperFacade.map(story, StoryDomain.class);
+		return storyDomain;
+
+	}
 }

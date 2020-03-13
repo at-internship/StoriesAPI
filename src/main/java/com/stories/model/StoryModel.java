@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 @Document(collection = "stories")
 public class StoryModel {
+
 	@Id
 	private String _id;
 	private String sprint_id;
@@ -28,4 +29,5 @@ public class StoryModel {
 	private String priority;
 	private String assignee_id;
 	private List<String> history;
+
 }
