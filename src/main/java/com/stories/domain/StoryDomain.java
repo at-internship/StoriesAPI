@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 import lombok.Data;
 
 @Data
@@ -11,11 +14,15 @@ public class StoryDomain {
 
 	private String sprint_id;
 	private String technology;
+	@NotBlank(message = "name is required")
 	private String name;
 	private String description;
 	private String acceptance_criteria;
+	@Min(1)
 	private int points;
+	@Min(1)
 	private int progress;
+	@NotBlank(message = "Status is required")
 	private String status;
 	private String notes;
 	private String comments;
@@ -28,5 +35,4 @@ public class StoryDomain {
 	public StoryDomain() {
 		this.history = new ArrayList<>();
 	}
-
 }

@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EntityNotFoundException extends Exception{
+public class EntityNotFoundException extends Exception {
 
 	private static final long serialVersionUID = 1002819552332825026L;
 	private HttpStatus status;
