@@ -1,12 +1,11 @@
 package com.stories.domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Data
 public class StoryDomain {
 
@@ -25,5 +24,9 @@ public class StoryDomain {
 	private String priority;
 	private String assignee_id;
 	private List<String> history;
+
+	public StoryDomain() {
+		this.history = new ArrayList<>();
+	}
 
 }
