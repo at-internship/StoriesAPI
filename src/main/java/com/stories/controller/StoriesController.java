@@ -25,6 +25,18 @@ public class StoriesController {
 
 	@Autowired
 	StoryServiceImpl storyService;
+  
+  @ResponseStatus(value = HttpStatus.OK)
+  @GetMapping(value = "/", produces = "application/json")
+	public List<StoryDomain> getAllStories() throws Exception{
+		return storyService.getAllStories();
+	}	
+	
+	@ResponseStatus(value = HttpStatus.OK)
+	@GetMapping(value = "/{id}", produces = "application/json")
+	public StoryDomain getStoryById(@Valid @PathVariable String id) throws Exception{
+		return storyService.getStoryById(id);
+	}
 
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping(value = "/", consumes = "application/json", produces = "application/json")
