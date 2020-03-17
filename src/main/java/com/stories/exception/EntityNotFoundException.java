@@ -16,7 +16,7 @@ public class EntityNotFoundException extends Exception {
 	private Throwable cause;
 
 	public EntityNotFoundException(String message) {
-		this.status = HttpStatus.NOT_FOUND;
+		this.status = HttpStatus.BAD_REQUEST;
 		this.message = message;
 	}
 

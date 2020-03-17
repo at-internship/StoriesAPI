@@ -1,9 +1,8 @@
 package com.stories.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -30,5 +29,5 @@ public class StoryModel {
 	private String priority;
 	private String assignee_id;
 	private List<String> history;
-  
+
 }
