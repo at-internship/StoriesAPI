@@ -69,18 +69,19 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
-            		<groupId>junit</groupId>
-            		<artifactId>junit</artifactId>
-            		<scope>test</scope>
-        	</dependency>
-		
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -96,7 +97,13 @@
 				<version>0.8.3</version>
 				<configuration>
 					<excludes>
-						<exclude>**/*src/main/**/*</exclude>
+						<exclude>**/domain/**/*</exclude>
+						<exclude>**/exception/**/*</exclude>
+						<exclude>**/model/**/*</exclude>
+						<exclude>**/mapper/**/*</exclude>
+						<exclude>**/service/**/*</exclude>
+						<exclude>**/repository/**/*</exclude>
+						<exclude>**/com/stories/StoriesApplication.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>
