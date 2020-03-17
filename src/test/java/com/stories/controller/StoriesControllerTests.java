@@ -34,7 +34,7 @@ public class StoriesControllerTests extends TestCase {
 
 	@Test
 	public void deleteStoryIdValid() throws Exception {
-		String uri = "/stories/5e713308b7872622cb3d10ea";
+		String uri = "/stories/5e7133b6430bf4151ec1e85f";
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
 		int status = mvcResult.getResponse().getStatus();
 		assertEquals(status, 204);
@@ -49,10 +49,10 @@ public class StoriesControllerTests extends TestCase {
 	}
 
 	@Test
-	public void postStoryValidJson() throws Exception {
+	public void postTestValidJson() throws Exception {
 		String uri = "/stories/";
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
-				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8").content(postStoryInJsonTrue()))
+				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8").content(postStoryValidJson()))
 				.andReturn();
 
 		int status = mvcResult.getResponse().getStatus();
@@ -62,10 +62,10 @@ public class StoriesControllerTests extends TestCase {
 	}
 
 	@Test
-	public void postStoryInValidFieldJson() throws Exception {
+	public void postTestInvalidStatusJson() throws Exception {
 		String uri = "/stories/";
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
-				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8").content(postStoryInJsonFalse()))
+				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8").content(postStoryInvalidStatusJson()))
 				.andReturn();
 
 		int status = mvcResult.getResponse().getStatus();
@@ -75,7 +75,7 @@ public class StoriesControllerTests extends TestCase {
 	}
 
 	@Test
-	public void postStoryInValidson() throws Exception {
+	public void postTestInvalidJson() throws Exception {
 		String uri = "/stories/";
 		MvcResult mvcResult = mvc
 				.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -88,11 +88,11 @@ public class StoriesControllerTests extends TestCase {
 		System.err.println(conten);
 	}
 
-	private String postStoryInJsonTrue() {
+	private String postStoryValidJson() {
 		return "{\"sprint_id\":\"UUID\", \"technology\":\"Javas\",\"name\":\"Create Stories POST endpoint\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":2,\"progress\":885, \"status\":\"Working\",\"notes\":\"\",\"comments\":\"Test\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"High\", \"assignee_id\":\"UUID\",\"history\":[\"\",\"\"]}";
 	}
 
-	private String postStoryInJsonFalse() {
+	private String postStoryInvalidStatusJson() {
 		return "{\"sprint_id\":\"UUID\", \"technology\":\"Javas\",\"name\":\"Create Stories POST endpoint\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":2,\"progress\":885, \"status\":\"working\",\"notes\":\"\",\"comments\":\"Test\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"High\", \"assignee_id\":\"UUID\",\"history\":[\"\",\"\"]}";
 	}
 
