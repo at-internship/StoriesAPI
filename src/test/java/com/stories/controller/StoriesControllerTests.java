@@ -34,10 +34,10 @@ public class StoriesControllerTests extends TestCase {
 	
 	@Test
 	public void putTestTrue() throws Exception {
-		String uri = "/stories/5e713308b7872622cb3d10ea";
+		String uri = "/stories/5e7133b6430bf4151ec1e85f";
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(getStoryInJson("5e713308b7872622cb3d10ea"))).andReturn();
+				.content(setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andReturn();
 		
 		int status = mvcResult.getResponse().getStatus();
 		assertEquals(status, 202);
@@ -48,7 +48,7 @@ public class StoriesControllerTests extends TestCase {
 		String uri = "/stories/5e6a8441bfc6533811235e1";
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(getStoryInJson("5e6a8441bfc6533811235e1"))).andReturn();
+				.content(setStoryInJsonFormat("5e6a8441bfc6533811235e1"))).andReturn();
 
 		int status = mvcResult.getResponse().getStatus();
 		assertEquals(status, 404);
@@ -59,17 +59,17 @@ public class StoriesControllerTests extends TestCase {
 		String uri = "/stories/5e6a8441bfc6533811235e19";
 		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(getStoryInJsonBad("5e6a8441bfc6533811235e19"))).andReturn();
+				.content(setStoryInJsonBadFormat("5e6a8441bfc6533811235e19"))).andReturn();
 				
 		int status = mvcResult.getResponse().getStatus();
 		assertEquals(status, 400);
 	}
 
-	private String getStoryInJson(String id) {
+	private String setStoryInJsonFormat(String id) {
 		return "{\"id\":\"" + id + "\", \"sprint_id\":\"UUID\", \"technology\":\"Java\",\"name\":\"Create Stories POST endpoint\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":2,\"progress\":885, \"status\":\"Working\",\"notes\":\"\",\"comments\":\"Test\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"High\", \"assignee_id\":\"UUID\",\"history\":[\"\",\"\"]}";
 	}
 	
-	private String getStoryInJsonBad(String id) {
+	private String setStoryInJsonBadFormat(String id) {
 		return "{\"id\":\"" + id + "\", \"sprint_id\":\"UUID\", \"technology\":\"Java\",\"name\":\"Create Stories POST endpoint\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":\"2#\",\"progress\":885, \"status\":\"Working\",\"notes\":\"\",\"comments\":\"Test\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"High\", \"assignee_id\":\"UUID\",\"history\":[\"\",\"\"]}";
 	}
 }
