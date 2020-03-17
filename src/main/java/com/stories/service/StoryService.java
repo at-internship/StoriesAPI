@@ -1,13 +1,13 @@
 package com.stories.service;
 
-import com.stories.domain.StoryDomain;
-
 import java.util.List;
+
+import com.stories.domain.StoryDomain;
 
 public interface StoryService {
 
 	StoryDomain getStoryById(String id) throws Exception;
-
+	
 	List<StoryDomain> getAllStories() throws Exception;
 
 	void createStory(StoryDomain request) throws Exception;
