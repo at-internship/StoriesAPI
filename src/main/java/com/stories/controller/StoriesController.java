@@ -32,10 +32,10 @@ public class StoriesController {
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/", consumes = "application/json", produces = "application/json")
-    public void createStory(@Valid @RequestBody StoryDomain request) throws Exception {
-        log.info("Creating story..." + request);
-        storyService.createStory(request);
+    public String createStory(@Valid @RequestBody StoryDomain request) throws Exception {
+    	return storyService.createStory(request);
     }
+
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}")

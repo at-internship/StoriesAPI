@@ -2,10 +2,15 @@ package com.stories.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Data
 @Document(collection = "stories")
@@ -15,6 +20,10 @@ public class StoryModel {
 	private String _id;
 	private String sprint_id;
 	private String technology;
+	@Indexed(unique = true)
+	@Pattern(regexp = "\\A(?!\\s*\\Z).+")
+	@Size(min = 1, message = "This field must contain something")
+	@NotNull(message = "This field must be not null")
 	private String name;
 	private String description;
 	private String acceptance_criteria;

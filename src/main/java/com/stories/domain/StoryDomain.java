@@ -4,6 +4,9 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+
+import org.springframework.data.mongodb.core.index.Indexed;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,7 @@ public class StoryDomain {
 
 	private String sprint_id;
 	private String technology;
+	@Indexed(unique = true)
 	@NotBlank(message = "name is required")
 	private String name;
 	private String description;

@@ -10,8 +10,8 @@ public interface StoriesService {
 
 	List<StoryDomain> getAllStories() throws Exception;
 
-	void createStory(StoryDomain request) throws Exception;
-
+	String createStory(StoryDomain request) throws Exception;
+	
 	void deleteStory(String id) throws Exception;
 	
 	StoryDomain updateStory(StoryDomain request, String id) throws Exception;

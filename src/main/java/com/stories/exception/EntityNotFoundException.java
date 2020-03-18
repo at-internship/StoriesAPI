@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
+import com.stories.domain.StoryDomain;
+
 @Getter
 @Setter
 public class EntityNotFoundException extends Exception {
@@ -18,9 +20,15 @@ public class EntityNotFoundException extends Exception {
 		this.status = HttpStatus.NOT_FOUND;
 		this.message = message;
 	}
-
+	
 	public EntityNotFoundException(String message, Class<?> entityType) {
 		this(message);
+		this.entityType = entityType;
+	}
+
+	public EntityNotFoundException(String message, String status, Class<StoryDomain> entityType) {
+		this.status = HttpStatus.BAD_REQUEST;
+		this.message = message;
 		this.entityType = entityType;
 	}
 }
