@@ -19,7 +19,7 @@ import com.stories.exception.EntityNotFoundException;
 import com.stories.service.StoriesServiceImpl;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(StoriesController.class)
+@WebMvcTest(controllers = StoriesController.class)
 public class PutMethodTests {
 
     @MockBean
