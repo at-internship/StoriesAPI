@@ -32,7 +32,7 @@ public class StoriesControllerTests extends TestCase{
     }
     
     @Test
-    public void testGet() throws Exception {
+    public void getAllValid() throws Exception {
         String uri = "/stories/";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)).andReturn();
         int status = mvcResult.getResponse().getStatus();
@@ -40,15 +40,15 @@ public class StoriesControllerTests extends TestCase{
     }
     
     @Test
-    public void testGetId() throws Exception {
-    	String uri = "/stories/5e713308b7872622cb3d10ea";
+    public void getByIdValid() throws Exception {
+    	String uri = "/stories/5e7134c9099a9a0ab248c90b";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         assertEquals(status, 200);
     }
     
     @Test
-    public void testGetIdError() throws Exception {
+    public void getByIdInvalid() throws Exception {
     	String uri = "/stories/5e6a8441bf#ERFSasda";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)).andReturn();
         int status = mvcResult.getResponse().getStatus();
