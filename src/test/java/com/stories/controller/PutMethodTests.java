@@ -19,8 +19,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(StoriesController.class)
-public class PutMethodTests extends TestCase {
+@WebMvcTest(controllers = StoriesController.class)
+public class PutMethodTests {
 
     @MockBean
     private StoriesServiceImpl storiesServiceImpl;
