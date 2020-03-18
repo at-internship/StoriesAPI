@@ -37,7 +37,7 @@ public class StoriesServiceImpl implements StoriesService {
 				System.err.println("Creating story with the status indicated....");
 				return storiesRepository.save(storyModel).get_id().toString();
 			} catch (Exception e) {
-				throw new EntityNotFoundException("There is a sprint with this name already", e.getMessage(),
+				throw new EntityNotFoundException("There is a story with this name already", e.getMessage(),
 						StoryDomain.class);
 			}
 		} else {
