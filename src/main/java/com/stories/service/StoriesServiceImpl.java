@@ -1,16 +1,18 @@
 package com.stories.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.stories.domain.StoryDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
 import com.stories.repository.StoriesRepository;
-import ma.glasnost.orika.MapperFacade;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import ma.glasnost.orika.MapperFacade;
 
 @Service
 public class StoriesServiceImpl implements StoriesService {
@@ -22,7 +24,7 @@ public class StoriesServiceImpl implements StoriesService {
 	private MapperFacade mapperFacade;
 
 	@Override
-	public void createStory(StoryDomain request) throws Exception {
+	public String createStory(StoryDomain request) throws Exception {
 		StoryModel storyModel = new StoryModel();
 		storyModel = mapperFacade.map(request, StoryModel.class);
 
@@ -31,11 +33,15 @@ public class StoriesServiceImpl implements StoriesService {
 		boolean test = Arrays.asList(statusArray).contains(storystatus);
 
 		if (test) {
-			storiesRepository.save(storyModel);
-			System.err.println("Creating story with the status indicated....");
+			try {
+				System.err.println("Creating story with the status indicated....");
+				return storiesRepository.save(storyModel).get_id().toString();
+			} catch (Exception e) {
+				throw new EntityNotFoundException("There is a sprint with this name already", e.getMessage(),
+						StoryDomain.class);
+			}
 		} else {
-			System.err.println("error");
-			throw new EntityNotFoundException("Status json state is invalid", StoryDomain.class);
+			throw new EntityNotFoundException("Status json state is invalid", "The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted." ,StoryDomain.class);
 		}
 
 	}
@@ -49,7 +55,7 @@ public class StoriesServiceImpl implements StoriesService {
 	}
 
 	public StoryDomain updateStory(StoryDomain request, String id) throws Exception {
-		StoryDomain storyDomain =  mapperFacade.map(request, StoryDomain.class);
+		StoryDomain storyDomain = mapperFacade.map(request, StoryDomain.class);
 		StoryModel story = mapperFacade.map(storyDomain, StoryModel.class);
 		if (!storiesRepository.existsById(id))
 			throw new EntityNotFoundException("Story not found", StoryDomain.class);

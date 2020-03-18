@@ -19,50 +19,36 @@ import com.stories.exception.EntityNotFoundException;
 import com.stories.service.StoriesServiceImpl;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = StoriesController.class)
-public class PutMethodTests {
-
-    @MockBean
+@WebMvcTest(StoriesController.class)
+public class DeleteMethodTests {
+	@MockBean
     private StoriesServiceImpl storiesServiceImpl;
 
     @Autowired
     private MockMvc mvcResult;
-
+    
     @Test
-    public void putTestTrue() throws Exception {
+    public void deleteTestTrue() throws Exception {
         String uri = "/stories/5e7133b6430bf4151ec1e85f";
-        mvcResult.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+        mvcResult.perform(MockMvcRequestBuilders.delete(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-                .content(setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andExpect(status().isAccepted());
+                .content(setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andExpect(status().isNoContent());
     }
-
+    
     @Test(expected = EntityNotFoundException.class)
-    public void putTestInvelidId() throws Exception {
-        String uri = "/stories/5e6a8441bfc6533811235e1";
-        mvcResult.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+    public void deleteTestInvalidId() throws Exception {
+        String uri = "/stories/5e7133b6430bf4151ec1e85f";
+        mvcResult.perform(MockMvcRequestBuilders.delete(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-                .content(setStoryInJsonFormat("5e6a8441bfc6533811235e1"))).andDo(new ResultHandler() {
+                .content(setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andDo(new ResultHandler() {
             @Override
             public void handle(MvcResult mvcResult) throws Exception {
-                throw new EntityNotFoundException("Story not found", StoryDomain.class);
+            	throw new EntityNotFoundException("Status json state is invalid", "The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted." ,StoryDomain.class);
             }
         }).andExpect(status().isNotFound());
     }
-
-    @Test
-    public void putTestInvalidJson() throws Exception {
-        String uri = "/stories/5e6a8441bfc6533811235e19";
-        mvcResult.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-                .content(setStoryInJsonBadFormat("5e6a8441bfc6533811235e19"))).andExpect(status().isBadRequest());
-    }
-
+    
     private String setStoryInJsonFormat(String id) {
         return "{\"id\":\"" + id + "\", \"sprint_id\":\"UUID\", \"technology\":\"Java\",\"name\":\"Create Stories POST endpoint\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":2,\"progress\":885, \"status\":\"Working\",\"notes\":\"\",\"comments\":\"Test\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"High\", \"assignee_id\":\"UUID\",\"history\":[\"\",\"\"]}";
     }
-
-    private String setStoryInJsonBadFormat(String id) {
-        return "{\"id\":\"" + id + "\", \"sprint_id\":\"UUID\", \"technology\":\"Java\",\"name\":\"Create Stories POST endpoint\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":\"2#\",\"progress\":885, \"status\":\"Working\",\"notes\":\"\",\"comments\":\"Test\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"High\", \"assignee_id\":\"UUID\",\"history\":[\"\",\"\"]}";
-    }
-
 }
