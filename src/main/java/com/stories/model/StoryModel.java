@@ -1,13 +1,11 @@
 package com.stories.model;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.Data;
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Document(collection = "stories")
@@ -30,5 +28,5 @@ public class StoryModel {
 	private String priority;
 	private String assignee_id;
 	private List<String> history;
-  
+
 }

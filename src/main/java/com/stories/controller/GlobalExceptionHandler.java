@@ -1,5 +1,7 @@
 package com.stories.controller;
 
+import com.stories.exception.ApiError;
+import com.stories.exception.EntityNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -10,9 +12,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import com.stories.exception.ApiError;
-import com.stories.exception.EntityNotFoundException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
