@@ -1,0 +1,192 @@
+---
+swagger: "2.0"
+info:
+  description: "This is the documentation for this project"
+  version: "0.0.1"
+  title: "example"
+tags:
+- name: "Microservices STORY"
+paths:
+  /stories/:
+    get:
+      tags:
+      - "Microservices STORY"
+      summary: " GET Stories "
+      description: " THIS OPERATION WILL RETURN A LIST OF STORIES "
+      operationId: "getAllStories"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: " SUCCESS OPERATION "
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/StoryDomain"
+    post:
+      tags:
+      - "Microservices STORY"
+      summary: " POST Story "
+      description: " THIS OPERATION WILL ADD A STORY "
+      operationId: "createStory"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/StoryDomain"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+        201:
+          description: " SUCCESS OPERATION "
+        400:
+          description: " Story has an invalid status Json "
+  /stories/{id}:
+    get:
+      tags:
+      - "Microservices STORY"
+      summary: " GET Story "
+      description: " THIS OPERATION WILL RETURN A STORY "
+      operationId: "getStoryById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: " SUCCESS OPERATION "
+          schema:
+            $ref: "#/definitions/StoryDomain"
+        404:
+          description: " Story not found "
+    put:
+      tags:
+      - "Microservices STORY"
+      summary: " PUT Story "
+      description: " THIS OPERATION WILL UPDATE A STORY "
+      operationId: "updateStory"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/StoryDomain"
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StoryDomain"
+        202:
+          description: " SUCCESS OPERATION "
+        400:
+          description: " Malformed JSON request "
+        404:
+          description: " Story not found "
+    delete:
+      tags:
+      - "Microservices STORY"
+      summary: " DELETE Story "
+      description: " THIS OPERATION WILL DELETE A STORY "
+      operationId: "deleteStory"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: " SUCCESS OPERATION "
+        404:
+          description: " Status json state is invalid\", \"The status should be: Ready\
+            \ to Work, Working, Testing, Ready to Accept or Accepted "
+definitions:
+  StoryDomain:
+    type: "object"
+    properties:
+      sprint_id:
+        type: "string"
+        example: "1"
+        description: "Identifier of the sprint"
+      technology:
+        type: "string"
+        example: "Java"
+        description: "Technology used"
+      name:
+        type: "string"
+        example: "Create new story"
+        description: "Name of the story"
+      description:
+        type: "string"
+        example: "Make new Stories"
+        description: "Story description"
+      acceptance_criteria:
+        type: "string"
+        example: "1"
+        description: "acceptance_criteria of the story"
+      points:
+        type: "integer"
+        format: "int32"
+        example: 1
+        description: "points of the story"
+        minimum: 1
+      progress:
+        type: "integer"
+        format: "int32"
+        example: 1
+        description: "progress of the story"
+        minimum: 1
+      status:
+        type: "string"
+        example: "Working"
+        description: "status of the story"
+      notes:
+        type: "string"
+        example: "The first steps"
+        description: "notes of the story"
+      comments:
+        type: "string"
+        example: "That do you don't"
+        description: "comments of the story"
+      start_date:
+        type: "string"
+        format: "date"
+        example: "2020-08-25"
+        description: "start_date of the story"
+      due_date:
+        type: "string"
+        format: "date"
+        example: "2020-08-25"
+        description: "due_date of the story"
+      priority:
+        type: "string"
+        example: "High"
+        description: "priority of the story"
+      assignee_id:
+        type: "string"
+        example: "1"
+        description: "assignee_id of the story"
+      history:
+        type: "array"
+        example: "1"
+        description: "the history of the story"
+        items:
+          type: "string"
