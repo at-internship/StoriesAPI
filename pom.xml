@@ -148,12 +148,16 @@
 							<locations>com.stories</locations>
 
 							<info>
-								<title>example</title>
+								<title>Stories API</title>
 								<description>
-									This is the documentation for this project
+									Official documentation for Stories AP
 								</description>
 
 								<version>0.0.1</version>
+
+								<contact>
+									<url>http://stories-qa.us-east-2.elasticbeanstalk.com</url>
+								</contact>
 							</info>
 							<swaggerDirectory>${project.basedir}/src/main/resources</swaggerDirectory>
 							<swaggerFileName>swagger</swaggerFileName>

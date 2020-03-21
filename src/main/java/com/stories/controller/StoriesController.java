@@ -38,16 +38,16 @@ public class StoriesController {
 	@Autowired
 	StoriesServiceImpl storyService;
 	
-	@ApiOperation(value = " GET Stories ", notes = " THIS OPERATION WILL RETURN A LIST OF STORIES ")
-	@ApiResponses({ @ApiResponse(code = 200, message = " SUCCESS OPERATION ") })
+	@ApiOperation(value = " GET Stories ", notes = " This operation will return a list of stories ")
+	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation ") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping(value = "/", produces = "application/json")
 	public List<StoryDomain> getAllStories() throws Exception {
 		return storyService.getAllStories();
 	}
 
-	@ApiOperation(value = " GET Story ", notes = " THIS OPERATION WILL RETURN A STORY ")
-	@ApiResponses({ @ApiResponse(code = 200, message = " SUCCESS OPERATION "),
+	@ApiOperation(value = " GET Story ", notes = " This operation will return a of story ")
+	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Story not found ") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping(value = "/{id}", produces = "application/json")
@@ -55,8 +55,8 @@ public class StoriesController {
 		return storyService.getStoryById(id);
 	}
 
-	@ApiOperation(value = " POST Story ", notes = " THIS OPERATION WILL ADD A STORY ")
-	@ApiResponses({ @ApiResponse(code = 201, message = " SUCCESS OPERATION "),
+	@ApiOperation(value = " POST Story ", notes = " This operation will add a story ")
+	@ApiResponses({ @ApiResponse(code = 201, message = " Success operation "),
 			@ApiResponse(code = 400, message = " Story has an invalid status Json ") })
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping(value = "/", consumes = "application/json", produces = "application/json")
@@ -64,8 +64,8 @@ public class StoriesController {
 		return storyService.createStory(request);
 	}
 
-	@ApiOperation(value = " DELETE Story ", notes = " THIS OPERATION WILL DELETE A STORY ")
-	@ApiResponses({ @ApiResponse(code = 204, message = " SUCCESS OPERATION "),
+	@ApiOperation(value = " DELETE Story ", notes = " This operation will delete a story ")
+	@ApiResponses({ @ApiResponse(code = 204, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Status json state is invalid\", \"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted ") })
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/{id}")
@@ -74,8 +74,8 @@ public class StoriesController {
 		storyService.deleteStory(id);
 	}
 	
-	@ApiOperation(value = " PUT Story ", notes = " THIS OPERATION WILL UPDATE A STORY ")
-	@ApiResponses({ @ApiResponse(code = 202, message = " SUCCESS OPERATION "),
+	@ApiOperation(value = " PUT Story ", notes = " This operation will update a story ")
+	@ApiResponses({ @ApiResponse(code = 202, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Story not found "),
 			@ApiResponse(code = 400, message = " Malformed JSON request ") })
 	@ResponseStatus(value = HttpStatus.ACCEPTED)

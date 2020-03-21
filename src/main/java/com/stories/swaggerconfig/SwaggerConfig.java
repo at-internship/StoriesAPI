@@ -30,7 +30,7 @@ public class SwaggerConfig {
 		@SuppressWarnings("deprecation")
 		ApiInfo apiInfo = new ApiInfo(
 				"Stories API",
-				"API to control the users´ stories",
+				"Official documentation for Stories AP",
 				"1.0",
 				"Terms of service",
 				"apache license",
