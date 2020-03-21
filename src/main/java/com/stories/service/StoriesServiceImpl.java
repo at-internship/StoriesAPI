@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class StoriesServiceImpl implements StoriesService {
 	@Autowired
 	StoriesRepository storiesRepository;
 
+	private static Logger logger = LogManager.getLogger();
+
 	@Autowired
 	private MapperFacade mapperFacade;
 
@@ -34,14 +38,16 @@ public class StoriesServiceImpl implements StoriesService {
 
 		if (test) {
 			try {
-				System.err.println("Creating story with the status indicated....");
+				logger.debug("Creating story.... - Body : {}", storyModel);
 				return storiesRepository.save(storyModel).get_id().toString();
 			} catch (Exception e) {
 				throw new EntityNotFoundException("There is a story with this name already", e.getMessage(),
 						StoryDomain.class);
 			}
 		} else {
-			throw new EntityNotFoundException("Status json state is invalid", "The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted." ,StoryDomain.class);
+			throw new EntityNotFoundException("Status json state is invalid",
+					"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted.",
+					StoryDomain.class);
 		}
 
 	}
@@ -51,7 +57,8 @@ public class StoriesServiceImpl implements StoriesService {
 		if (!storiesRepository.existsById(id)) {
 			throw new EntityNotFoundException("Story with the given id was not found", StoryModel.class);
 		} else
-			storiesRepository.deleteById(id);
+			logger.debug("Deleting story.... " + id);
+		storiesRepository.deleteById(id);
 	}
 
 	public StoryDomain updateStory(StoryDomain request, String id) throws Exception {
@@ -62,8 +69,8 @@ public class StoriesServiceImpl implements StoriesService {
 		story.set_id(id);
 		storiesRepository.save(story);
 		storyDomain = mapperFacade.map(story, StoryDomain.class);
+		logger.debug("Updating story with the id: " + id + " - Body : {}", storyDomain);
 		return storyDomain;
-
 	}
 
 	@Override
@@ -73,6 +80,7 @@ public class StoriesServiceImpl implements StoriesService {
 			throw new EntityNotFoundException("Story not found", StoryDomain.class);
 		StoryModel storyModel = storiesRepository.findById(id).get();
 		story = mapperFacade.map(storyModel, StoryDomain.class);
+		logger.debug("Getting story with the id: " + id + " - Body : {}", story);
 		return story;
 	}
 
@@ -86,6 +94,7 @@ public class StoriesServiceImpl implements StoriesService {
 		for (int i = 0; i < story.size(); i++) {
 			stories.add(mapperFacade.map(story.get(i), StoryDomain.class));
 		}
+		logger.debug("Getting all stories - Body : {}", stories);
 		return stories;
 	}
 }

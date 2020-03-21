@@ -1,15 +1,15 @@
 package com.stories.domain;
 
-import lombok.Data;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Data;
 
 @Data
 public class StoryDomain {
