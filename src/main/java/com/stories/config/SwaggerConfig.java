@@ -1,4 +1,4 @@
-package com.stories.swaggerconfig;
+package com.stories.config;
 
 
 import org.springframework.context.annotation.Bean;

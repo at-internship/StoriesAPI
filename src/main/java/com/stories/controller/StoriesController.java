@@ -3,10 +3,6 @@ package com.stories.controller;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,9 +23,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "Microservices STORY", tags = "Microservices STORY")
 @RequestMapping(value = "/stories")
@@ -37,7 +31,7 @@ public class StoriesController {
 
 	@Autowired
 	StoriesServiceImpl storyService;
-	
+
 	@ApiOperation(value = " GET Stories ", notes = " This operation will return a list of stories ")
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation ") })
 	@ResponseStatus(value = HttpStatus.OK)
@@ -70,10 +64,9 @@ public class StoriesController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/{id}")
 	public void deleteStory(@Valid @PathVariable String id) throws Exception {
-		log.info("Deleting story with id from the controller: " + id);
 		storyService.deleteStory(id);
 	}
-	
+
 	@ApiOperation(value = " PUT Story ", notes = " This operation will update a story ")
 	@ApiResponses({ @ApiResponse(code = 202, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Story not found "),
