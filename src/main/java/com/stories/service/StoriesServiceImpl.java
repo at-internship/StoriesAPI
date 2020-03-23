@@ -38,7 +38,7 @@ public class StoriesServiceImpl implements StoriesService {
 
 		if (test) {
 			try {
-				logger.debug("Creating story.... - Body : {}", storyModel);
+				logger.debug("Creating story with the json : {}", storyModel);
 				return storiesRepository.save(storyModel).get_id().toString();
 			} catch (Exception e) {
 				throw new EntityNotFoundException("There is a story with this name already", e.getMessage(),
@@ -57,7 +57,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (!storiesRepository.existsById(id)) {
 			throw new EntityNotFoundException("Story with the given id was not found", StoryModel.class);
 		} else
-			logger.debug("Deleting story.... " + id);
+			logger.debug("Deleting story with the id: " + id);
 		storiesRepository.deleteById(id);
 	}
 
@@ -69,7 +69,7 @@ public class StoriesServiceImpl implements StoriesService {
 		story.set_id(id);
 		storiesRepository.save(story);
 		storyDomain = mapperFacade.map(story, StoryDomain.class);
-		logger.debug("Updating story with the id: " + id + " - Body : {}", storyDomain);
+		logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
 		return storyDomain;
 	}
 
@@ -80,7 +80,7 @@ public class StoriesServiceImpl implements StoriesService {
 			throw new EntityNotFoundException("Story not found", StoryDomain.class);
 		StoryModel storyModel = storiesRepository.findById(id).get();
 		story = mapperFacade.map(storyModel, StoryDomain.class);
-		logger.debug("Getting story with the id: " + id + " - Body : {}", story);
+		logger.debug("Getting story with the id: " + id + " - JSON : {}", story);
 		return story;
 	}
 
@@ -94,7 +94,7 @@ public class StoriesServiceImpl implements StoriesService {
 		for (int i = 0; i < story.size(); i++) {
 			stories.add(mapperFacade.map(story.get(i), StoryDomain.class));
 		}
-		logger.debug("Getting all stories - Body : {}", stories);
+		logger.debug("Getting all stories - JSON : {}", stories);
 		return stories;
 	}
 }

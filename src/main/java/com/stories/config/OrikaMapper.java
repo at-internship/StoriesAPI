@@ -1,4 +1,4 @@
-package com.stories.mapper;
+package com.stories.config;
 
 import org.springframework.context.annotation.Configuration;
 
