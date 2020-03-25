@@ -126,8 +126,7 @@
 						<exclude>**/domain/**/*</exclude>
 						<exclude>**/exception/**/*</exclude>
 						<exclude>**/model/**/*</exclude>
-						<exclude>**/mapper/**/*</exclude>
-						<exclude>**/service/**/*</exclude>
+						<exclude>**/config/**/*</exclude>
 						<exclude>**/repository/**/*</exclude>
 						<exclude>**/com/stories/StoriesApplication.class</exclude>
 					</excludes>
