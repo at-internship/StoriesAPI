@@ -24,10 +24,32 @@ public class StoriesServiceImpl implements StoriesService {
 	private MapperFacade mapperFacade;
 
 	@Override
+	public StoryDomain getStoryById(String id) throws Exception {
+		StoryDomain story = new StoryDomain();
+		if (!storiesRepository.existsById(id))
+			throw new EntityNotFoundException("Story not found", StoryDomain.class);
+		StoryModel storyModel = storiesRepository.findById(id).get();
+		story = mapperFacade.map(storyModel, StoryDomain.class);
+		return story;
+	}
+	
+	@Override
+	public List<StoryDomain> getAllStories() throws Exception {
+		List<StoryModel> storiesModel = new ArrayList<StoryModel>();
+		storiesModel = storiesRepository.findAll();
+		List<StoryDomain> storiesDomain = new ArrayList<>();
+		if (storiesModel == null)
+			throw new EntityNotFoundException("Story not found", StoryDomain.class);
+		for (int i = 0; i < storiesModel.size(); i++) {
+			storiesDomain.add(mapperFacade.map(storiesModel.get(i), StoryDomain.class));
+		}
+		return storiesDomain;
+	}
+	
+	@Override
 	public String createStory(StoryDomain request) throws Exception {
 		StoryModel storyModel = new StoryModel();
 		storyModel = mapperFacade.map(request, StoryModel.class);
-
 		String storystatus = storyModel.getStatus();
 		String[] statusArray = { "Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted" };
 		boolean test = Arrays.asList(statusArray).contains(storystatus);
@@ -43,49 +65,23 @@ public class StoriesServiceImpl implements StoriesService {
 		} else {
 			throw new EntityNotFoundException("Status json state is invalid", "The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted." ,StoryDomain.class);
 		}
-
 	}
 
 	@Override
 	public void deleteStory(String id) throws Exception {
-		if (!storiesRepository.existsById(id)) {
+		if (!storiesRepository.existsById(id)) 
 			throw new EntityNotFoundException("Story with the given id was not found", StoryModel.class);
-		} else
-			storiesRepository.deleteById(id);
+		storiesRepository.deleteById(id);
 	}
 
-	public StoryDomain updateStory(StoryDomain request, String id) throws Exception {
-		StoryDomain storyDomain = mapperFacade.map(request, StoryDomain.class);
-		StoryModel story = mapperFacade.map(storyDomain, StoryModel.class);
+	public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
+		StoryModel storyModel = mapperFacade.map(storyDomain, StoryModel.class);
 		if (!storiesRepository.existsById(id))
 			throw new EntityNotFoundException("Story not found", StoryDomain.class);
-		story.set_id(id);
-		storiesRepository.save(story);
-		storyDomain = mapperFacade.map(story, StoryDomain.class);
+		storyModel.set_id(id);
+		storiesRepository.save(storyModel);
+		storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
+		System.err.println(storyDomain);
 		return storyDomain;
-
-	}
-
-	@Override
-	public StoryDomain getStoryById(String id) throws Exception {
-		StoryDomain story = new StoryDomain();
-		if (!storiesRepository.existsById(id))
-			throw new EntityNotFoundException("Story not found", StoryDomain.class);
-		StoryModel storyModel = storiesRepository.findById(id).get();
-		story = mapperFacade.map(storyModel, StoryDomain.class);
-		return story;
-	}
-
-	@Override
-	public List<StoryDomain> getAllStories() throws Exception {
-		List<StoryModel> story = new ArrayList<StoryModel>();
-		story = storiesRepository.findAll();
-		List<StoryDomain> stories = new ArrayList<>();
-		if (story == null)
-			throw new EntityNotFoundException("Story not found", StoryDomain.class);
-		for (int i = 0; i < story.size(); i++) {
-			stories.add(mapperFacade.map(story.get(i), StoryDomain.class));
-		}
-		return stories;
 	}
 }
