@@ -1,8 +1,9 @@
 package com.stories.repository;
 
-import com.stories.model.StoryModel;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+
+import com.stories.model.StoryModel;
 
 @Repository
 public interface StoriesRepository extends MongoRepository<StoryModel, String> {

@@ -1,10 +1,11 @@
 package com.stories.exception;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import com.stories.domain.StoryDomain;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -20,7 +21,7 @@ public class EntityNotFoundException extends Exception {
 		this.status = HttpStatus.NOT_FOUND;
 		this.message = message;
 	}
-	
+
 	public EntityNotFoundException(String message, Class<?> entityType) {
 		this(message);
 		this.entityType = entityType;
