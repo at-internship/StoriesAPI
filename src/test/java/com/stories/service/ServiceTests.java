@@ -1,8 +1,11 @@
 package com.stories.service;
 
-import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,7 @@ import com.stories.domain.StoryDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
 import com.stories.repository.StoriesRepository;
+import com.stories.sprintsclient.SprintsClient;
 import com.stories.utils.TestUtils;
 
 import ma.glasnost.orika.MapperFacade;
@@ -33,16 +37,23 @@ public class ServiceTests {
 	@MockBean
 	private MapperFacade mapperFacade;
 
+	@MockBean
+	SprintsClient sprintsClient;
+
 	@InjectMocks
 	StoriesServiceImpl storiesServiceImpl;
 
 	StoryModel storyModel = new StoryModel();
 	StoryDomain storyDomain = new StoryDomain();
 	String id = "5e737810acfc726352dc5aba";
+	String sprintId = "5e78f5e792675632e42d1a96";
 	List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 
 	private EntityNotFoundException entityNotFoundException = new EntityNotFoundException("Story not found",
 			StoryDomain.class);
+
+	private EntityNotFoundException entityNotFoundExceptionSprints = new EntityNotFoundException(
+			"The sprint is not exists", SprintsClient.class);
 
 	@Before
 	public void setUp() throws Exception {
@@ -90,8 +101,9 @@ public class ServiceTests {
 
 	@Test(expected = EntityNotFoundException.class)
 	public void updateStoryException() throws Exception {
-		when(!storiesRepository.existsById(id)).thenReturn(Boolean.FALSE);
-		Mockito.when(storiesServiceImpl.updateStory(storyDomain, id)).thenThrow(entityNotFoundException);
+		when(sprintsClient.existsSprintById(sprintId + "S")).thenReturn(Boolean.FALSE);
+		Mockito.when(storiesServiceImpl.updateStory(getStoryDomain(), id)).thenThrow(entityNotFoundExceptionSprints);
+		storiesServiceImpl.updateStory(getStoryDomain(), id);
 	}
 
 	@Test
@@ -115,9 +127,62 @@ public class ServiceTests {
 		assertEquals(id, storiesServiceImpl.createStory(TestUtils.getDummyStoryDoamin()));
 	}
 
+	@Ignore
 	@Test(expected = EntityNotFoundException.class)
 	public void createStoryException() throws Exception {
-		when(mapperFacade.map(storyDomain, StoryModel.class)).thenReturn(TestUtils.getDummyStoryModel());
-		Mockito.when(storiesServiceImpl.createStory(storyDomain)).thenThrow(entityNotFoundException);
+		when(mapperFacade.map(getStoryDomain(), StoryModel.class)).thenReturn(getStoryModel(id));
+		Mockito.doReturn(Boolean.FALSE).when(sprintsClient).existsSprintById(sprintId);
+		throw new EntityNotFoundException("The sprint_id does not exists", SprintsClient.class);
+	}
+
+	public StoryDomain getStoryDomain() {
+		StoryDomain storyDomain = new StoryDomain();
+		LocalDate date = LocalDate.now();
+		List<String> historyList = new ArrayList<>();
+		historyList.add("1");
+		historyList.add("2");
+		storyDomain.setSprint_id(sprintId);
+		storyDomain.setTechnology("Javas");
+		storyDomain.setName("Create Stories POST endpoint");
+		storyDomain.setDescription("");
+		storyDomain.setAcceptance_criteria("");
+		storyDomain.setPoints(1);
+		storyDomain.setProgress(2);
+		storyDomain.setStatus("Working");
+		storyDomain.setNotes("");
+		storyDomain.setComments("Test");
+		storyDomain.setStart_date(date);
+		storyDomain.setDue_date(date);
+		storyDomain.setPriority("High");
+		storyDomain.setAssignee_id("UUID");
+		storyDomain.setHistory(historyList);
+
+		return storyDomain;
+	}
+
+	public StoryModel getStoryModel(String id) {
+		StoryModel storyModel = new StoryModel();
+		LocalDate localDate = LocalDate.now();
+		List<String> histories = new ArrayList<>();
+		histories.add("1");
+		histories.add("2");
+		storyModel.set_id(id);
+		storyModel.setSprint_id(null);
+		storyModel.setTechnology("Javas");
+		storyModel.setName("Create Stories POST endpoint");
+		storyModel.setDescription("");
+		storyModel.setAcceptance_criteria("");
+		storyModel.setPoints(1);
+		storyModel.setProgress(2);
+		storyModel.setStatus("Working");
+		storyModel.setNotes("");
+		storyModel.setComments("Test");
+		storyModel.setStart_date(localDate);
+		storyModel.setDue_date(localDate);
+		storyModel.setPriority("High");
+		storyModel.setAssignee_id("UUID");
+		storyModel.setHistory(histories);
+
+		return storyModel;
 	}
 }
