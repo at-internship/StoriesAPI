@@ -36,14 +36,14 @@ public class TestUtils {
 		return "{\"sprint_id\":\"hola\", \"technology\":\"Java\",\"name\":\"Probando la impresion en consola y json file\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":1,\"progress\":1, \"status\":\"Working\",\"notes\":\"!\",\"comments\":\"$\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"%\", \"assignee_id\":\"Prueba\",\"history\":[\"1\",\"2\"]}";
 	}
 
-	public static StoryDomain getDummyStoryDoamin() {
+	public static StoryDomain getDummyStoryDomain() {
 		
 		LocalDate date = LocalDate.now();
 		ArrayList<String> historyList = new ArrayList<>();
 		historyList.add("1");
 		historyList.add("2");
 		StoryDomain storyDomain = new StoryDomain();
-		storyDomain.setSprint_id("hola");
+		storyDomain.setSprint_id("Hello");
 		storyDomain.setTechnology("Java");
 		storyDomain.setName("Try Test");
 		storyDomain.setDescription("");
@@ -86,7 +86,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-
+	
 	public static List<StoryModel> listStoriesModelNull() {
 		List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 		storiesModel = null;
