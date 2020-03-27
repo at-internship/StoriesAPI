@@ -1,5 +1,6 @@
 package com.stories.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,6 +52,7 @@ public class StoriesServiceImpl implements StoriesService {
 			if (userNullValidation(storyDomain.getAssignee_id())) {
 				if (sprintNullValidation(storyDomain.getSprint_id())) {
 					storyModel = mapperFacade.map(storyDomain, StoryModel.class);
+					storyModel.setStart_date(LocalDate.now());
 					if (statusValidation(statusArray, storyModel.getStatus())) {
 						logger.debug("Creating story with the json : {}", storyModel);
 						String id = nameValidation(storyModel).get_id();
