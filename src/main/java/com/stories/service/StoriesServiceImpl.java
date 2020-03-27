@@ -14,6 +14,7 @@ import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
 import com.stories.repository.StoriesRepository;
 import com.stories.repository.UsersRepository;
+import com.stories.sprintsclient.SprintsClient;
 
 import ma.glasnost.orika.MapperFacade;
 
@@ -30,27 +31,32 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Autowired
 	private MapperFacade mapperFacade;
+
+	String[] statusArray = { "Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted" };
+	StoryModel storyModel = new StoryModel();
+	List<StoryModel> storiesModel = new ArrayList<StoryModel>();
+	StoryDomain storyDomain = new StoryDomain();
+	List<StoryDomain> storiesDomain = new ArrayList<>();
+	
+	@Autowired
+	SprintsClient sprintClient;
 	
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
-		StoryModel storyModel = new StoryModel();
-		storyModel = mapperFacade.map(storyDomain, StoryModel.class);
-		String storystatus = storyModel.getStatus();
-		String[] statusArray = { "Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted" };
-		boolean test = Arrays.asList(statusArray).contains(storystatus);
 		if(!usersRepository.existsById(storyDomain.getAssignee_id()))
-				throw new EntityNotFoundException("The user does not exist");
-		if (test) {
-			try {
-				logger.debug("Creating story with the json : {}", storyModel);
-				return storiesRepository.save(storyModel).get_id().toString();
-			} catch (Exception e) {
-				throw new EntityNotFoundException("There is a story with this name already", e.getMessage(),
+			throw new EntityNotFoundException("The user provided does not exist", StoryDomain.class);
+		if (sprintClient.existsSprintById(storyDomain.getSprint_id())) {
+			storyModel = mapperFacade.map(storyDomain, StoryModel.class);
+			if (statusValidation(statusArray, storyModel.getStatus())) {
+				String id = nameValidation(storyModel).get_id();
+				return id;
+			} else {
+				throw new EntityNotFoundException("Status json state is invalid",
+						"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted.",
 						StoryDomain.class);
 			}
 		} else {
-			throw new EntityNotFoundException("The Status field should be one of the following options: 'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-                    "", StoryDomain.class);
+			throw new EntityNotFoundException("The sprint_id does not exists", SprintsClient.class);
 		}
 	}
 
@@ -64,37 +70,36 @@ public class StoriesServiceImpl implements StoriesService {
 	}
 
 	public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
-		StoryModel storyModel = mapperFacade.map(storyDomain, StoryModel.class);
-		String storystatus = storyModel.getStatus();
-		String[] statusArray = { "Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted" };
-		boolean test = Arrays.asList(statusArray).contains(storystatus);
-		if (!storiesRepository.existsById(id))
-			throw new EntityNotFoundException("Story not found", StoryDomain.class);
+		storyModel = mapperFacade.map(storyDomain, StoryModel.class);
+		boolean sprintExists = sprintClient.existsSprintById(storyDomain.getSprint_id());
 		if (!usersRepository.existsById(storyDomain.getAssignee_id()))
-			throw new EntityNotFoundException("The user does not exist", StoryDomain.class);
-		if (test) {
-			try {
-				storyModel.set_id(id);
-				storiesRepository.save(storyModel);
-				storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
-				logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
-				return storyDomain;
-			} catch (Exception e) {
-				throw new EntityNotFoundException("There is a story with this name already", e.getMessage(),
-						StoryDomain.class);
+			throw new EntityNotFoundException("The user provided does not exist", StoryDomain.class);
+		if (sprintExists) {
+			if (storiesRepository.existsById(id)) {
+				if (statusValidation(statusArray, storyModel.getStatus())) {
+					storyModel.set_id(id);
+					nameValidation(storyModel);
+					storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
+					logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
+					return storyDomain;
+				} else {
+					throw new EntityNotFoundException("Status json state is invalid",
+							"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted.",
+							StoryDomain.class);
+				}
+			} else {
+				throw new EntityNotFoundException("Story not found", StoryDomain.class);
 			}
-		}else {
-			throw new EntityNotFoundException("The Status field should be one of the following options: 'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-                    "", StoryDomain.class);
+		} else {
+			throw new EntityNotFoundException("The sprint_id does not exists", SprintsClient.class);
 		}
 	}
 
 	@Override
 	public StoryDomain getStoryById(String id) throws Exception {
-		StoryDomain storyDomain = new StoryDomain();
 		if (!storiesRepository.existsById(id))
 			throw new EntityNotFoundException("Story not found", StoryDomain.class);
-		StoryModel storyModel = storiesRepository.findById(id).get();
+		storyModel = storiesRepository.findById(id).get();
 		storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
 		logger.debug("Getting story with the id: " + id + " - JSON : {}", storyDomain);
 		return storyDomain;
@@ -102,9 +107,7 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public List<StoryDomain> getAllStories() throws Exception {
-		List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 		storiesModel = storiesRepository.findAll();
-		List<StoryDomain> storiesDomain = new ArrayList<>();
 		if (storiesModel == null)
 			throw new EntityNotFoundException("Story not found", StoryDomain.class);
 		for (int i = 0; i < storiesModel.size(); i++) {
@@ -112,5 +115,20 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 		logger.debug("Getting all stories - JSON : {}", storiesDomain);
 		return storiesDomain;
+	}
+
+	private boolean statusValidation(String[] statusArray, String storystatus) {
+		return Arrays.asList(statusArray).contains(storystatus);
+	}
+
+	private StoryModel nameValidation(StoryModel storyModel) throws EntityNotFoundException {
+		try {
+			logger.debug("Creating story with the json : {}", storyModel);
+			storiesRepository.save(storyModel);
+			return storyModel;
+		} catch (Exception e) {
+			throw new EntityNotFoundException("There is a story with this name already", e.getMessage(),
+					StoryDomain.class);
+		}
 	}
 }

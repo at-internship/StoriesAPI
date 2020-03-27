@@ -4,10 +4,52 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+import com.stories.domain.SprintDomain;
 import com.stories.domain.StoryDomain;
 import com.stories.model.StoryModel;
 
+@Component
 public class TestUtils {
+
+	private static UnitTestProperties unitTestProperties;
+	@Autowired
+	private TestUtils(UnitTestProperties unitTestProperties) {
+		TestUtils.unitTestProperties = unitTestProperties;
+	}
+
+	public TestUtils() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public RestTemplate getrestTemplate() {
+		RestTemplate restTemplate = new RestTemplate();
+		return restTemplate;
+	}
+
+	public StoryModel getEmtyStoryMdodel() {
+		StoryModel storyModel = new StoryModel();
+		return storyModel;
+	}
+
+	public StoryDomain getEmtyStoryDomain() {
+		StoryDomain storyDomain = new StoryDomain();
+		return storyDomain;
+	}
+
+	public List<StoryModel> getEmtyStoryModelList() {
+		List<StoryModel> storiesModelList = new ArrayList<StoryModel>();
+		return storiesModelList;
+	}
+
+	public List<SprintDomain> getEmtySprintsDomain() {
+		List<SprintDomain> storyDomain = new ArrayList<SprintDomain>();
+		return storyDomain;
+	}
 
 	public String setStoryInJsonFormat(String id) {
 		return "{\"id\":\"" + id
@@ -36,8 +78,7 @@ public class TestUtils {
 		return "{\"sprint_id\":\"hola\", \"technology\":\"Java\",\"name\":\"Probando la impresion en consola y json file\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":1,\"progress\":1, \"status\":\"Working\",\"notes\":\"!\",\"comments\":\"$\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"%\", \"assignee_id\":\"Prueba\",\"history\":[\"1\",\"2\"]}";
 	}
 
-	public static StoryDomain getDummyStoryDomain() {
-		
+	public static StoryDomain getDummyStoryDoamin() {
 		LocalDate date = LocalDate.now();
 		ArrayList<String> historyList = new ArrayList<>();
 		historyList.add("1");
@@ -62,27 +103,25 @@ public class TestUtils {
 	}
 
 	public static StoryModel getDummyStoryModel() {
-
-		LocalDate date = LocalDate.now();
 		ArrayList<String> historyList = new ArrayList<>();
-		historyList.add("1");
-		historyList.add("2");
+		historyList.add(unitTestProperties.modelHistory1);
+		historyList.add(unitTestProperties.modelHistory2);
 		StoryModel storyModel = new StoryModel();
-		storyModel.set_id("5e737810acfc726352dc4abc");
-		storyModel.setSprint_id("For the Test Post");
-		storyModel.setTechnology("Java");
-		storyModel.setName("Try Test");
-		storyModel.setDescription("");
-		storyModel.setAcceptance_criteria("");
-		storyModel.setPoints(1);
-		storyModel.setProgress(1);
-		storyModel.setStatus("Working");
-		storyModel.setNotes("!");
-		storyModel.setComments("$");
-		storyModel.setStart_date(date);
-		storyModel.setDue_date(date);
-		storyModel.setPriority("%");
-		storyModel.setAssignee_id("Try Test");
+		storyModel.set_id(unitTestProperties.modelId);
+		storyModel.setSprint_id(unitTestProperties.modelSprintid);
+		storyModel.setTechnology(unitTestProperties.modelTechnology);
+		storyModel.setName(unitTestProperties.modelName);
+		storyModel.setDescription(unitTestProperties.modelDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.modelAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.modelPoints);
+		storyModel.setProgress(unitTestProperties.modelProgress);
+		storyModel.setStatus(unitTestProperties.modelStatus);
+		storyModel.setNotes(unitTestProperties.modelNotes);
+		storyModel.setComments(unitTestProperties.modelComments);
+		storyModel.setStart_date(unitTestProperties.modelStartDate);
+		storyModel.setDue_date(unitTestProperties.modelDueDate);
+		storyModel.setPriority(unitTestProperties.modelPriority);
+		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
@@ -91,5 +130,95 @@ public class TestUtils {
 		List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 		storiesModel = null;
 		return storiesModel;
+	}
+
+	public static StoryDomain getStoryDomain() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(unitTestProperties.domainPoints);
+		storyDomain.setProgress(unitTestProperties.domainProgress);
+		storyDomain.setStatus(unitTestProperties.domainStatus);
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+
+		return storyDomain;
+	}
+
+	public static StoryModel getStoryModel() {
+		StoryModel storyModel = new StoryModel();
+		ArrayList<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.modelHistory1);
+		historyList.add(unitTestProperties.modelHistory2);
+		storyModel.set_id(unitTestProperties.modelId);
+		storyModel.setSprint_id(unitTestProperties.modelSprintid);
+		storyModel.setTechnology(unitTestProperties.modelTechnology);
+		storyModel.setName(unitTestProperties.modelName);
+		storyModel.setDescription(unitTestProperties.modelDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.modelAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.modelPoints);
+		storyModel.setProgress(unitTestProperties.modelProgress);
+		storyModel.setStatus(unitTestProperties.modelStatus);
+		storyModel.setNotes(unitTestProperties.modelNotes);
+		storyModel.setComments(unitTestProperties.modelComments);
+		storyModel.setStart_date(unitTestProperties.modelStartDate);
+		storyModel.setDue_date(unitTestProperties.modelDueDate);
+		storyModel.setPriority(unitTestProperties.modelPriority);
+		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
+		storyModel.setHistory(historyList);
+
+		return storyModel;
+	}
+
+	public static List<StoryModel> getStoryModelList() {
+		List<StoryModel> storyModelList = new ArrayList<StoryModel>();
+		StoryModel storyModel = new StoryModel();
+		ArrayList<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.modelHistory1);
+		historyList.add(unitTestProperties.modelHistory2);
+
+		storyModel.set_id(unitTestProperties.modelId);
+		storyModel.setSprint_id(unitTestProperties.modelSprintid);
+		storyModel.setTechnology(unitTestProperties.modelTechnology);
+		storyModel.setName(unitTestProperties.modelName);
+		storyModel.setDescription(unitTestProperties.modelDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.modelAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.modelPoints);
+		storyModel.setProgress(unitTestProperties.modelProgress);
+		storyModel.setStatus(unitTestProperties.modelStatus);
+		storyModel.setNotes(unitTestProperties.modelNotes);
+		storyModel.setComments(unitTestProperties.modelComments);
+		storyModel.setStart_date(unitTestProperties.modelStartDate);
+		storyModel.setDue_date(unitTestProperties.modelDueDate);
+		storyModel.setPriority(unitTestProperties.modelPriority);
+		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
+		storyModel.setHistory(historyList);
+		storyModelList.add(storyModel);
+		return storyModelList;
+	}
+
+	public static ResponseEntity<List<SprintDomain>> getSprintDomaintList() {
+		SprintDomain sprintDomain = new SprintDomain();
+
+		sprintDomain.setId(unitTestProperties.sprintClientId);
+		sprintDomain.setName(unitTestProperties.sprintClientName);
+		sprintDomain.setTechnology(unitTestProperties.sprintClientTechnology);
+		sprintDomain.setActive(unitTestProperties.isSprintClientActive());
+		sprintDomain.set_backlog(unitTestProperties.isSprintClientIsBacklog());
+		sprintDomain.setStart_date(unitTestProperties.sprintClientStartDate);
+		sprintDomain.setEnd_date(unitTestProperties.sprintClientEndDate);
+
+		return null;
 	}
 }
