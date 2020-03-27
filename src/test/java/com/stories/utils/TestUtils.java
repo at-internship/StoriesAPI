@@ -125,7 +125,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-
+	
 	public static List<StoryModel> listStoriesModelNull() {
 		List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 		storiesModel = null;

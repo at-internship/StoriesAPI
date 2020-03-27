@@ -23,7 +23,7 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Autowired
 	StoriesRepository storiesRepository;
-
+	
 	@Autowired
 	UsersRepository usersRepository;
 
