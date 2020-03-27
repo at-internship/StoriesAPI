@@ -37,14 +37,12 @@ public class StoriesServiceImpl implements StoriesService {
 	List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 	StoryDomain storyDomain = new StoryDomain();
 	List<StoryDomain> storiesDomain = new ArrayList<>();
-
+	
 	@Autowired
 	SprintsClient sprintClient;
-
+	
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
-		storyModel = mapperFacade.map(storyDomain, StoryModel.class);
-		SprintsClient sprintClient = new SprintsClient();
 		if(!usersRepository.existsById(storyDomain.getAssignee_id()))
 			throw new EntityNotFoundException("The user provided does not exist", StoryDomain.class);
 		if (sprintClient.existsSprintById(storyDomain.getSprint_id())) {

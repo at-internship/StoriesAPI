@@ -15,12 +15,8 @@ import com.stories.model.StoryModel;
 
 @Component
 public class TestUtils {
-	
-	public static String storyId = "5e7668cfacfc726352dc5abc";
-	public static String sprintId = "5e78f5e792675632e42d1a96";
 
 	private static UnitTestProperties unitTestProperties;
-
 	@Autowired
 	private TestUtils(UnitTestProperties unitTestProperties) {
 		TestUtils.unitTestProperties = unitTestProperties;
