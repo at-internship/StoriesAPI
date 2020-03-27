@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +37,7 @@ public class StoriesController {
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation ") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping(value = "/", produces = "application/json")
+	@ResponseBody
 	public List<StoryDomain> getAllStories() throws Exception {
 		return storyService.getAllStories();
 	}
@@ -45,6 +47,7 @@ public class StoriesController {
 			@ApiResponse(code = 404, message = " Story not found ") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping(value = "/{id}", produces = "application/json")
+	@ResponseBody
 	public StoryDomain getStoryById(@Valid @PathVariable String id) throws Exception {
 		return storyService.getStoryById(id);
 	}
@@ -68,10 +71,10 @@ public class StoriesController {
 	}
 
 	@ApiOperation(value = " PUT Story ", notes = " This operation will update a story ")
-	@ApiResponses({ @ApiResponse(code = 202, message = " Success operation "),
+	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Story not found "),
 			@ApiResponse(code = 400, message = " Malformed JSON request ") })
-	@ResponseStatus(value = HttpStatus.ACCEPTED)
+	@ResponseStatus(value = HttpStatus.OK)
 	@PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
 	public StoryDomain updateStory(@Valid @RequestBody StoryDomain request, @PathVariable String id) throws Exception {
 		return storyService.updateStory(request, id);

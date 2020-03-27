@@ -1,17 +1,13 @@
 package com.stories.domain;
 
-import lombok.Data;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import io.swagger.annotations.ApiModelProperty;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Data;
 
 @Data
 public class StoryDomain {
@@ -24,7 +20,6 @@ public class StoryDomain {
 	
 	@ApiModelProperty(example="Create new story", value="Name of the story")
 	@Indexed(unique = true)
-	@NotBlank(message = "name is required")
 	private String name;
 	
 	@ApiModelProperty(example="Make new Stories", value="Story description")
@@ -34,15 +29,12 @@ public class StoryDomain {
 	private String acceptance_criteria;
 	
 	@ApiModelProperty(example="1", value="Points of the story")
-	@Min(1)
 	private int points;
 	
 	@ApiModelProperty(example="1", value="Progress of the story")
-	@Min(1)
 	private int progress;
 	
 	@ApiModelProperty(example="Working", value="Status of the story")
-	@NotBlank(message = "Status is required")
 	private String status;
 	
 	@ApiModelProperty(example="The first steps", value="Notes of the story")
