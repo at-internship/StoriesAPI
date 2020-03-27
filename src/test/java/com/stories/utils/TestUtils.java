@@ -85,7 +85,7 @@ public class TestUtils {
 		historyList.add("1");
 		historyList.add("2");
 		StoryDomain storyDomain = new StoryDomain();
-		storyDomain.setSprint_id("");
+		storyDomain.setSprint_id("Hello");
 		storyDomain.setTechnology("Java");
 		storyDomain.setName("Try Test");
 		storyDomain.setDescription("");
