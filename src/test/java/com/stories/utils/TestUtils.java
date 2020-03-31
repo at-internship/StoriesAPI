@@ -23,7 +23,6 @@ public class TestUtils {
 	}
 
 	public TestUtils() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public RestTemplate getrestTemplate() {
@@ -187,7 +186,6 @@ public class TestUtils {
 		ArrayList<String> historyList = new ArrayList<>();
 		historyList.add(unitTestProperties.modelHistory1);
 		historyList.add(unitTestProperties.modelHistory2);
-
 		storyModel.set_id(unitTestProperties.modelId);
 		storyModel.setSprint_id(unitTestProperties.modelSprintid);
 		storyModel.setTechnology(unitTestProperties.modelTechnology);
@@ -208,24 +206,9 @@ public class TestUtils {
 		return storyModelList;
 	}
 
-//	public static ResponseEntity<List<SprintDomain>> getSprintDomaintList() {
-//		SprintDomain sprintDomain = new SprintDomain();
-//
-//		sprintDomain.setId(unitTestProperties.sprintClientId);
-//		sprintDomain.setName(unitTestProperties.sprintClientName);
-//		sprintDomain.setTechnology(unitTestProperties.sprintClientTechnology);
-//		sprintDomain.setActive(unitTestProperties.isSprintClientActive());
-//		sprintDomain.set_backlog(unitTestProperties.isSprintClientIsBacklog());
-//		sprintDomain.setStart_date(unitTestProperties.sprintClientStartDate);
-//		sprintDomain.setEnd_date(unitTestProperties.sprintClientEndDate);
-//
-//		return null;
-//	}
-	
 	public static List<SprintDomain> getSprintDomaintList() {
 		List<SprintDomain> sprintDomainList = new ArrayList<SprintDomain>();
 		SprintDomain sprintDomain = new SprintDomain();
-	
 		sprintDomain.setId("5e827f2f48b0866f87e1cbc2");
 		sprintDomain.setName("asd");
 		sprintDomain.setTechnology("asd");
@@ -234,7 +217,6 @@ public class TestUtils {
 		sprintDomain.setStart_date(LocalDate.now());
 		sprintDomain.setEnd_date(LocalDate.now());
 		sprintDomainList.add(sprintDomain);
-		
 		return sprintDomainList;
 	}
 	

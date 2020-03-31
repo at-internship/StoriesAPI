@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import com.stories.utils.UnitTestProperties;
 @RunWith(SpringRunner.class)
 public class SprintsClientTest {
 
-	@Autowired(required = false)
 	UnitTestProperties unitTestProperties;
 
 	private TestUtils testUtils;
