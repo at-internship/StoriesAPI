@@ -22,6 +22,7 @@ import com.stories.domain.StoryDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
 import com.stories.repository.StoriesRepository;
+import com.stories.repository.UsersRepository;
 import com.stories.sprintsclient.SprintsClient;
 import com.stories.utils.TestUtils;
 import com.stories.utils.UnitTestProperties;
@@ -35,6 +36,9 @@ public class ServiceTests {
 
 	@MockBean
 	StoriesRepository storiesRepository;
+	
+	@MockBean
+	UsersRepository usersRepository;
 
 	@MockBean
 	private MapperFacade mapperFacade;
@@ -56,35 +60,35 @@ public class ServiceTests {
 		testUtils = new TestUtils();
 	}
 
-	@Ignore
+	
 	@Test
 	public void getById() throws Exception {
-		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.TRUE);
+		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+				.thenReturn(Boolean.TRUE);
 		when(storiesRepository.findById(unitTestProperties.getUrlId()))
 				.thenReturn(java.util.Optional.of(TestUtils.getDummyStoryModel()));
 		when(mapperFacade.map(testUtils.getStoryModel(), StoryDomain.class))
-				.thenReturn(TestUtils.getDummyStoryDoamin());
+				.thenReturn(testUtils.getDummyStoryDomain());
 		when(storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()))
-				.thenReturn(TestUtils.getDummyStoryDoamin());
-		assertEquals(TestUtils.getDummyStoryDoamin(), storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()));
+				.thenReturn(testUtils.getDummyStoryDomain());
+		assertEquals(testUtils.getDummyStoryDomain(), 
+					storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()));
 	}
 
-	@Ignore
+	
 	@Test(expected = EntityNotFoundException.class)
 	public void getByIdException() throws Exception {
-		when(!storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.FALSE);
+		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.FALSE);
 		Mockito.when(storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()))
 				.thenThrow(new EntityNotFoundException("Story not found", StoryDomain.class));
 	}
 
-	@Ignore
 	@Test
 	public void getAllStories() throws Exception {
-		when(storiesRepository.findAll()).thenReturn(testUtils.getStoryModelList());
-		assertEquals(storiesServiceImpl.getAllStories(), testUtils.getStoryModelList());
+		when(storiesRepository.findAll()).thenReturn(storiesServiceImpl.storiesModel);
+		assertEquals(storiesServiceImpl.storiesDomain, storiesServiceImpl.getAllStories());
 	}
 
-	@Ignore
 	@Test(expected = EntityNotFoundException.class)
 	public void getAllStoriesException() throws Exception {
 		when(storiesRepository.findAll()).thenReturn(TestUtils.listStoriesModelNull());
@@ -92,29 +96,42 @@ public class ServiceTests {
 				.thenThrow(new EntityNotFoundException("Story not found", StoryDomain.class));
 	}
 
-	@Ignore
 	@Test
 	public void updateStory() throws Exception {
-		when(mapperFacade.map(TestUtils.getDummyStoryDoamin(), StoryModel.class))
-				.thenReturn(TestUtils.getDummyStoryModel());
-		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.TRUE);
-		when(storiesRepository.save(TestUtils.getDummyStoryModel())).thenReturn(TestUtils.getDummyStoryModel());
-		when(mapperFacade.map(testUtils.getStoryDomain(), StoryDomain.class))
-				.thenReturn(TestUtils.getDummyStoryDoamin());
-		assertEquals(TestUtils.getDummyStoryDoamin(),
-				storiesServiceImpl.updateStory(TestUtils.getDummyStoryDoamin(), unitTestProperties.getUrlId()));
+		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
+		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(true);
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(true);
+		when(mapperFacade.map(testUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
+		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getModelId());
 	}
-
-	@Ignore
+	
 	@Test(expected = EntityNotFoundException.class)
-	public void updateStoryException() throws Exception {
-		when(sprintsClient.existsSprintById(unitTestProperties.getDomainSprintId() + "S")).thenReturn(Boolean.FALSE);
-		Mockito.when(storiesServiceImpl.updateStory(TestUtils.getStoryDomain(), unitTestProperties.getModelId()))
-				.thenThrow(new EntityNotFoundException("The sprint is not exists", SprintsClient.class));
-		storiesServiceImpl.updateStory(TestUtils.getStoryDomain(), unitTestProperties.getUrlId());
+	public void updateUserException() throws Exception {
+		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(false);
+		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateStorySprintException() throws Exception {
+		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
+		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(false);
+		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateStoryIdException() throws Exception {
+		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
+		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(true);
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(false);
+		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
 	}
 
-	@Ignore
+	@Test(expected = EntityNotFoundException.class)
+	public void updateException() throws Exception {
+		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, testUtils.getStoryModel().get_id()))
+		.thenThrow(new EntityNotFoundException("Story not found", StoryDomain.class));
+	}
+	
 	@Test
 	public void deleteStory() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.TRUE);
@@ -122,26 +139,26 @@ public class ServiceTests {
 		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
 	}
 
-	@Ignore
+	
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteStoryException() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.FALSE);
 		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
 	}
 
-	@Ignore
 	@Test
-	public void createStory() throws Exception {
-		when(mapperFacade.map(TestUtils.getDummyStoryDoamin(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
-		when(storiesRepository.save(TestUtils.getDummyStoryModel())).thenReturn(testUtils.getStoryModel());
-		assertEquals(unitTestProperties.getUrlId(), storiesServiceImpl.createStory(TestUtils.getDummyStoryDoamin()));
-	}
+    public void createStory() throws Exception {
+        when(mapperFacade.map(TestUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
+        when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
+        when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(true);
+        when(storiesRepository.save(TestUtils.getStoryModel())).thenReturn(testUtils.getStoryModel());
+        assertEquals(unitTestProperties.getUrlId(), storiesServiceImpl.createStory(TestUtils.getStoryDomain()));
+    }
 
-	@Ignore
+	
 	@Test(expected = EntityNotFoundException.class)
 	public void createStoryException() throws Exception {
-		when(mapperFacade.map(TestUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
-		Mockito.doReturn(Boolean.FALSE).when(sprintsClient).existsSprintById(unitTestProperties.getDomainSprintId());
-		throw new EntityNotFoundException("The sprint_id does not exists", SprintsClient.class);
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
+		.thenThrow(new EntityNotFoundException("Story not found", StoryDomain.class));
 	}
 }
