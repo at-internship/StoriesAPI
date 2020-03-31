@@ -14,8 +14,9 @@ import com.stories.domain.SprintDomain;
 @Component
 public class SprintsClient {
 
+	RestTemplate restTemplate = new RestTemplate();
+
 	public boolean existsSprintById(String id) {
-		RestTemplate restTemplate = new RestTemplate();
 		String uri = "http://sprints-qa.us-east-2.elasticbeanstalk.com/sprints/";
 		boolean exists = false;
 		try {
@@ -27,7 +28,6 @@ public class SprintsClient {
 				List<SprintDomain> sprints = sprintsResponse.getBody();
 				for (int i = 0; i < sprints.size(); i++) {
 					if (id.equals(sprints.get(i).getId())) {
-
 						exists = true;
 						break;
 					}
