@@ -107,6 +107,7 @@ public class StoriesServiceImpl implements StoriesService {
 				}
 			} else {
 				throw new EntityNotFoundException("The user provided does not exist", StoryDomain.class);
+
 			}
 		} else {
 			throw new EntityNotFoundException(
