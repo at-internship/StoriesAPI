@@ -16,7 +16,7 @@ public class SprintsClient {
 
 	RestTemplate restTemplate = new RestTemplate();
 
-	public boolean existsSprintById(String id) {
+	public boolean existsSprintById(String id) throws RestClientException {
 		String uri = "http://sprints-qa.us-east-2.elasticbeanstalk.com/sprints/";
 		boolean exists = false;
 		try {
@@ -34,7 +34,7 @@ public class SprintsClient {
 				}
 			}
 		} catch (RestClientException e) {
-			e.printStackTrace();
+			throw new RestClientException("Spritns API has no entities");
 		}
 		return exists;
 	}

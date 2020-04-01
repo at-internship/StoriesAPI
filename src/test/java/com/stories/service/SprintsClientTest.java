@@ -67,9 +67,11 @@ public class SprintsClientTest {
 
 	@Test(expected = RestClientException.class)
 	public void existsSprintByIdException() throws Exception {
+		ResponseEntity<List<SprintDomain>> sprintEntity = new ResponseEntity<List<SprintDomain>>(
+				testUtils.getNullSprintDomaintList(), HttpStatus.NOT_FOUND);
 		Mockito.when(restTemplate.exchange(uriSprintClient, HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<SprintDomain>>() {
-				})).thenThrow(new RestClientException("Null Body"));
+				})).thenThrow(new RestClientException("spritns API has no entities"));
 		sprintsClient.existsSprintById("5e78f5e792675632e42d1a96");
 	}
 }
