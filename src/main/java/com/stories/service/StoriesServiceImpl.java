@@ -48,7 +48,7 @@ public class StoriesServiceImpl implements StoriesService {
         if (!StringUtils.isEmpty(storyDomain.getName()) && !StringUtils.isEmpty(storyDomain.getStatus())) {
             if (userNullValidation(storyDomain.getAssignee_id())) {
                 if (sprintNullValidation(storyDomain.getSprint_id())) {
-                    if (startDateValidation(storyDomain.getStart_date())) {
+                    storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
 						storyModel = mapperFacade.map(storyDomain, StoryModel.class);
                         if (statusValidation(statusArray, storyModel.getStatus())) {
                             logger.debug("Creating story with the json : {}", storyModel);
@@ -59,7 +59,6 @@ public class StoriesServiceImpl implements StoriesService {
                                     "The Status field should be one of the following options: 'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
                                     "", StoryDomain.class);
                         }
-                    }
                 } else {
                     throw new EntityNotFoundException("The sprint_id does not exists", SprintsClient.class);
                 }
@@ -87,7 +86,7 @@ public class StoriesServiceImpl implements StoriesService {
             if (userNullValidation(storyDomain.getAssignee_id())) {
 				if (sprintNullValidation(storyDomain.getSprint_id())) {
                     if (storiesRepository.existsById(id)) {
-                        if (startDateValidation(storyDomain.getStart_date())) {
+                    	storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
 							storyModel = mapperFacade.map(storyDomain, StoryModel.class);
                             if (statusValidation(statusArray, storyModel.getStatus())) {
                                 storyModel.set_id(id);
@@ -100,11 +99,6 @@ public class StoriesServiceImpl implements StoriesService {
                                         "The Status field should be one of the following options: 'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
                                         "", StoryDomain.class);
                             }
-                        } else {
-                            throw new EntityNotFoundException(
-                                    "Occurs an exception problem with startDate field.",
-                                    "", StoryDomain.class);
-                        }
                     } else {
                         throw new EntityNotFoundException("Story not found", StoryDomain.class);
                     }
@@ -113,7 +107,6 @@ public class StoriesServiceImpl implements StoriesService {
                 }
             } else {
                 throw new EntityNotFoundException("The user provided does not exist", StoryDomain.class);
-
             }
         } else {
             throw new EntityNotFoundException(
@@ -178,12 +171,11 @@ public class StoriesServiceImpl implements StoriesService {
         }
     }
 
-    private boolean startDateValidation(LocalDate start_date) {
-        if (!StringUtils.isEmpty(String.valueOf(start_date))) {
-            storyModel.setStart_date(start_date);
+    private LocalDate startDateValidation(LocalDate start_date) {
+        if ((!(start_date == null || (StringUtils.isEmpty(start_date.toString()))))) {
+        	return start_date;
         } else {
-            storyModel.setStart_date(LocalDate.now());
+            return LocalDate.now();
         }
-        return true;
     }
 }
