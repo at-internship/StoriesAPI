@@ -17,6 +17,7 @@ public class UnitTestProperties {
 	protected String urlId;
 	protected String sprintClientUri;
 	
+	protected String domainId;
 	protected String domainSprintId;
 	protected String domainTechnology;
 	protected String domainName;

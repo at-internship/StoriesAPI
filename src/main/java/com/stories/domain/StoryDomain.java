@@ -12,6 +12,9 @@ import lombok.Data;
 @Data
 public class StoryDomain {
 	
+	@ApiModelProperty(example="5e827f2f48b0866f87e1cbc2", value="Identifier of the story")
+	private String _id;
+	
 	@ApiModelProperty(example="1", value="Identifier of the sprint")
 	private String sprint_id;
 	
