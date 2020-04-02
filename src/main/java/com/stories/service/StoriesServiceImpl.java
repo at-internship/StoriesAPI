@@ -45,7 +45,7 @@ public class StoriesServiceImpl implements StoriesService {
 
     @Override
     public String createStory(StoryDomain storyDomain) throws Exception {
-        if (!StringUtils.isEmpty(storyDomain.getName()) && !StringUtils.isEmpty(storyDomain.getStatus())) {
+    	if (nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus())) {
             if (userNullValidation(storyDomain.getAssignee_id())) {
                 if (sprintNullValidation(storyDomain.getSprint_id())) {
                     storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
@@ -82,7 +82,7 @@ public class StoriesServiceImpl implements StoriesService {
 
     @Override
     public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
-        if (!StringUtils.isEmpty(storyDomain.getName()) && !StringUtils.isEmpty(storyDomain.getStatus())) {
+    	if (nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus())) {
             if (userNullValidation(storyDomain.getAssignee_id())) {
 				if (sprintNullValidation(storyDomain.getSprint_id())) {
                     if (storiesRepository.existsById(id)) {
@@ -170,6 +170,17 @@ public class StoriesServiceImpl implements StoriesService {
             return true;
         }
     }
+    
+    private boolean nameStatusNullValidation(String name, String status) throws EntityNotFoundException {
+		if (StringUtils.isEmpty(name) && StringUtils.isEmpty(status)) {
+			throw new EntityNotFoundException("The JSON format provided is invalid. Please provide the required fields ('Name','Status).", "", StoryDomain.class);
+		} else if (StringUtils.isEmpty(name)) {
+			throw new EntityNotFoundException("The JSON format provided is invalid. Please provide the required field ('Name').", "", StoryDomain.class);
+		} else if (StringUtils.isEmpty(status)) {
+			throw new EntityNotFoundException("The JSON format provided is invalid. Please provide the required field ('Status).", "", StoryDomain.class);
+		}
+		return true;
+	}
 
     private LocalDate startDateValidation(LocalDate start_date) {
         if ((!(start_date == null || (StringUtils.isEmpty(start_date.toString()))))) {
