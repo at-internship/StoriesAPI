@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -36,7 +35,7 @@ public class ServiceTests {
 
 	@MockBean
 	StoriesRepository storiesRepository;
-	
+
 	@MockBean
 	UsersRepository usersRepository;
 
@@ -60,27 +59,23 @@ public class ServiceTests {
 		testUtils = new TestUtils();
 	}
 
-	
 	@Test
 	public void getById() throws Exception {
-		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
-				.thenReturn(Boolean.TRUE);
+		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.TRUE);
 		when(storiesRepository.findById(unitTestProperties.getUrlId()))
 				.thenReturn(java.util.Optional.of(TestUtils.getDummyStoryModel()));
 		when(mapperFacade.map(testUtils.getStoryModel(), StoryDomain.class))
 				.thenReturn(testUtils.getDummyStoryDomain());
 		when(storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()))
 				.thenReturn(testUtils.getDummyStoryDomain());
-		assertEquals(testUtils.getDummyStoryDomain(), 
-					storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()));
+		assertEquals(testUtils.getDummyStoryDomain(), storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()));
 	}
 
-	
 	@Test(expected = EntityNotFoundException.class)
 	public void getByIdException() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.FALSE);
 		Mockito.when(storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()))
-				.thenThrow(new EntityNotFoundException("Story not found", StoryDomain.class));
+				.thenThrow(new EntityNotFoundException("Story not found", "/stories/"));
 	}
 
 	@Test
@@ -93,7 +88,7 @@ public class ServiceTests {
 	public void getAllStoriesException() throws Exception {
 		when(storiesRepository.findAll()).thenReturn(TestUtils.listStoriesModelNull());
 		Mockito.when(storiesServiceImpl.getAllStories())
-				.thenThrow(new EntityNotFoundException("Story not found", StoryDomain.class));
+				.thenThrow(new EntityNotFoundException("Stories not found", "/stories/"));
 	}
 
 	@Test
@@ -104,20 +99,20 @@ public class ServiceTests {
 		when(mapperFacade.map(testUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
 		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getModelId());
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	public void updateUserException() throws Exception {
 		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(false);
 		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	public void updateStorySprintException() throws Exception {
 		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
 		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(false);
 		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	public void updateStoryIdException() throws Exception {
 		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
@@ -129,9 +124,9 @@ public class ServiceTests {
 	@Test(expected = EntityNotFoundException.class)
 	public void updateException() throws Exception {
 		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, testUtils.getStoryModel().get_id()))
-		.thenThrow(new EntityNotFoundException("Story not found", StoryDomain.class));
+				.thenThrow(new EntityNotFoundException("Story not found", "/stories/"));
 	}
-	
+
 	@Test
 	public void deleteStory() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.TRUE);
@@ -139,7 +134,6 @@ public class ServiceTests {
 		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
 	}
 
-	
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteStoryException() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.FALSE);
@@ -147,18 +141,17 @@ public class ServiceTests {
 	}
 
 	@Test
-    public void createStory() throws Exception {
-        when(mapperFacade.map(TestUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
-        when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
-        when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(true);
-        when(storiesRepository.save(TestUtils.getStoryModel())).thenReturn(testUtils.getStoryModel());
-        assertEquals(unitTestProperties.getUrlId(), storiesServiceImpl.createStory(TestUtils.getStoryDomain()));
-    }
+	public void createStory() throws Exception {
+		when(mapperFacade.map(TestUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
+		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
+		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(true);
+		when(storiesRepository.save(TestUtils.getStoryModel())).thenReturn(testUtils.getStoryModel());
+		assertEquals(unitTestProperties.getUrlId(), storiesServiceImpl.createStory(TestUtils.getStoryDomain()));
+	}
 
-	
 	@Test(expected = EntityNotFoundException.class)
 	public void createStoryException() throws Exception {
 		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
-		.thenThrow(new EntityNotFoundException("Story not found", StoryDomain.class));
+				.thenThrow(new EntityNotFoundException("Story not found", "/stories/"));
 	}
 }

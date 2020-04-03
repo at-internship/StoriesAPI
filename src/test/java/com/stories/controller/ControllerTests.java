@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.stories.domain.StoryDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.service.StoriesServiceImpl;
 import com.stories.utils.TestUtils;
@@ -51,7 +50,7 @@ public class ControllerTests {
 		mockMvc.perform(MockMvcRequestBuilders.get(uri)).andDo(new ResultHandler() {
 			@Override
 			public void handle(MvcResult mvcResult) throws Exception {
-				throw new EntityNotFoundException("Story not found", StoryDomain.class);
+				throw new EntityNotFoundException("Story not found", "/stories/");
 			}
 		}).andExpect(status().isNotFound());
 	}
@@ -72,7 +71,7 @@ public class ControllerTests {
 				.content(testUtils.setStoryInJsonFormat("5e6a8441bfc6533811235e1"))).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Story not found", StoryDomain.class);
+						throw new EntityNotFoundException("Story not found", "/stories/");
 					}
 				}).andExpect(status().isNotFound());
 	}
@@ -102,9 +101,9 @@ public class ControllerTests {
 				.content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Status json state is invalid",
-								"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted.",
-								StoryDomain.class);
+						throw new EntityNotFoundException(
+								"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+								400, "", "/stories/");
 					}
 				}).andExpect(status().isNotFound());
 	}
@@ -126,7 +125,7 @@ public class ControllerTests {
 				.content(testUtils.postStoryInvalidStatusJson())).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Story has an invalid status Json", StoryDomain.class);
+						throw new EntityNotFoundException("Story has an invalid status Json", "/stories/");
 					}
 				}).andExpect(status().isBadRequest());
 	}
@@ -139,7 +138,7 @@ public class ControllerTests {
 				.content(testUtils.postStoryBadJsonFormat())).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Malformed JSON request", StoryDomain.class);
+						throw new EntityNotFoundException("Malformed JSON request", "/stories/");
 					}
 				}).andExpect(status().isBadRequest());
 
