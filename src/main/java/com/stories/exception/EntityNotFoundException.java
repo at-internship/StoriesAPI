@@ -2,7 +2,6 @@ package com.stories.exception;
 
 import org.springframework.http.HttpStatus;
 
-import com.stories.domain.StoryDomain;
 import com.stories.model.StoryModel;
 
 import lombok.Getter;
@@ -13,38 +12,42 @@ import lombok.Setter;
 public class EntityNotFoundException extends Exception {
 
 	private static final long serialVersionUID = 1002819552332825026L;
-	private HttpStatus status;
+	private HttpStatus error;
 	private Class<?> entityType;
 	private String message;
 	private Throwable cause;
-	private int code;
+	private int status;
+	private String path;
 
 	public EntityNotFoundException(String message) {
-		this.status = HttpStatus.NOT_FOUND;
+		this.error = HttpStatus.NOT_FOUND;
 		this.message = message;
 	}
-	
-	public EntityNotFoundException(String message, HttpStatus status, Class<StoryModel> entityType) {
-        this.status = HttpStatus.CONFLICT;
-        this.message = message;
-        this.entityType = entityType;
-    }
 
-	public EntityNotFoundException(String message, Class<?> entityType) {
+	public EntityNotFoundException(String message, HttpStatus status, Class<StoryModel> entityType, String path) {
+		this.error = HttpStatus.CONFLICT;
+		this.message = message;
+		this.entityType = entityType;
+		this.path = path;
+	}
+
+	public EntityNotFoundException(String message, String path) {
 		this(message);
-		this.entityType = entityType;
+		this.path = path;
 	}
-	
-	 public EntityNotFoundException(String message, int code, Class<?> entityType) {
-	        this.message = message;
-	        this.code = code;
-	        this.entityType = entityType;
-	    }
 
-	public EntityNotFoundException(String message, int code, String status, Class<StoryDomain> entityType) {
-		this.status = HttpStatus.BAD_REQUEST;
-		this.code = code;
+	public EntityNotFoundException(String message, int status, Class<?> entityType, String path) {
 		this.message = message;
+		this.status = status;
 		this.entityType = entityType;
+		this.path = path;
+	}
+
+	public EntityNotFoundException(String message, int status, String error, String path) {
+		this.error = HttpStatus.BAD_REQUEST;
+		this.status = status;
+		this.message = message;
+		// this.entityType = entityType;
+		this.path = path;
 	}
 }

@@ -26,12 +26,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-		return new ResponseEntity<>(apiError, apiError.getStatus());
+		return new ResponseEntity<>(apiError, apiError.getError());
 	}
 
 	@ExceptionHandler({ EntityNotFoundException.class })
 	public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex) {
-		return buildResponseEntity(new ApiError(ex.getStatus(), ex.getCode(), ex.getMessage(), ex.getEntityType().toString()));
+		return buildResponseEntity(
+				new ApiError(ex.getError(), ex.getStatus(), ex.getMessage(), ex.getPath().toString()));
 	}
-
 }

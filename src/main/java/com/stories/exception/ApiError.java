@@ -13,56 +13,53 @@ import lombok.Setter;
 @Setter
 public class ApiError {
 
-	private HttpStatus status;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
 	private LocalDateTime timestamp;
+	private HttpStatus error;
+	private int status;
 	private String message;
-	private String debugMessage;
-	private int code;
+	private String path;
 
 	public ApiError() {
 		this.timestamp = LocalDateTime.now();
 	}
 
-	public ApiError(HttpStatus status) {
+	public ApiError(HttpStatus error) {
 		this();
-		this.status = status;
+		this.error = error;
 	}
 
-	public ApiError(HttpStatus status, Throwable ex) {
+	public ApiError(HttpStatus error, Throwable ex) {
 		this();
-		this.status = status;
+		this.error = error;
 		this.message = "Unexpected error";
-		this.debugMessage = ex.getLocalizedMessage();
 	}
 
-	public ApiError(HttpStatus status, String message) {
+	public ApiError(HttpStatus error, String message) {
 		this();
-		this.status = status;
+		this.error = error;
 		this.message = message;
 	}
 
-	public ApiError(HttpStatus status, String message, Throwable ex) {
+	public ApiError(HttpStatus error, String message, Throwable ex) {
 		this();
-		this.status = status;
+		this.error = error;
 		this.message = message;
-		this.debugMessage = ex.getLocalizedMessage();
 	}
 
-	public ApiError(HttpStatus status, int code, String message, String debugMessage) {
+	public ApiError(HttpStatus error, int status, String message, String path) {
 		this();
-		this.status = status;
-		this.code = status.value();
+		this.error = error;
+		this.status = error.value();
 		this.message = message;
-		this.debugMessage = debugMessage;
+		this.path = path;
 	}
 
-	public ApiError(HttpStatus status, String message, String debugMessage, Throwable ex) {
+	public ApiError(HttpStatus error, String message, Throwable ex, String path) {
 		this();
-		this.status = status;
+		this.error = error;
 		this.message = message;
-		this.debugMessage = debugMessage;
-		this.debugMessage = ex.getLocalizedMessage();
+		this.path = path;
 	}
 
 }
