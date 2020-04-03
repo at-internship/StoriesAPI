@@ -76,7 +76,7 @@ public class StoriesServiceImpl implements StoriesService {
 	public void deleteStory(String id) throws Exception {
 		if (!storiesRepository.existsById(id)) {
 			throw new EntityNotFoundException("Story with the given id was not found", HttpStatus.CONFLICT,
-					StoryModel.class, "/stories/");
+					"/stories/");
 		} else
 			logger.debug("Deleting story with the id: " + id);
 		storiesRepository.deleteById(id);
@@ -129,14 +129,16 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public List<StoryDomain> getAllStories() throws Exception {
-		storiesModel = storiesRepository.findAll();
-		if (storiesModel == null)
+		List<StoryModel> allStoriesModel = new ArrayList<>();
+		List<StoryDomain> allStoriesDomain = new ArrayList<>();
+		allStoriesModel = storiesRepository.findAll();
+		if (allStoriesModel == null)
 			throw new EntityNotFoundException("Stories not found", "/stories/");
-		for (int i = 0; i < storiesModel.size(); i++) {
-			storiesDomain.add(mapperFacade.map(storiesModel.get(i), StoryDomain.class));
+		for (int i = 0; i < allStoriesModel.size(); i++) {
+			allStoriesDomain.add(mapperFacade.map(allStoriesModel.get(i), StoryDomain.class));
 		}
-		logger.debug("Getting all stories - JSON : {}", storiesDomain);
-		return storiesDomain;
+		logger.debug("Getting all stories - JSON : {}", allStoriesDomain);
+		return allStoriesDomain;
 	}
 
 	private boolean statusValidation(String[] statusArray, String storyStatus) {

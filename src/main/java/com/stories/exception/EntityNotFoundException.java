@@ -2,8 +2,6 @@ package com.stories.exception;
 
 import org.springframework.http.HttpStatus;
 
-import com.stories.model.StoryModel;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,10 +22,9 @@ public class EntityNotFoundException extends Exception {
 		this.message = message;
 	}
 
-	public EntityNotFoundException(String message, HttpStatus status, Class<StoryModel> entityType, String path) {
+	public EntityNotFoundException(String message, HttpStatus status, String path) {
 		this.error = HttpStatus.CONFLICT;
 		this.message = message;
-		this.entityType = entityType;
 		this.path = path;
 	}
 
@@ -47,7 +44,6 @@ public class EntityNotFoundException extends Exception {
 		this.error = HttpStatus.BAD_REQUEST;
 		this.status = status;
 		this.message = message;
-		// this.entityType = entityType;
 		this.path = path;
 	}
 }
