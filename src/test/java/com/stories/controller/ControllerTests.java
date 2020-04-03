@@ -102,8 +102,8 @@ public class ControllerTests {
 				.content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Status json state is invalid",
-								"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted.",
+						throw new EntityNotFoundException(
+								"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
 								StoryDomain.class);
 					}
 				}).andExpect(status().isNotFound());

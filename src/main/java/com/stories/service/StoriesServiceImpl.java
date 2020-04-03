@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.stories.domain.StoryDomain;
@@ -34,7 +35,7 @@ public class StoriesServiceImpl implements StoriesService {
     @Autowired
     private MapperFacade mapperFacade;
 
-    String[] statusArray = {"Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted"};
+    String[] statusArray = {"Refining", "Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted"};
     StoryModel storyModel = new StoryModel();
     List<StoryModel> storiesModel = new ArrayList<StoryModel>();
     StoryDomain storyDomain = new StoryDomain();
@@ -55,9 +56,9 @@ public class StoriesServiceImpl implements StoriesService {
                             String id = nameValidation(storyModel).get_id();
                             return id;
                         } else {
-                            throw new EntityNotFoundException(
-                                    "The Status field should be one of the following options: 'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-                                    "", StoryDomain.class);
+                        	throw new EntityNotFoundException(
+                                    "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+                                    StoryDomain.class);
                         }
                 } else {
                     throw new EntityNotFoundException("The sprint_id does not exists", SprintsClient.class);
@@ -66,15 +67,13 @@ public class StoriesServiceImpl implements StoriesService {
                 throw new EntityNotFoundException("The user provided does not exist", StoryDomain.class);
             }
         }
-        throw new EntityNotFoundException(
-                "The JSON format provided is invalid. Please provide all the required fields ('Name' and 'Status').",
-                "", StoryDomain.class);
+    	throw new EntityNotFoundException("The JSON format provided is invalid, please provide the required fields ('Name','Status').",400,"", StoryDomain.class);
     }
 
     @Override
     public void deleteStory(String id) throws Exception {
         if (!storiesRepository.existsById(id)) {
-            throw new EntityNotFoundException("Story with the given id was not found", StoryModel.class);
+            throw new EntityNotFoundException("Story with the given id was not found", HttpStatus.CONFLICT, StoryModel.class);
         } else
             logger.debug("Deleting story with the id: " + id);
         storiesRepository.deleteById(id);
@@ -95,9 +94,9 @@ public class StoriesServiceImpl implements StoriesService {
                                 logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
                                 return storyDomain;
                             } else {
-                                throw new EntityNotFoundException(
-                                        "The Status field should be one of the following options: 'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-                                        "", StoryDomain.class);
+                            	throw new EntityNotFoundException(
+                                        "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+                                        StoryDomain.class);
                             }
                     } else {
                         throw new EntityNotFoundException("Story not found", StoryDomain.class);
@@ -109,9 +108,7 @@ public class StoriesServiceImpl implements StoriesService {
                 throw new EntityNotFoundException("The user provided does not exist", StoryDomain.class);
             }
         } else {
-            throw new EntityNotFoundException(
-                    "The JSON format provided is invalid. Please provide all the required fields ('Name' and 'Status').",
-                    "", StoryDomain.class);
+        	throw new EntityNotFoundException("The JSON format provided is invalid, please provide the required fields ('Name','Status').",400,"", StoryDomain.class);
         }
     }
 
@@ -146,8 +143,7 @@ public class StoriesServiceImpl implements StoriesService {
             storiesRepository.save(storyModel);
             return storyModel;
         } catch (Exception e) {
-            throw new EntityNotFoundException("There is a story with this name already", e.getMessage(),
-                    StoryDomain.class);
+        	throw new EntityNotFoundException("There is a story with this name already", StoryDomain.class);
         }
     }
 
@@ -173,11 +169,11 @@ public class StoriesServiceImpl implements StoriesService {
     
     private boolean nameStatusNullValidation(String name, String status) throws EntityNotFoundException {
 		if (StringUtils.isEmpty(name) && StringUtils.isEmpty(status)) {
-			throw new EntityNotFoundException("The JSON format provided is invalid. Please provide the required fields ('Name','Status).", "", StoryDomain.class);
+			throw new EntityNotFoundException("The JSON format provided is invalid, please provide the required fields ('Name','Status').",400,"", StoryDomain.class);
 		} else if (StringUtils.isEmpty(name)) {
-			throw new EntityNotFoundException("The JSON format provided is invalid. Please provide the required field ('Name').", "", StoryDomain.class);
+			throw new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').",400,"", StoryDomain.class);
 		} else if (StringUtils.isEmpty(status)) {
-			throw new EntityNotFoundException("The JSON format provided is invalid. Please provide the required field ('Status).", "", StoryDomain.class);
+			throw new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Status').",400,"", StoryDomain.class);
 		}
 		return true;
 	}

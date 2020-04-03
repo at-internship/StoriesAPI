@@ -31,7 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler({ EntityNotFoundException.class })
 	public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex) {
-		return buildResponseEntity(new ApiError(ex.getStatus(), ex.getMessage(), ex.getEntityType().toString()));
+		return buildResponseEntity(new ApiError(ex.getStatus(), ex.getCode(), ex.getMessage(), ex.getEntityType().toString()));
 	}
 
 }
