@@ -103,7 +103,7 @@ public class ControllerTests {
 					public void handle(MvcResult mvcResult) throws Exception {
 						throw new EntityNotFoundException(
 								"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-								400, "", "/stories/");
+								"", "/stories/");
 					}
 				}).andExpect(status().isNotFound());
 	}

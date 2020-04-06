@@ -58,17 +58,17 @@ public class StoriesServiceImpl implements StoriesService {
 					} else {
 						throw new EntityNotFoundException(
 								"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-								400, "", "/stories/");
+								"", "/stories/");
 					}
 				} else {
 					throw new EntityNotFoundException("The sprint_id does not exists", "/sprints/");
 				}
 			} else {
-				throw new EntityNotFoundException("The user provided does not exist", "/stories/");
+				throw new EntityNotFoundException("The user provided does not exist", "/users/");
 			}
 		}
 		throw new EntityNotFoundException(
-				"The JSON format provided is invalid, please provide the required fields ('Name','Status').", 400, "",
+				"The JSON format provided is invalid, please provide the required fields ('Name','Status').", "",
 				"/stories/");
 	}
 
@@ -99,7 +99,7 @@ public class StoriesServiceImpl implements StoriesService {
 						} else {
 							throw new EntityNotFoundException(
 									"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-									400, "", "/stories/");
+									"", "/stories/");
 						}
 					} else {
 						throw new EntityNotFoundException("Story not found", "/stories/");
@@ -108,12 +108,12 @@ public class StoriesServiceImpl implements StoriesService {
 					throw new EntityNotFoundException("The sprint_id does not exists", "/sprints/");
 				}
 			} else {
-				throw new EntityNotFoundException("The user provided does not exist", "/stories/");
+				throw new EntityNotFoundException("The user provided does not exist", "/users/");
 			}
 		} else {
 			throw new EntityNotFoundException(
-					"The JSON format provided is invalid, please provide the required fields ('Name','Status').", 400,
-					"", "/stories/");
+					"The JSON format provided is invalid, please provide the required fields ('Name','Status').", "",
+					"/stories/");
 		}
 	}
 
@@ -150,7 +150,7 @@ public class StoriesServiceImpl implements StoriesService {
 			storiesRepository.save(storyModel);
 			return storyModel;
 		} catch (Exception e) {
-			throw new EntityNotFoundException("There is a story with this name already.", 400, "", "/stories/");
+			throw new EntityNotFoundException("There is a story with this name already.", "", "/stories/");
 		}
 	}
 
@@ -177,15 +177,15 @@ public class StoriesServiceImpl implements StoriesService {
 	private boolean nameStatusNullValidation(String name, String status) throws EntityNotFoundException {
 		if (StringUtils.isEmpty(name) && StringUtils.isEmpty(status)) {
 			throw new EntityNotFoundException(
-					"The JSON format provided is invalid, please provide the required fields ('Name','Status').", 400,
-					"", "/stories/");
+					"The JSON format provided is invalid, please provide the required fields ('Name','Status').", "",
+					"/stories/");
 		} else if (StringUtils.isEmpty(name)) {
 			throw new EntityNotFoundException(
-					"The JSON format provided is invalid, please provide the required field ('Name').", 400, "",
+					"The JSON format provided is invalid, please provide the required field ('Name').", "",
 					"/stories/");
 		} else if (StringUtils.isEmpty(status)) {
 			throw new EntityNotFoundException(
-					"The JSON format provided is invalid, please provide the required field ('Status').", 400, "",
+					"The JSON format provided is invalid, please provide the required field ('Status').", "",
 					"/stories/");
 		}
 		return true;

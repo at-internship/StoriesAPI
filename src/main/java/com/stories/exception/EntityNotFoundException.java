@@ -40,9 +40,9 @@ public class EntityNotFoundException extends Exception {
 		this.path = path;
 	}
 
-	public EntityNotFoundException(String message, int status, String error, String path) {
+	public EntityNotFoundException(String message, String error, String path) {
 		this.error = HttpStatus.BAD_REQUEST;
-		this.status = status;
+		this.status = HttpStatus.BAD_REQUEST.value();
 		this.message = message;
 		this.path = path;
 	}
