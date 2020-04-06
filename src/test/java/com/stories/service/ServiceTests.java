@@ -122,6 +122,24 @@ public class ServiceTests {
 	}
 
 	@Test(expected = EntityNotFoundException.class)
+	public void updateStoryStatusException() throws Exception {
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		storiesServiceImpl.storyDomain.setStatus("incorrect");
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyModel.setStatus("incorrect");
+		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
+		when(sprintsClient.existsSprintById(storiesServiceImpl.storyDomain.getSprint_id())).thenReturn(true);
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(true);
+		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
+				.thenReturn(storiesServiceImpl.storyModel);
+		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, storiesServiceImpl.storyModel.get_id()))
+				.thenThrow(new EntityNotFoundException(
+						"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+						"", "/stories/"));
+		storiesServiceImpl.createStory(storiesServiceImpl.storyDomain);
+	}
+
+	@Test(expected = EntityNotFoundException.class)
 	public void updateException() throws Exception {
 		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, testUtils.getStoryModel().get_id()))
 				.thenThrow(new EntityNotFoundException("Story not found", "/stories/"));
@@ -151,7 +169,31 @@ public class ServiceTests {
 
 	@Test(expected = EntityNotFoundException.class)
 	public void createStoryException() throws Exception {
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		storiesServiceImpl.storyDomain.setStatus("incorrect");
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyModel.setStatus("incorrect");
+		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
+		when(sprintsClient.existsSprintById(storiesServiceImpl.storyDomain.getSprint_id())).thenReturn(true);
+		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
+				.thenReturn(storiesServiceImpl.storyModel);
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
+				"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+				"", "/stories/"));
+		storiesServiceImpl.createStory(storiesServiceImpl.storyDomain);
+	}
+
+	@Test(expected = EntityNotFoundException.class)
+	public void createStorySprintIdException() throws Exception {
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		storiesServiceImpl.storyDomain.setSprint_id("incorrect");
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyModel.setSprint_id("incorrect");
+		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
+		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
+				.thenReturn(storiesServiceImpl.storyModel);
 		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
-				.thenThrow(new EntityNotFoundException("Story not found", "/stories/"));
+				.thenThrow(new EntityNotFoundException("The sprint_id does not exists", "/sprints/"));
+		storiesServiceImpl.createStory(storiesServiceImpl.storyDomain);
 	}
 }
