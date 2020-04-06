@@ -34,7 +34,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 					mss = ex.toString().substring(ex.toString().indexOf(statusArray[i]),
 							ex.toString().indexOf(statusArray[i]) + statusArray[i].length());
 					if (mss.equals("start_date")) {
-						mss = "Malformed JSON request, format date should be: ex. '2020-04-06'; at " + mss;
+						mss = "Malformed JSON request, format date should be: ex. 'YYYY-MM-DD'; at " + mss;
 					} else {
 						mss = "Malformed JSON request " + mss;
 					}
