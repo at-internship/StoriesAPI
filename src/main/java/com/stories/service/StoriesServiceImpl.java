@@ -46,30 +46,26 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
-		if (nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus())) {
-			if (userNullValidation(storyDomain.getAssignee_id())) {
-				if (sprintNullValidation(storyDomain.getSprint_id())) {
-					storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-					storyModel = mapperFacade.map(storyDomain, StoryModel.class);
-					if (statusValidation(statusArray, storyModel.getStatus())) {
-						logger.debug("Creating story with the json : {}", storyModel);
-						String id = nameValidation(storyModel).get_id();
-						return id;
-					} else {
-						throw new EntityNotFoundException(
-								"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-								"", "/stories/");
-					}
+		nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
+		if (userNullValidation(storyDomain.getAssignee_id())) {
+			if (sprintNullValidation(storyDomain.getSprint_id())) {
+				storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
+				storyModel = mapperFacade.map(storyDomain, StoryModel.class);
+				if (statusValidation(statusArray, storyModel.getStatus())) {
+					logger.debug("Creating story with the json : {}", storyModel);
+					String id = nameValidation(storyModel).get_id();
+					return id;
 				} else {
-					throw new EntityNotFoundException("The sprint_id does not exists", "/sprints/");
+					throw new EntityNotFoundException(
+							"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+							"", "/stories/");
 				}
 			} else {
-				throw new EntityNotFoundException("The user provided does not exist", "/users/");
+				throw new EntityNotFoundException("The sprint_id does not exists", "/sprints/");
 			}
+		} else {
+			throw new EntityNotFoundException("The user provided does not exist", "/users/");
 		}
-		throw new EntityNotFoundException(
-				"The JSON format provided is invalid, please provide the required fields ('Name','Status').", "",
-				"/stories/");
 	}
 
 	@Override
@@ -84,36 +80,31 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
-		if (nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus())) {
-			if (userNullValidation(storyDomain.getAssignee_id())) {
-				if (sprintNullValidation(storyDomain.getSprint_id())) {
-					if (storiesRepository.existsById(id)) {
-						storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-						storyModel = mapperFacade.map(storyDomain, StoryModel.class);
-						if (statusValidation(statusArray, storyModel.getStatus())) {
-							storyModel.set_id(id);
-							nameValidation(storyModel);
-							storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
-							logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
-							return storyDomain;
-						} else {
-							throw new EntityNotFoundException(
-									"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-									"", "/stories/");
-						}
+		nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
+		if (userNullValidation(storyDomain.getAssignee_id())) {
+			if (sprintNullValidation(storyDomain.getSprint_id())) {
+				if (storiesRepository.existsById(id)) {
+					storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
+					storyModel = mapperFacade.map(storyDomain, StoryModel.class);
+					if (statusValidation(statusArray, storyModel.getStatus())) {
+						storyModel.set_id(id);
+						nameValidation(storyModel);
+						storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
+						logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
+						return storyDomain;
 					} else {
-						throw new EntityNotFoundException("Story not found", "/stories/");
+						throw new EntityNotFoundException(
+								"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+								"", "/stories/");
 					}
 				} else {
-					throw new EntityNotFoundException("The sprint_id does not exists", "/sprints/");
+					throw new EntityNotFoundException("Story not found", "/stories/");
 				}
 			} else {
-				throw new EntityNotFoundException("The user provided does not exist", "/users/");
+				throw new EntityNotFoundException("The sprint_id does not exists", "/sprints/");
 			}
 		} else {
-			throw new EntityNotFoundException(
-					"The JSON format provided is invalid, please provide the required fields ('Name','Status').", "",
-					"/stories/");
+			throw new EntityNotFoundException("The user provided does not exist", "/users/");
 		}
 	}
 
