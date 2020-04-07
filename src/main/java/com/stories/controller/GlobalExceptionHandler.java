@@ -22,7 +22,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
 
-		String[] statusArray = { "points", "start_date" };
+		String[] statusArray = { "points", "progress", "start_date" };
 		String mss = "";
 		for (int i = 0; i < statusArray.length; i++) {
 			if (ex.toString().indexOf(statusArray[i]) == -1) {
@@ -35,7 +35,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 							ex.toString().indexOf(statusArray[i]) + statusArray[i].length());
 					if (mss.equals("start_date")) {
 						mss = "Malformed JSON request, format date should be: ex. 'YYYY-MM-DD'; at " + mss;
-					} else {
+					} 
+					else if(mss.equals("points")) {
+						mss = "Malformed JSON request, The format of the "+ mss +" field is not valid, Non-numeric content";
+					}
+					else if(mss.equals("progress")) {
+						mss = "Malformed JSON request, The format of the "+ mss +" field is not valid, Non-numeric content";
+					}
+					else {
 						mss = "Malformed JSON request " + mss;
 					}
 					return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, 400, mss, "/stories/"));
