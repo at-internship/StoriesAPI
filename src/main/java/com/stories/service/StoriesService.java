@@ -19,4 +19,6 @@ public interface StoriesService {
 	StoryDomain updateStory(StoryDomain request, String id) throws Exception;
 	
 	List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException;
+
+	TasksDomain getTaskById(String id, String _id) throws Exception;
 }

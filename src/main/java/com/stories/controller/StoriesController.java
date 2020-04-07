@@ -2,6 +2,7 @@ package com.stories.controller;
 
 import java.util.List;
 
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,4 +91,15 @@ public class StoriesController {
 		public List<TasksDomain> getTasksByStory(@Valid @PathVariable String id) throws EntityNotFoundException{
 			return storyService.getTasksByStory(id);
 		}
+		
+		@ApiOperation(value = " GET Task ", notes = "This operation will return a task from a story")
+		@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
+						@ApiResponse(code = 404, message = " Task not found ") })
+		@ResponseStatus(value = HttpStatus.OK)
+		@GetMapping(value = "/{storyId}/tasks/{taskId}", produces = "application/json")
+		@ResponseBody
+		public TasksDomain getTaskById(@Valid @PathVariable("storyId") String storyId, @PathVariable("taskId") String taskId) throws Exception {
+			return storyService.getTaskById(storyId, taskId);
+		}
+	
 }
