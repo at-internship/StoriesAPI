@@ -31,5 +31,6 @@ public class StoryModel {
 	private String priority;
 	private String assignee_id;
 	private List<String> history;
+	private List<TaskModel> tasks;
 
 }

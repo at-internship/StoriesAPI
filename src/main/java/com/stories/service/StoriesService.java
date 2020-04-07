@@ -3,6 +3,8 @@ package com.stories.service;
 import java.util.List;
 
 import com.stories.domain.StoryDomain;
+import com.stories.domain.TasksDomain;
+import com.stories.exception.EntityNotFoundException;
 
 public interface StoriesService {
 
@@ -15,4 +17,6 @@ public interface StoriesService {
 	void deleteStory(String id) throws Exception;
 
 	StoryDomain updateStory(StoryDomain request, String id) throws Exception;
+	
+	List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException;
 }

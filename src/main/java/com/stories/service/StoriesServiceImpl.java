@@ -12,8 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.stories.domain.StoryDomain;
+import com.stories.domain.TasksDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
+import com.stories.repository.StoriesCustomRepository;
 import com.stories.repository.StoriesRepository;
 import com.stories.repository.UsersRepository;
 import com.stories.sprintsclient.SprintsClient;
@@ -29,6 +31,9 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Autowired
 	UsersRepository usersRepository;
+	
+	@Autowired
+    StoriesCustomRepository storiesCustomRepository;
 
 	private static Logger logger = LogManager.getLogger();
 
@@ -115,6 +120,15 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 		logger.debug("Getting all stories - JSON : {}", allStoriesDomain);
 		return allStoriesDomain;
+	}
+	
+	public List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException{
+		if(storiesRepository.existsById(id)) {
+		List<TasksDomain> results = storiesCustomRepository.getTasksByStory(id).getMappedResults();
+		return results;
+		}
+		throw new EntityNotFoundException("Story not found", "/stories/" + id + "/tasks");
+		
 	}
 
 	private String statusValidation(String[] statusArray, String storyStatus) {
