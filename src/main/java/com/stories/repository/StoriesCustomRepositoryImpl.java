@@ -1,5 +1,8 @@
 package com.stories.repository;
 
+import javax.ws.rs.InternalServerErrorException;
+
+
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -8,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import com.stories.domain.TasksDomain;
+import com.stories.exception.EntityNotFoundException;
 import com.stories.model.TaskModel;
 
 @Repository
@@ -33,15 +37,21 @@ private MongoTemplate mongoTemplate;
 	}
 	
 	@Override
-	public AggregationResults<TaskModel> getTaskById(String _id){
-		Aggregation aggregation = Aggregation.newAggregation(
-				Aggregation.unwind("tasks"),
-				Aggregation.match(Criteria.where("tasks._id").is(new ObjectId(_id))),
-				Aggregation.project("tasks._id", "tasks.name", "tasks.description",
-									"tasks.status", "tasks.comments", "tasks.assignee")
-				);
-		AggregationResults<TaskModel> results = mongoTemplate.aggregate(aggregation, "stories", TaskModel.class);
-		return results;
+	public AggregationResults<TaskModel> getTaskById(String id ,String _id) throws EntityNotFoundException{
+		try {
+			Aggregation aggregation = Aggregation.newAggregation(
+					Aggregation.unwind("tasks"),
+					Aggregation.match(Criteria.where("tasks._id").is(new ObjectId(_id))),
+					Aggregation.project("tasks._id", "tasks.name", "tasks.description",
+										"tasks.status", "tasks.comments", "tasks.assignee")
+					);
+			AggregationResults<TaskModel> results = mongoTemplate.aggregate(aggregation, "stories", TaskModel.class);
+			return results;
+			
+		}catch(Exception e) {
+			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
+		}
+		
 	}
 	
 }
