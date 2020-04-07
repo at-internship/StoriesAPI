@@ -143,4 +143,12 @@ public class ControllerTests {
 				}).andExpect(status().isBadRequest());
 
 	}
+	
+	@Test()
+	public void getTaskByStoryTest() throws Exception {
+		String uri = "/stories/5e7134c9099a9a0ab248c90b/tasks/6e413de9099a9a0ab248c90c";
+		mockMvc.perform(MockMvcRequestBuilders.get(uri).contentType("6e413de9099a9a0ab248c90c"))
+				.andExpect(status().isOk());
+		
+	}
 }

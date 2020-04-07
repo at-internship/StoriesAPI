@@ -1,6 +1,7 @@
 package com.stories.service;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,7 @@ import com.stories.domain.StoryDomain;
 import com.stories.domain.TasksDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
+import com.stories.model.TaskModel;
 import com.stories.repository.StoriesCustomRepository;
 import com.stories.repository.StoriesRepository;
 import com.stories.repository.UsersRepository;
@@ -121,6 +125,19 @@ public class StoriesServiceImpl implements StoriesService {
 		logger.debug("Getting all stories - JSON : {}", allStoriesDomain);
 		return allStoriesDomain;
 	}
+	
+	@Override
+    public TasksDomain getTaskById(String id, String _id) throws Exception {
+    	if(storiesRepository.existsById(id)) {
+    		TaskModel taskModel = storiesCustomRepository.getTaskById(_id).getUniqueMappedResult();
+    		if(taskModel == null) {
+    			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
+    		}
+    		TasksDomain taskDomain = mapperFacade.map(taskModel, TasksDomain.class);
+    		return taskDomain;
+    	}
+    	throw new EntityNotFoundException("Story not found", "/stories/" + id);
+    }
 	
 	public List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException{
 		if(storiesRepository.existsById(id)) {
