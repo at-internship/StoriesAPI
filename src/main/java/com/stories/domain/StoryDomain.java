@@ -61,7 +61,7 @@ public class StoryDomain {
 	@ApiModelProperty(example="1", value="The history of the story")
 	private List<String> history;
 	
-	@ApiModelProperty(example="?", value="The tasks of the story")
+	@ApiModelProperty(example="New task", value="The tasks of the story")
 	private List<TasksDomain> tasks;
 
 	public StoryDomain() {
