@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.stories.domain.StoryDomain;
-import com.stories.exception.ApiError;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
 import com.stories.repository.StoriesRepository;
@@ -38,7 +37,7 @@ public class StoriesServiceImpl implements StoriesService {
 
 	String[] statusArray = { "Refining", "Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted" };
 	String[] DomainValidation = { "Sprint_id", "Technology", "Description", "Acceptance_criteria", "Points", "Progress",
-			"Notes", "Comments", "Start_date","Due_date","Priority", "Assignee_id", "History" };
+			"Notes", "Comments", "Start_date", "Due_date", "Priority", "Assignee_id", "History" };
 	int[] pointsArray = { 0, 1, 2, 3, 5 };
 	StoryModel storyModel = new StoryModel();
 	List<StoryModel> storiesModel = new ArrayList<StoryModel>();
@@ -50,19 +49,15 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
-		
 		storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-		
-//		nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
-		String []mensaggeDinamicValidation = dinamicValidation(storyDomain);
-		
-		if(StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
+		String[] mensaggeDinamicValidation = dinamicValidation(storyDomain);
+
+		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
 			storyModel = mapperFacade.map(storyDomain, StoryModel.class);
 			logger.debug("Creating story with the json : {}", storyModel);
 			String id = nameValidation(storyModel).get_id();
 			return id;
-		}
-		else {
+		} else {
 			throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
 		}
 	}
@@ -79,13 +74,12 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
-//		nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
 		storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-		String []mensaggeDinamicValidation = dinamicValidation(storyDomain);
-		
-		if(StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
+		String[] mensaggeDinamicValidation = dinamicValidation(storyDomain);
+
+		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
 			if (storiesRepository.existsById(id)) {
-			storyModel = mapperFacade.map(storyDomain, StoryModel.class);
+				storyModel = mapperFacade.map(storyDomain, StoryModel.class);
 				storyModel.set_id(id);
 				nameValidation(storyModel);
 				storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
@@ -94,8 +88,7 @@ public class StoriesServiceImpl implements StoriesService {
 			} else {
 				throw new EntityNotFoundException("Story not found", "/stories/");
 			}
-		}
-		else {
+		} else {
 			throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
 		}
 	}
@@ -124,17 +117,15 @@ public class StoriesServiceImpl implements StoriesService {
 		return allStoriesDomain;
 	}
 
-	private String statusValidation(String[] statusArray, String storyStatus){
-		String validationStatus ="";
-		if(!(Arrays.asList(statusArray).contains(storyStatus))) {
-			validationStatus = "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.";	
+	private String statusValidation(String[] statusArray, String storyStatus) {
+		String validationStatus = "";
+		if (!(Arrays.asList(statusArray).contains(storyStatus))) {
+			validationStatus = "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.";
 		}
-		
-		if(StringUtils.isEmpty(validationStatus)) {
+		if (StringUtils.isEmpty(validationStatus)) {
 			return validationStatus;
-		}
-		else {
-			return validationStatus + ", " ;	
+		} else {
+			return validationStatus + ", ";
 		}
 	}
 
@@ -149,39 +140,35 @@ public class StoriesServiceImpl implements StoriesService {
 
 	private String userNullValidation(String assigneeId) {
 		String validation = "";
-		
+
 		if (!usersRepository.existsById(assigneeId) && !(StringUtils.isEmpty(assigneeId))) {
 			validation = "User assignee_id does not exist";
 		}
-		
-		if(StringUtils.isEmpty(validation)) {
+		if (StringUtils.isEmpty(validation)) {
 			return validation;
-		}
-		else {
-			return validation + ", " ;	
+		} else {
+			return validation + ", ";
 		}
 	}
 
-	private String sprintNullValidation(String sprintId){
+	private String sprintNullValidation(String sprintId) {
 		String validation = "";
 		if (StringUtils.isEmpty(sprintId)) {
-		
+
 		} else {
 			if (!sprintClient.existsSprintById(sprintId))
 				validation = "The id entered in the sprint_id field does not exist";
 		}
-		
-		if(StringUtils.isEmpty(validation)) {
+		if (StringUtils.isEmpty(validation)) {
 			return validation;
-		}
-		else {
-			return validation + ", " ;	
+		} else {
+			return validation + ", ";
 		}
 	}
 
 	private String nameStatusNullValidation(String name, String status) {
 		String validationNameStatus = "";
-		
+
 		if (StringUtils.isEmpty(name) && StringUtils.isEmpty(status)) {
 			validationNameStatus = "The JSON format provided is invalid, please provide the required fields ('Name','Status').";
 		} else if (StringUtils.isEmpty(name)) {
@@ -189,11 +176,10 @@ public class StoriesServiceImpl implements StoriesService {
 		} else if (StringUtils.isEmpty(status)) {
 			validationNameStatus = "The JSON format provided is invalid, please provide the required field ('Status').";
 		}
-		
-		if(!StringUtils.isEmpty(validationNameStatus)) {
+
+		if (!StringUtils.isEmpty(validationNameStatus)) {
 			return validationNameStatus;
-		}
-		else {
+		} else {
 			return validationNameStatus;
 		}
 	}
@@ -205,32 +191,29 @@ public class StoriesServiceImpl implements StoriesService {
 			return LocalDate.now();
 		}
 	}
-	
+
 	private String proggressValidation(int progress) {
 		String progressValidation = "";
-		if (progress <0) {
+		if (progress < 0) {
 			progressValidation = "The number entered in the progress field is a negative number";
 		}
 
 		if (progress > 100) {
 			progressValidation = "The number entered in the progress field exceeds 100%";
-		} 
-		
-		if(StringUtils.isEmpty(progressValidation)) {
-			return progressValidation;
 		}
-		else {
-			return progressValidation + ", " ;	
+
+		if (StringUtils.isEmpty(progressValidation)) {
+			return progressValidation;
+		} else {
+			return progressValidation + ", ";
 		}
 	}
 
 	private String pointsValidation(int points, int[] pointsArray) {
 		String pointsValidation = "";
-//		System.err.println(points);
-		if (points <0) {
+		if (points < 0) {
 			pointsValidation = "The number entered in the points field is a negative number";
-		}
-		else {
+		} else {
 			for (int i = 0; i < pointsArray.length; i++) {
 				if (points == pointsArray[i]) {
 					break;
@@ -239,76 +222,73 @@ public class StoriesServiceImpl implements StoriesService {
 				}
 			}
 		}
-		
-		if(StringUtils.isEmpty(pointsValidation)) {
+		if (StringUtils.isEmpty(pointsValidation)) {
 			return pointsValidation;
-		}
-		else {
-			return pointsValidation + ", " ;	
+		} else {
+			return pointsValidation + ", ";
 		}
 	}
-	
-	private String []dinamicValidation(StoryDomain storyDomain) {
-		String []mensaggeDinamicValidation = {"",""};
+
+	private String[] dinamicValidation(StoryDomain storyDomain) {
+		String[] mensaggeDinamicValidation = { "", "" };
 		String validationRespons = "";
-		String []validationPath = {"/Sprints/", "/StoryDomain/", "/Users/", "/stories/"};
-		
-		
-		
+		String[] validationPath = { "/Sprints/", "/StoryDomain/", "/Users/", "/stories/" };
+
 		validationRespons = nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
-		if(!StringUtils.isEmpty(validationRespons)) {
+		if (!StringUtils.isEmpty(validationRespons)) {
 			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
 			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
 			return mensaggeDinamicValidation;
 		}
-		
+
 		validationRespons = sprintNullValidation(storyDomain.getSprint_id());
-		if(!StringUtils.isEmpty(validationRespons)) {
+		if (!StringUtils.isEmpty(validationRespons)) {
 			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
 			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
 		}
-		
+
 		validationRespons = pointsValidation(storyDomain.getPoints(), pointsArray);
-		if(!StringUtils.isEmpty(validationRespons)) {
+		if (!StringUtils.isEmpty(validationRespons)) {
 			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
 			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
 		}
-		
+
 		validationRespons = proggressValidation(storyDomain.getProgress());
-		if(!StringUtils.isEmpty(validationRespons)) {
+		if (!StringUtils.isEmpty(validationRespons)) {
 			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
 			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
 		}
-		
+
 		validationRespons = userNullValidation(storyDomain.getAssignee_id());
-		if(!StringUtils.isEmpty(validationRespons)) {
+		if (!StringUtils.isEmpty(validationRespons)) {
 			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
 			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
 		}
-		
+
 		validationRespons = statusValidation(statusArray, storyDomain.getStatus());
-		if(!StringUtils.isEmpty(validationRespons)) {
+		if (!StringUtils.isEmpty(validationRespons)) {
 			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
 			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
 		}
-		
+
 		validationRespons = "";
 		for (int i = 0; i < validationPath.length; i++) {
 			if (mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]) == -1) {
 
 			} else {
-				if (validationPath[i].equals(mensaggeDinamicValidation[1].toString().substring(mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]),
-						mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]) + validationPath[i].length()))) {
-					
-					if(!(mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]) == -1)) {
-						if(StringUtils.isEmpty(validationRespons)) {
+				if (validationPath[i].equals(mensaggeDinamicValidation[1].toString().substring(
+						mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]),
+						mensaggeDinamicValidation[1].toString().indexOf(validationPath[i])
+								+ validationPath[i].length()))) {
+
+					if (!(mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]) == -1)) {
+						if (StringUtils.isEmpty(validationRespons)) {
 							validationRespons = validationPath[i];
 						}
 					}
 				}
 			}
 		}
-		
 		mensaggeDinamicValidation[1] = validationRespons;
 		return mensaggeDinamicValidation;
 	}

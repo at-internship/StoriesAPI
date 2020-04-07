@@ -90,7 +90,7 @@ public class ServiceTests {
 		Mockito.when(storiesServiceImpl.getAllStories())
 				.thenThrow(new EntityNotFoundException("Stories not found", "/stories/"));
 	}
-	
+
 	@Test
 	public void updateStory() throws Exception {
 		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(true);
@@ -196,7 +196,7 @@ public class ServiceTests {
 				.thenThrow(new EntityNotFoundException("The sprint_id does not exists", "/sprints/"));
 		storiesServiceImpl.createStory(storiesServiceImpl.storyDomain);
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	public void createStoryNameInvalid() throws Exception {
 		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
@@ -206,10 +206,10 @@ public class ServiceTests {
 		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
 		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
 				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
-				.thenThrow(new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
+				"The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	public void createStoryStatusInvalid() throws Exception {
 		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
@@ -219,10 +219,10 @@ public class ServiceTests {
 		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
 		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
 				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
-				.thenThrow(new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
+				"The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	public void createStartDateNull() throws Exception {
 		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
@@ -232,10 +232,10 @@ public class ServiceTests {
 		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
 		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
 				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
-				.thenThrow(new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
+				"The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	public void createPointsProggresNegative() throws Exception {
 		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
@@ -247,10 +247,10 @@ public class ServiceTests {
 		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
 		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
 				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
-				.thenThrow(new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
+				"The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
 	}
-	
+
 	@Test(expected = EntityNotFoundException.class)
 	public void createPointsProgressInvalid() throws Exception {
 		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
@@ -262,7 +262,7 @@ public class ServiceTests {
 		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
 		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
 				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
-				.thenThrow(new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
+				"The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
 	}
 }
