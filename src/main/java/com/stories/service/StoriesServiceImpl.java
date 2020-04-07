@@ -129,7 +129,7 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
     public TasksDomain getTaskById(String id, String _id) throws Exception {
     	if(storiesRepository.existsById(id)) {
-    		TaskModel taskModel = storiesCustomRepository.getTaskById(_id).getUniqueMappedResult();
+    		TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
     		if(taskModel == null) {
     			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
     		}
