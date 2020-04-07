@@ -87,7 +87,7 @@ public class StoriesController {
 		@ResponseStatus(value = HttpStatus.OK)
 		@GetMapping(value = "/{id}/tasks", produces = "application/json")
 		@ResponseBody
-		public List<TasksDomain> findTasksByyId(@Valid @PathVariable String id) throws EntityNotFoundException{
-			return storyService.findTasksByStoryId(id);
+		public List<TasksDomain> getTasksByStory(@Valid @PathVariable String id) throws EntityNotFoundException{
+			return storyService.getTasksByStory(id);
 		}
 }
