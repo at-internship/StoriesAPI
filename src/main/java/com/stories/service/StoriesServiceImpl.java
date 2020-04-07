@@ -8,12 +8,16 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.stories.domain.StoryDomain;
+import com.stories.domain.TasksDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
+import com.stories.repository.StoriesCustomRepository;
 import com.stories.repository.StoriesRepository;
 import com.stories.repository.UsersRepository;
 import com.stories.sprintsclient.SprintsClient;
@@ -29,6 +33,9 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Autowired
 	UsersRepository usersRepository;
+	
+	@Autowired
+    StoriesCustomRepository storiesCustomRepository;
 
 	private static Logger logger = LogManager.getLogger();
 
@@ -115,6 +122,20 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 		logger.debug("Getting all stories - JSON : {}", allStoriesDomain);
 		return allStoriesDomain;
+	}
+	
+	public List<TasksDomain> findTasksByStoryId(String id) throws EntityNotFoundException{
+		if(storiesRepository.existsById(id)) {
+			Aggregation aggregation = Aggregation.newAggregation(
+					Aggregation.unwind("tasks"),
+					Aggregation.match(Criteria.where("_id").is(id)),
+					Aggregation.project("tasks._id", "tasks.name", "tasks.description", "tasks.status", "tasks.comments", "tasks.assignee")
+				);
+		List<TasksDomain> results = storiesCustomRepository.findAllTasksByStoryId(aggregation).getMappedResults();
+		return results;
+		}
+		throw new EntityNotFoundException("Story not found", "/stories/" + id + "/tasks");
+		
 	}
 
 	private String statusValidation(String[] statusArray, String storyStatus) {

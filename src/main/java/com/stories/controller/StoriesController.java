@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stories.domain.StoryDomain;
+import com.stories.domain.TasksDomain;
+import com.stories.exception.EntityNotFoundException;
 import com.stories.service.StoriesServiceImpl;
 
 import io.swagger.annotations.Api;
@@ -79,4 +81,13 @@ public class StoriesController {
 	public StoryDomain updateStory(@Valid @RequestBody StoryDomain request, @PathVariable String id) throws Exception {
 		return storyService.updateStory(request, id);
 	}
+	
+		@ApiOperation(value = " GET Tasks ", notes = " This operation will return the tasks of a story ")
+		@ApiResponses({ @ApiResponse(code = 200, message = " Success operation ")})
+		@ResponseStatus(value = HttpStatus.OK)
+		@GetMapping(value = "/{id}/tasks", produces = "application/json")
+		@ResponseBody
+		public List<TasksDomain> findTasksByyId(@Valid @PathVariable String id) throws EntityNotFoundException{
+			return storyService.findTasksByStoryId(id);
+		}
 }
