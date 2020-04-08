@@ -100,7 +100,7 @@ public class StoriesServiceImpl implements StoriesService {
 					}
 				}
 			} else {
-				throw new EntityNotFoundException("Tasks not found", "/tasks/");
+				throw new EntityNotFoundException("There are not tasks for this user story yet.", "/tasks/");
 			}
 		}
 	}
