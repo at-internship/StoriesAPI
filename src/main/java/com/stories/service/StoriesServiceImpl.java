@@ -126,6 +126,50 @@ public class StoriesServiceImpl implements StoriesService {
 			throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
 		}
 	}
+	
+	@Override
+	public TasksDomain updateTask(TasksDomain task, String id, String _id) throws Exception {
+		if(storiesRepository.existsById(id)) {
+			task.set_id(_id);
+			TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
+			//Validating that the task exists
+			if(taskModel == null) {
+    			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
+    		}
+			//Validating assignee
+			if(!usersRepository.existsById(task.getAssignee())) {
+				throw new EntityNotFoundException("User assignee id does not exist", HttpStatus.CONFLICT, "/stories/" + id + "/tasks/" + _id);
+			}
+			//TasksDomain taskDomain = mapperFacade.map(task, TasksDomain.class);
+			//taskDomain.set_id(_id);
+			storyModel = storiesRepository.findById(id).get();
+			taskModel = mapperFacade.map(task, TaskModel.class);
+			int taskPos = 0;
+			boolean taskNameExists = false;
+			List<TaskModel> taskList = new ArrayList<>();
+			taskList = storyModel.getTasks();
+			//Getting Task Position in the array list
+			for(int i=0; i<taskList.size();i++) {
+				if(taskList.get(i).get_id()==_id) {
+					taskPos=i;
+				}
+				if(taskList.get(i).getName()==task.getName()) {
+					taskNameExists=true;
+				}
+			}
+			if (taskNameExists) {
+				throw new EntityNotFoundException("Task name already exists", HttpStatus.CONFLICT, "/stories/" + id + "/tasks/" + _id);
+			}
+			//Setting changes in task
+			taskList.set(taskPos, taskModel);
+			//saving the entire story to database
+			storyModel.setTasks(taskList);
+			storiesRepository.save(storyModel);
+    		return task;
+		}else {
+			throw new EntityNotFoundException("Story not found", "/stories/" + id);
+		}
+	}
 
 	@Override
 	public StoryDomain getStoryById(String id) throws Exception {
