@@ -137,8 +137,10 @@ public class StoriesServiceImpl implements StoriesService {
     			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
     		}
 			//Validating assignee
-			if(!usersRepository.existsById(task.getAssignee())) {
-				throw new EntityNotFoundException("User assignee id does not exist", HttpStatus.CONFLICT, "/stories/" + id + "/tasks/" + _id);
+			if(!StringUtils.isEmpty(task.getAssignee())) {
+				if(!usersRepository.existsById(task.getAssignee())) {
+					throw new EntityNotFoundException("User assignee id does not exist", HttpStatus.CONFLICT, "/stories/" + id + "/tasks/" + _id);
+				}
 			}
 			//TasksDomain taskDomain = mapperFacade.map(task, TasksDomain.class);
 			//taskDomain.set_id(_id);
@@ -155,6 +157,7 @@ public class StoriesServiceImpl implements StoriesService {
 				}
 				if(taskList.get(i).getName()==task.getName()) {
 					taskNameExists=true;
+					//searching for repeated names in tasks
 				}
 			}
 			if (taskNameExists) {
