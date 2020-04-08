@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.stories.domain.SprintDomain;
 import com.stories.domain.StoryDomain;
+import com.stories.domain.TasksDomain;
 import com.stories.model.StoryModel;
 import com.stories.model.TaskModel;
 
@@ -101,7 +102,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-
+		
 	public static StoryModel getDummyStoryModel() {
 		ArrayList<String> historyList = new ArrayList<>();
 		historyList.add(unitTestProperties.modelHistory1);
@@ -155,6 +156,19 @@ public class TestUtils {
 
 		return storyDomain;
 	}
+ 	
+ 	public static List<TasksDomain> getTasksDomainList(){
+ 		List<TasksDomain> tasksDomainList= new ArrayList<TasksDomain>();
+ 		TasksDomain tasksDomain = new TasksDomain();
+ 		tasksDomain.set_id(unitTestProperties.domainId);
+ 		tasksDomain.setName(unitTestProperties.domainName);
+ 		tasksDomain.setDescription(unitTestProperties.domainDescription);
+ 		tasksDomain.setStatus(unitTestProperties.domainStatus);
+ 		tasksDomain.setComments(unitTestProperties.domainComment);
+ 		tasksDomain.setAssignee(unitTestProperties.domainAssigneeId);
+ 		tasksDomainList.add(tasksDomain);
+		return tasksDomainList;
+ 	}
 
 	public static StoryModel getStoryModel() {
 		StoryModel storyModel = new StoryModel();
