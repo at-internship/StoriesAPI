@@ -15,9 +15,13 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfigurat
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.stories.domain.StoryDomain;
+import com.stories.domain.TasksDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
 import com.stories.repository.StoriesCustomRepository;
@@ -63,6 +67,8 @@ public class ServiceTests {
 		testUtils = new TestUtils();
 	}
 
+    MongoTemplate mongoTemplate = Mockito.mock(MongoTemplate.class);
+    
 	@Test
 	public void getById() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.TRUE);
@@ -285,5 +291,31 @@ public class ServiceTests {
 				.thenReturn(storiesServiceImpl.storyModel);
 		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
 				"The JSON format provided is invalid, please provide the required field ('Name').", "", "/stories/"));
+	}
+	
+	@Test 
+	public void getTasksByStory() throws Exception {
+		AggregationResults <TasksDomain> aggregationResultsMock = Mockito.mock(AggregationResults.class);
+        Aggregation aggregateMock = Mockito.mock(Aggregation.class);
+        
+        when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(true);
+        Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
+        .aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TasksDomain.class));        
+        Mockito.doReturn(testUtils.getTasksDomainList()).when(aggregationResultsMock).getMappedResults();        
+        when(storiesCustomRepository.getTasksByStory(unitTestProperties.getUrlId())).thenReturn(aggregationResultsMock);        
+       when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
+       .thenReturn(testUtils.getTasksDomainList());
+        
+    assertEquals(testUtils.getTasksDomainList(), storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getTasksByStoryFail() throws Exception {
+		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+        .thenReturn(false);
+		
+		Mockito.when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
+        .thenThrow(new EntityNotFoundException("Story not found", "/stories/" + unitTestProperties.getUrlId()));
+		
 	}
 }

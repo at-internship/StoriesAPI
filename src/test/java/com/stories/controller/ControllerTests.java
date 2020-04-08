@@ -151,4 +151,10 @@ public class ControllerTests {
 				.andExpect(status().isOk());
 		
 	}
+	
+	@Test
+	public void getTasksByStoryTest() throws Exception {
+		String uri = "/stories/5e7134c9099a9a0ab248c90b/tasks/";
+		mockMvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(status().isOk());
+	}
 }
