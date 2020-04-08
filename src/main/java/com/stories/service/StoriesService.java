@@ -21,4 +21,6 @@ public interface StoriesService {
 	List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException;
 
 	TasksDomain getTaskById(String id, String _id) throws Exception;
+
+	void deleteTask(String id, String taskId) throws Exception;
 }
