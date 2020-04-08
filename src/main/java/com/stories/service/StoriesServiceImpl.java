@@ -87,17 +87,20 @@ public class StoriesServiceImpl implements StoriesService {
 		} else {
 			storyModel = storiesRepository.findById(id).get();
 			List<TaskModel> tasks = storyModel.getTasks();
-
-			for (int i = 0; i < tasks.size(); i++) {
-				if (tasks.get(i).get_id().toString().equals(taskId)) {
-					tasks.remove(i);
-					logger.debug("Deleting task with the id: " + taskId);
-					storyModel.setTasks(tasks);
-					storiesRepository.save(storyModel);
-				} else if (i == (tasks.size() - 1)) {
-					throw new EntityNotFoundException("Task with the given id was not found.", HttpStatus.CONFLICT,
-							"/tasks/");
+			if (!tasks.isEmpty()) {
+				for (int i = 0; i < tasks.size(); i++) {
+					if (tasks.get(i).get_id().toString().equals(taskId)) {
+						tasks.remove(i);
+						logger.debug("Deleting task with the id: " + taskId);
+						storyModel.setTasks(tasks);
+						storiesRepository.save(storyModel);
+					} else if (i == (tasks.size() - 1)) {
+						throw new EntityNotFoundException("Task with the given id was not found.", HttpStatus.CONFLICT,
+								"/tasks/");
+					}
 				}
+			} else {
+				throw new EntityNotFoundException("Tasks not found", "/tasks/");
 			}
 		}
 	}
@@ -193,15 +196,9 @@ public class StoriesServiceImpl implements StoriesService {
 
 	private String userNullValidation(String assigneeId) {
 		String validation = "";
-
-		if (!usersRepository.existsById(assigneeId) && !(StringUtils.isEmpty(assigneeId))) {
-			validation = "User assignee_id does not exist";
-		}
-		if (StringUtils.isEmpty(validation)) {
-			return validation;
-		} else {
-			return validation + ", ";
-		}
+		if (!usersRepository.existsById(assigneeId))
+			validation = "The user provided does not exist";
+		return validation;
 	}
 
 	private String sprintNullValidation(String sprintId) {
@@ -244,7 +241,7 @@ public class StoriesServiceImpl implements StoriesService {
 			return LocalDate.now();
 		}
 	}
-	
+
 	private LocalDate dueDateValidation(LocalDate due_date) {
 		if ((!(due_date == null || (StringUtils.isEmpty(due_date.toString()))))) {
 			return due_date;
