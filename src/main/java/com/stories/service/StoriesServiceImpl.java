@@ -196,8 +196,13 @@ public class StoriesServiceImpl implements StoriesService {
 
 	private String userNullValidation(String assigneeId) {
 		String validation = "";
-		if (!usersRepository.existsById(assigneeId))
-			validation = "The user provided does not exist";
+		if (StringUtils.isEmpty(assigneeId)) {
+
+		} else {
+			if (!usersRepository.existsById(assigneeId))
+				validation = "User assignee_id does not exist";
+			return validation;
+		}
 		return validation;
 	}
 
