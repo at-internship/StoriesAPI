@@ -155,7 +155,7 @@ public class StoriesServiceImpl implements StoriesService {
 	public TasksDomain getTaskById(String id, String _id) throws Exception {
 		if (storiesRepository.existsById(id)) {
 			TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
-			if (taskModel == null) {
+			if (taskModel.get_id() == null) {
 				throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
 			}
 			TasksDomain taskDomain = mapperFacade.map(taskModel, TasksDomain.class);

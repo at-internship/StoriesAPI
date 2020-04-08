@@ -157,4 +157,17 @@ public class ControllerTests {
 		String uri = "/stories/5e7134c9099a9a0ab248c90b/tasks/";
 		mockMvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(status().isOk());
 	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getTaskByIdInvalid() throws Exception {
+		String uri = "/stories/5e7134c9099a9a0ab248c90b/tasks/6e413de9099a9a0ab248c90c";
+		mockMvc.perform(MockMvcRequestBuilders.get(uri)).andDo(new ResultHandler() {
+			
+			@Override
+			public void handle(MvcResult mvcResult) throws Exception {
+				throw new EntityNotFoundException("Task not found", "/tasks/");
+				
+			}
+		}).andExpect(status().isNotFound());
+	}
 }

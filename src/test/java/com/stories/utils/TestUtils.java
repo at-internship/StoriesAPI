@@ -51,6 +51,16 @@ public class TestUtils {
 		List<SprintDomain> storyDomain = new ArrayList<SprintDomain>();
 		return storyDomain;
 	}
+	
+	public TasksDomain getEmptyTasksDomain() {
+		TasksDomain tasksDomain = new TasksDomain();
+		return tasksDomain;
+	}
+	
+	public TaskModel getEmptyTasksModel() {
+		TaskModel taskModel = new TaskModel();
+		return taskModel;
+	}
 
 	public String setStoryInJsonFormat(String id) {
 		return "{\"id\":\"" + id
@@ -272,5 +282,27 @@ public class TestUtils {
 		List<SprintDomain> sprintDomainList = new ArrayList<SprintDomain>();
 		sprintDomainList.add(null);
 		return sprintDomainList;
+	}
+	
+	public static TasksDomain getDummyTasksDomain() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id("5e8dc1ba4ce33c0efc555845");
+		tasksDomain.setName("TaskDomainTest");
+		tasksDomain.setDescription("TasksDomainDescriptionTest");
+		tasksDomain.setStatus("TaskDomainStatusTest");
+		tasksDomain.setComments("TasksDomainCommentsTest");
+		tasksDomain.setAssignee("TasksDomainAssigneeTest");
+		return tasksDomain;
+	}
+	
+	public static TaskModel getDummyTaskModel() {
+		TaskModel taskModel = new TaskModel();
+		taskModel.set_id("5e8dc1ba4ce33c0efc555845");
+		taskModel.setName("TaskModelTest");
+		taskModel.setDescription("TasksModelDescriptionTest");
+		taskModel.setStatus("TaskModelStatusTest");
+		taskModel.setComments("TasksModelCommentsTest");
+		taskModel.setAssignee("TasksModelAssigneeTest");
+		return taskModel;
 	}
 }

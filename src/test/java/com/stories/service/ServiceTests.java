@@ -24,6 +24,7 @@ import com.stories.domain.StoryDomain;
 import com.stories.domain.TasksDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
+import com.stories.model.TaskModel;
 import com.stories.repository.StoriesCustomRepository;
 import com.stories.repository.StoriesRepository;
 import com.stories.repository.UsersRepository;
@@ -317,5 +318,54 @@ public class ServiceTests {
 		Mockito.when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
         .thenThrow(new EntityNotFoundException("Story not found", "/stories/" + unitTestProperties.getUrlId()));
 		
+	}
+	
+	@Test
+	public void getTaskById() throws Exception {
+		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
+		TaskModel taskModel = new TaskModel();
+		taskModel.set_id("5e8dc1ba4ce33c0efc555845");
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id("5e8dc1ba4ce33c0efc555845");
+		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+			.thenReturn(Boolean.TRUE);
+		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
+			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
+		Mockito.doReturn(taskModel).when(aggregationResultsMock).getUniqueMappedResult();
+		when(storiesCustomRepository.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+			.thenReturn(aggregationResultsMock);
+		when(mapperFacade.map(testUtils.getDummyTaskModel(), TasksDomain.class))
+			.thenReturn(testUtils.getDummyTasksDomain());
+		when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+			.thenReturn(testUtils.getDummyTasksDomain());
+		assertEquals(testUtils.getDummyTasksDomain(), storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getTaskByIdNoStory() throws Exception {
+		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+		.thenReturn(Boolean.FALSE);
+		Mockito.when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+			.thenThrow(new EntityNotFoundException("Story not found", "/stories/" + unitTestProperties.getUrlId()));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getTaskByIdTry() throws Exception {
+		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
+		TaskModel taskModel = new TaskModel();
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id("5e8dc1ba4ce33c0efc555845");
+		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+			.thenReturn(Boolean.TRUE);
+		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
+			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
+		Mockito.doReturn(taskModel).when(aggregationResultsMock).getUniqueMappedResult();
+		when(storiesCustomRepository.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+			.thenReturn(aggregationResultsMock);
+		when(mapperFacade.map(testUtils.getDummyTaskModel(), TasksDomain.class))
+			.thenReturn(testUtils.getDummyTasksDomain());
+		when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+			.thenReturn(testUtils.getDummyTasksDomain());
+		assertEquals(testUtils.getDummyTasksDomain(), storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()));
 	}
 }
