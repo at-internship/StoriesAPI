@@ -1,7 +1,6 @@
 package com.stories.service;
 
 import java.time.LocalDate;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,8 +8,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +32,9 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Autowired
 	UsersRepository usersRepository;
-	
+
 	@Autowired
-    StoriesCustomRepository storiesCustomRepository;
+	StoriesCustomRepository storiesCustomRepository;
 
 	private static Logger logger = LogManager.getLogger();
 
@@ -59,7 +56,8 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
 		storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-		String[] mensaggeDinamicValidation = dinamicValidation(storyDomain);
+		storyDomain.setDue_date(dueDateValidation(storyDomain.getDue_date()));
+		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain);
 
 		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
 			storyModel = mapperFacade.map(storyDomain, StoryModel.class);
@@ -82,9 +80,36 @@ public class StoriesServiceImpl implements StoriesService {
 	}
 
 	@Override
+	public void deleteTask(String id, String taskId) throws Exception {
+		if (!storiesRepository.existsById(id)) {
+			throw new EntityNotFoundException("Story with the given id was not found", HttpStatus.CONFLICT,
+					"/stories/");
+		} else {
+			storyModel = storiesRepository.findById(id).get();
+			List<TaskModel> tasks = storyModel.getTasks();
+			if (!tasks.isEmpty()) {
+				for (int i = 0; i < tasks.size(); i++) {
+					if (tasks.get(i).get_id().toString().equals(taskId)) {
+						tasks.remove(i);
+						logger.debug("Deleting task with the id: " + taskId);
+						storyModel.setTasks(tasks);
+						storiesRepository.save(storyModel);
+					} else if (i == (tasks.size() - 1)) {
+						throw new EntityNotFoundException("Task with the given id was not found.", HttpStatus.CONFLICT,
+								"/tasks/");
+					}
+				}
+			} else {
+				throw new EntityNotFoundException("There are not tasks for this user story yet.", "/tasks/");
+			}
+		}
+	}
+
+	@Override
 	public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
 		storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-		String[] mensaggeDinamicValidation = dinamicValidation(storyDomain);
+		storyDomain.setDue_date(dueDateValidation(storyDomain.getDue_date()));
+		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain);
 
 		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
 			if (storiesRepository.existsById(id)) {
@@ -125,27 +150,27 @@ public class StoriesServiceImpl implements StoriesService {
 		logger.debug("Getting all stories - JSON : {}", allStoriesDomain);
 		return allStoriesDomain;
 	}
-	
+
 	@Override
-    public TasksDomain getTaskById(String id, String _id) throws Exception {
-    	if(storiesRepository.existsById(id)) {
-    		TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
-    		if(taskModel == null) {
-    			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
-    		}
-    		TasksDomain taskDomain = mapperFacade.map(taskModel, TasksDomain.class);
-    		return taskDomain;
-    	}
-    	throw new EntityNotFoundException("Story not found", "/stories/" + id);
-    }
-	
-	public List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException{
-		if(storiesRepository.existsById(id)) {
-		List<TasksDomain> results = storiesCustomRepository.getTasksByStory(id).getMappedResults();
-		return results;
+	public TasksDomain getTaskById(String id, String _id) throws Exception {
+		if (storiesRepository.existsById(id)) {
+			TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
+			if (taskModel == null) {
+				throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
+			}
+			TasksDomain taskDomain = mapperFacade.map(taskModel, TasksDomain.class);
+			return taskDomain;
+		}
+		throw new EntityNotFoundException("Story not found", "/stories/" + id);
+	}
+
+	public List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException {
+		if (storiesRepository.existsById(id)) {
+			List<TasksDomain> results = storiesCustomRepository.getTasksByStory(id).getMappedResults();
+			return results;
 		}
 		throw new EntityNotFoundException("Story not found", "/stories/" + id + "/tasks");
-		
+
 	}
 
 	private String statusValidation(String[] statusArray, String storyStatus) {
@@ -171,15 +196,14 @@ public class StoriesServiceImpl implements StoriesService {
 
 	private String userNullValidation(String assigneeId) {
 		String validation = "";
+		if (StringUtils.isEmpty(assigneeId)) {
 
-		if (!usersRepository.existsById(assigneeId) && !(StringUtils.isEmpty(assigneeId))) {
-			validation = "User assignee_id does not exist";
-		}
-		if (StringUtils.isEmpty(validation)) {
-			return validation;
 		} else {
-			return validation + ", ";
+			if (!usersRepository.existsById(assigneeId))
+				validation = "User assignee_id does not exist";
+			return validation;
 		}
+		return validation;
 	}
 
 	private String sprintNullValidation(String sprintId) {
@@ -223,6 +247,14 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 	}
 
+	private LocalDate dueDateValidation(LocalDate due_date) {
+		if ((!(due_date == null || (StringUtils.isEmpty(due_date.toString()))))) {
+			return due_date;
+		} else {
+			return LocalDate.now();
+		}
+	}
+
 	private String proggressValidation(int progress) {
 		String progressValidation = "";
 		if (progress < 0) {
@@ -260,7 +292,7 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 	}
 
-	private String[] dinamicValidation(StoryDomain storyDomain) {
+	private String[] dynamicValidation(StoryDomain storyDomain) {
 		String[] mensaggeDinamicValidation = { "", "" };
 		String validationRespons = "";
 		String[] validationPath = { "/Sprints/", "/StoryDomain/", "/Users/", "/stories/" };

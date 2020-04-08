@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import com.stories.domain.SprintDomain;
 import com.stories.domain.StoryDomain;
 import com.stories.model.StoryModel;
+import com.stories.model.TaskModel;
 
 @Component
 public class TestUtils {
@@ -177,6 +178,39 @@ public class TestUtils {
 		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
 		storyModel.setHistory(historyList);
 
+		return storyModel;
+	}
+	
+	public static StoryModel getStoryTaskModel() {
+		StoryModel storyModel = new StoryModel();
+		ArrayList<String> historyList = new ArrayList<>();
+		ArrayList<TaskModel> taskList = new ArrayList<>();
+		TaskModel taskModel = new TaskModel();
+		taskModel.set_id("5e8cf37b7a605837de2865ad");
+		taskModel.setName("New Tasks Armando");
+		taskModel.setStatus("Working");
+		taskModel.setAssignee("5e6bbc854244ac0cbc8df65d");
+		taskList.add(taskModel);
+		historyList.add(unitTestProperties.modelHistory1);
+		historyList.add(unitTestProperties.modelHistory2);
+		storyModel.set_id(unitTestProperties.modelId);
+		storyModel.setSprint_id(unitTestProperties.modelSprintid);
+		storyModel.setTechnology(unitTestProperties.modelTechnology);
+		storyModel.setName(unitTestProperties.modelName);
+		storyModel.setDescription(unitTestProperties.modelDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.modelAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.modelPoints);
+		storyModel.setProgress(unitTestProperties.modelProgress);
+		storyModel.setStatus(unitTestProperties.modelStatus);
+		storyModel.setNotes(unitTestProperties.modelNotes);
+		storyModel.setComments(unitTestProperties.modelComments);
+		storyModel.setStart_date(unitTestProperties.modelStartDate);
+		storyModel.setDue_date(unitTestProperties.modelDueDate);
+		storyModel.setPriority(unitTestProperties.modelPriority);
+		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
+		storyModel.setHistory(historyList);
+		storyModel.setTasks(taskList);
+		
 		return storyModel;
 	}
 

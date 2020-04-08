@@ -2,7 +2,6 @@ package com.stories.controller;
 
 import java.util.List;
 
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +72,15 @@ public class StoriesController {
 		storyService.deleteStory(id);
 	}
 
+	@ApiOperation(value = " DELETE Task ", notes = " This operation will delete a task ")
+	@ApiResponses({ @ApiResponse(code = 204, message = " Success operation "),
+			@ApiResponse(code = 404, message = " Status json state is invalid\", \"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted ") })
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@DeleteMapping(value = "/{id}/tasks/{taskId}")
+	public void deleteTask(@Valid @PathVariable String id, @PathVariable String taskId) throws Exception {
+		storyService.deleteTask(id, taskId);
+	}
+
 	@ApiOperation(value = " PUT Story ", notes = " This operation will update a story ")
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Story not found "),
@@ -82,24 +90,25 @@ public class StoriesController {
 	public StoryDomain updateStory(@Valid @RequestBody StoryDomain request, @PathVariable String id) throws Exception {
 		return storyService.updateStory(request, id);
 	}
-	
-		@ApiOperation(value = " GET Tasks ", notes = " This operation will return the tasks of a story ")
-		@ApiResponses({ @ApiResponse(code = 200, message = " Success operation ")})
-		@ResponseStatus(value = HttpStatus.OK)
-		@GetMapping(value = "/{id}/tasks", produces = "application/json")
-		@ResponseBody
-		public List<TasksDomain> getTasksByStory(@Valid @PathVariable String id) throws EntityNotFoundException{
-			return storyService.getTasksByStory(id);
-		}
-		
-		@ApiOperation(value = " GET Task ", notes = "This operation will return a task from a story")
-		@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
-						@ApiResponse(code = 404, message = " Task not found ") })
-		@ResponseStatus(value = HttpStatus.OK)
-		@GetMapping(value = "/{storyId}/tasks/{taskId}", produces = "application/json")
-		@ResponseBody
-		public TasksDomain getTaskById(@Valid @PathVariable("storyId") String storyId, @PathVariable("taskId") String taskId) throws Exception {
-			return storyService.getTaskById(storyId, taskId);
-		}
-	
+
+	@ApiOperation(value = " GET Tasks ", notes = " This operation will return the tasks of a story ")
+	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation ") })
+	@ResponseStatus(value = HttpStatus.OK)
+	@GetMapping(value = "/{id}/tasks", produces = "application/json")
+	@ResponseBody
+	public List<TasksDomain> getTasksByStory(@Valid @PathVariable String id) throws EntityNotFoundException {
+		return storyService.getTasksByStory(id);
+	}
+
+	@ApiOperation(value = " GET Task ", notes = "This operation will return a task from a story")
+	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
+			@ApiResponse(code = 404, message = " Task not found ") })
+	@ResponseStatus(value = HttpStatus.OK)
+	@GetMapping(value = "/{storyId}/tasks/{taskId}", produces = "application/json")
+	@ResponseBody
+	public TasksDomain getTaskById(@Valid @PathVariable("storyId") String storyId,
+			@PathVariable("taskId") String taskId) throws Exception {
+		return storyService.getTaskById(storyId, taskId);
+	}
+
 }

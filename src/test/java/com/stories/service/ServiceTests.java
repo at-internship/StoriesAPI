@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.stories.domain.StoryDomain;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.model.StoryModel;
+import com.stories.repository.StoriesCustomRepository;
 import com.stories.repository.StoriesRepository;
 import com.stories.repository.UsersRepository;
 import com.stories.sprintsclient.SprintsClient;
@@ -38,6 +39,9 @@ public class ServiceTests {
 
 	@MockBean
 	UsersRepository usersRepository;
+	
+	@MockBean
+	StoriesCustomRepository storiesCustomRepository;
 
 	@MockBean
 	private MapperFacade mapperFacade;
@@ -156,6 +160,23 @@ public class ServiceTests {
 	public void deleteStoryException() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.FALSE);
 		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
+	}
+	
+	@Test
+	public void deleteTask() throws Exception {
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(Boolean.TRUE);
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		when(storiesRepository.findById(storiesServiceImpl.storyModel.get_id()).get()).thenReturn(storiesServiceImpl.storyModel);
+		Mockito.doNothing().when(storiesRepository.save(storiesServiceImpl.storyModel));
+		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id());
+		
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void deleteTaskException() throws Exception {
+		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.FALSE);
+		storiesServiceImpl.deleteTask(unitTestProperties.getUrlId(), null);
 	}
 
 	@Test
