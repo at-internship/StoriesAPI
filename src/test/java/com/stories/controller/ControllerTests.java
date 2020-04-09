@@ -170,4 +170,26 @@ public class ControllerTests {
 			}
 		}).andExpect(status().isNotFound());
 	}
+	
+	@Test
+	public void postTestTaskValidJson() throws Exception {
+		String uri = "/stories/5e8dc1ba4ce33c0efc555845/tasks";
+		mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
+				.content(testUtils.postStoryValidJson("5e8dc1dfc5b47511cff2c88c"))).andDo(print())
+				.andExpect(status().isOk());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void postTaskTestInvalidStatusJson() throws Exception {
+		String uri = "/stories/5e8dc1ba4ce33c0efc555845/tasks";
+		mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
+				.content(testUtils.postStoryInvalidStatusJson())).andDo(new ResultHandler() {
+					@Override
+					public void handle(MvcResult mvcResult) throws Exception {
+						throw new EntityNotFoundException("Story has an invalid status Json", "/stories/5e8dc1ba4ce33c0efc555845/tasks");
+					}
+				}).andExpect(status().isBadRequest());
+	}
 }

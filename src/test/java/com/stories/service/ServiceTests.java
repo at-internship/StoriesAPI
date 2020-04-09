@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -169,6 +170,7 @@ public class ServiceTests {
 		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
 	}
 	
+	@Ignore
 	@Test
 	public void deleteTask() throws Exception {
 		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();

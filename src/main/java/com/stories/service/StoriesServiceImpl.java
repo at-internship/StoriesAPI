@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class StoriesServiceImpl implements StoriesService {
 	List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 	StoryDomain storyDomain = new StoryDomain();
 	List<StoryDomain> storiesDomain = new ArrayList<>();
+	
 
 	@Autowired
 	SprintsClient sprintClient;
@@ -66,14 +68,53 @@ public class StoriesServiceImpl implements StoriesService {
 			return id;
 		} else {
 			throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
+//			if(mensaggeDinamicValidation[2]=="1") {
+//				throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
+//			}
+//			else {
+//				throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
+//			}
+		}
+	}
+	
+	@Override
+	public String createTask(TasksDomain taskDomain, String id) throws Exception {
+		TaskModel taskModel = new TaskModel();
+		StoryDomain newStoryDomain = new StoryDomain();
+		List<TaskModel> tasksModel = new ArrayList<>();
+		if(storiesRepository.existsById(id)) { 
+			storyModel = storiesRepository.findById(id).get();
+				taskModel = mapperFacade.map(taskDomain, TaskModel.class);
+				taskModel.set_id(new ObjectId().toString());
+					if(storyModel.getTasks() == null) {
+						tasksModel.add(taskModel);
+					}else {
+						tasksModel = storyModel.getTasks();
+						tasksModel.add(taskModel);
+					}
+					storyModel.setTasks(tasksModel);
+					newStoryDomain = mapperFacade.map(storyModel, StoryDomain.class);
+					String[] dynamicValidationAssigneTask = dynamicValidationTaskAssigne(newStoryDomain);
+					String[] dynamicValidationStatuTask = dynamicValidation(newStoryDomain);
+					if(StringUtils.isEmpty(dynamicValidationStatuTask[0])) {
+						if(StringUtils.isEmpty(dynamicValidationAssigneTask[0])) {
+							storiesRepository.save(storyModel);
+							return taskModel.get_id();
+						}else {
+							throw new EntityNotFoundException(dynamicValidationAssigneTask[0],dynamicValidationAssigneTask[1]);
+						}
+					}else {
+						throw new EntityNotFoundException(dynamicValidationStatuTask[0],"400",dynamicValidationStatuTask[1]);
+					}
+		}else {
+			throw new EntityNotFoundException("Story not found", "/stories/");
 		}
 	}
 
 	@Override
 	public void deleteStory(String id) throws Exception {
 		if (!storiesRepository.existsById(id)) {
-			throw new EntityNotFoundException("Story with the given id was not found", HttpStatus.CONFLICT,
-					"/stories/");
+			throw new EntityNotFoundException("Story with the given id was not found","/stories/");
 		} else
 			logger.debug("Deleting story with the id: " + id);
 		storiesRepository.deleteById(id);
@@ -82,8 +123,7 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public void deleteTask(String id, String taskId) throws Exception {
 		if (!storiesRepository.existsById(id)) {
-			throw new EntityNotFoundException("Story with the given id was not found", HttpStatus.CONFLICT,
-					"/stories/");
+			throw new EntityNotFoundException("Story with the given id was not found","/stories/");
 		} else {
 			storyModel = storiesRepository.findById(id).get();
 			List<TaskModel> tasks = storyModel.getTasks();
@@ -183,6 +223,19 @@ public class StoriesServiceImpl implements StoriesService {
 		} else {
 			return validationStatus + ", ";
 		}
+	}
+	
+	private String statusTaskValidation(String[] statusArray, String status) {
+		String validationStatus = "";
+		if (StringUtils.isEmpty(status)) {
+
+		}else {
+			if(!Arrays.asList(statusArray).contains(status)) {
+				validationStatus = "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.";
+				return validationStatus;
+			}
+		}
+		return validationStatus;
 	}
 
 	private StoryModel nameValidation(StoryModel storyModel) throws EntityNotFoundException {
@@ -291,6 +344,21 @@ public class StoriesServiceImpl implements StoriesService {
 			return pointsValidation + ", ";
 		}
 	}
+	
+	private String[] dynamicValidationTaskAssigne(StoryDomain storyDomain) {
+		String[] mensaggeDinamicValidation = { "", "" };
+		String validationRespons = "";
+		
+		if(storyDomain.getTasks().size()!=0) {
+			validationRespons = userNullValidation(storyDomain.getTasks().get(storyDomain.getTasks().size()-1).getAssignee());
+			if (!StringUtils.isEmpty(validationRespons)) {
+				mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + "for Task " + validationRespons;
+				mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+			}
+		}
+		mensaggeDinamicValidation[1] = validationRespons;
+		return mensaggeDinamicValidation;
+	}
 
 	private String[] dynamicValidation(StoryDomain storyDomain) {
 		String[] mensaggeDinamicValidation = { "", "" };
@@ -332,6 +400,14 @@ public class StoriesServiceImpl implements StoriesService {
 		if (!StringUtils.isEmpty(validationRespons)) {
 			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
 			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+		}
+		
+		if(storyDomain.getTasks().size()!=0) {
+			validationRespons = statusTaskValidation(statusArray, storyDomain.getTasks().get(storyDomain.getTasks().size()-1).getStatus());
+			if (!StringUtils.isEmpty(validationRespons)) {
+				mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + "for Task " + validationRespons;
+				mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+			}
 		}
 
 		validationRespons = "";
