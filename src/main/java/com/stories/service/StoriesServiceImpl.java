@@ -67,49 +67,44 @@ public class StoriesServiceImpl implements StoriesService {
 			String id = nameValidation(storyModel).get_id();
 			return id;
 		} else {
-			throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
-//			if(mensaggeDinamicValidation[2]=="1") {
-//				throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
-//			}
-//			else {
-//				throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
-//			}
+			if(mensaggeDinamicValidation[2] == "BAD_REQUEST") {
+                throw new EntityNotFoundException(mensaggeDinamicValidation[0],"", mensaggeDinamicValidation[1]);
+            }
+            else if(mensaggeDinamicValidation[2] == "CONFLICT") {
+                throw new EntityNotFoundException(mensaggeDinamicValidation[0], HttpStatus.CONFLICT, mensaggeDinamicValidation[1]);
+            }
+            else {
+                throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
+            }
 		}
 	}
 	
 	@Override
 	public String createTask(TasksDomain taskDomain, String id) throws Exception {
 		TaskModel taskModel = new TaskModel();
-		StoryDomain newStoryDomain = new StoryDomain();
-		List<TaskModel> tasksModel = new ArrayList<>();
-		if(storiesRepository.existsById(id)) { 
-			storyModel = storiesRepository.findById(id).get();
-				taskModel = mapperFacade.map(taskDomain, TaskModel.class);
-				taskModel.set_id(new ObjectId().toString());
-					if(storyModel.getTasks() == null) {
-						tasksModel.add(taskModel);
-					}else {
-						tasksModel = storyModel.getTasks();
-						tasksModel.add(taskModel);
-					}
-					storyModel.setTasks(tasksModel);
-					newStoryDomain = mapperFacade.map(storyModel, StoryDomain.class);
-					String[] dynamicValidationAssigneTask = dynamicValidationTaskAssigne(newStoryDomain);
-					String[] dynamicValidationStatuTask = dynamicValidation(newStoryDomain);
-					if(StringUtils.isEmpty(dynamicValidationStatuTask[0])) {
-						if(StringUtils.isEmpty(dynamicValidationAssigneTask[0])) {
-							storiesRepository.save(storyModel);
-							return taskModel.get_id();
-						}else {
-							throw new EntityNotFoundException(dynamicValidationAssigneTask[0],dynamicValidationAssigneTask[1]);
-						}
-					}else {
-						throw new EntityNotFoundException(dynamicValidationStatuTask[0],"400",dynamicValidationStatuTask[1]);
-					}
-		}else {
-			throw new EntityNotFoundException("Story not found", "/stories/");
+		   if(storiesRepository.existsById(id)) {
+		      if (userNullTaskValidation(taskDomain.getAssignee())) {
+		         if (statusTaskValidation(statusArray, taskDomain.getStatus())) {
+		            storyModel = storiesRepository.findById(id).get();
+		            List<TaskModel> tasks = storyModel.getTasks();
+		            taskModel = mapperFacade.map(taskDomain, TaskModel.class);
+		            taskModel.set_id(new ObjectId().toString());
+		            tasks.add(taskModel);
+		            storyModel.setTasks(tasks);
+		            storiesRepository.save(storyModel);
+		            return taskModel.get_id();
+		         }else {
+		            throw new EntityNotFoundException(
+		                  "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+		                  "400","/stories/");
+		         }
+		      }else {
+		         throw new EntityNotFoundException("The user provided does not exist", "/users/");
+		      }
+		   }else {
+		         throw new EntityNotFoundException("Story not found", HttpStatus.CONFLICT,"/stories/");
+		      }
 		}
-	}
 
 	@Override
 	public void deleteStory(String id) throws Exception {
@@ -163,7 +158,15 @@ public class StoriesServiceImpl implements StoriesService {
 				throw new EntityNotFoundException("Story not found", "/stories/");
 			}
 		} else {
-			throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
+			if(mensaggeDinamicValidation[2] == "BAD_REQUEST") {
+                throw new EntityNotFoundException(mensaggeDinamicValidation[0],"", mensaggeDinamicValidation[1]);
+            }
+            else if(mensaggeDinamicValidation[2] == "CONFLICT") {
+                throw new EntityNotFoundException(mensaggeDinamicValidation[0], HttpStatus.CONFLICT, mensaggeDinamicValidation[1]);
+            }
+            else {
+                throw new EntityNotFoundException(mensaggeDinamicValidation[0], mensaggeDinamicValidation[1]);
+            }
 		}
 	}
 
@@ -225,19 +228,6 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 	}
 	
-	private String statusTaskValidation(String[] statusArray, String status) {
-		String validationStatus = "";
-		if (StringUtils.isEmpty(status)) {
-
-		}else {
-			if(!Arrays.asList(statusArray).contains(status)) {
-				validationStatus = "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.";
-				return validationStatus;
-			}
-		}
-		return validationStatus;
-	}
-
 	private StoryModel nameValidation(StoryModel storyModel) throws EntityNotFoundException {
 		try {
 			storiesRepository.save(storyModel);
@@ -344,91 +334,118 @@ public class StoriesServiceImpl implements StoriesService {
 			return pointsValidation + ", ";
 		}
 	}
-	
-	private String[] dynamicValidationTaskAssigne(StoryDomain storyDomain) {
-		String[] mensaggeDinamicValidation = { "", "" };
-		String validationRespons = "";
-		
-		if(storyDomain.getTasks().size()!=0) {
-			validationRespons = userNullValidation(storyDomain.getTasks().get(storyDomain.getTasks().size()-1).getAssignee());
-			if (!StringUtils.isEmpty(validationRespons)) {
-				mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + "for Task " + validationRespons;
-				mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
-			}
-		}
-		mensaggeDinamicValidation[1] = validationRespons;
-		return mensaggeDinamicValidation;
-	}
 
 	private String[] dynamicValidation(StoryDomain storyDomain) {
-		String[] mensaggeDinamicValidation = { "", "" };
-		String validationRespons = "";
-		String[] validationPath = { "/Sprints/", "/StoryDomain/", "/Users/", "/stories/" };
+		String[] mensaggeDinamicValidation = { "", "" , ""};
+        String validationRespons = "";
+        String[] validationPath = { "/Sprints/", "/StoryDomain/", "/Users/", "/stories/" };
 
-		validationRespons = nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
-		if (!StringUtils.isEmpty(validationRespons)) {
-			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
-			return mensaggeDinamicValidation;
+ 
+
+        validationRespons = nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
+        if (!StringUtils.isEmpty(validationRespons)) {
+            mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
+            mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+            mensaggeDinamicValidation[2] = "BAD_REQUEST";
+            return mensaggeDinamicValidation;
+        }
+
+ 
+
+        if((!StringUtils.isEmpty(storyDomain.getSprint_id())) || (!StringUtils.isEmpty(storyDomain.getAssignee_id()))) {
+            validationRespons = sprintNullValidation(storyDomain.getSprint_id());
+            if (!StringUtils.isEmpty(validationRespons)) {
+                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
+                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+                
+            }
+            
+            validationRespons = userNullValidation(storyDomain.getAssignee_id());
+            if (!StringUtils.isEmpty(validationRespons)) {
+                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
+                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+            }
+            
+            mensaggeDinamicValidation[1] = filtervalidation(validationPath, mensaggeDinamicValidation[1]);
+            mensaggeDinamicValidation[2] = "CONFLICT";
+            if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
+                return mensaggeDinamicValidation;    
+            }
+        }
+
+ 
+
+        if((!StringUtils.isEmpty(storyDomain.getStatus())) || !(StringUtils.isEmpty(storyDomain.getProgress()+"")) || !(StringUtils.isEmpty(storyDomain.getPoints()+""))) {
+            validationRespons = pointsValidation(storyDomain.getPoints(), pointsArray);
+            if (!StringUtils.isEmpty(validationRespons)) {
+                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
+                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+            }
+
+ 
+
+            validationRespons = proggressValidation(storyDomain.getProgress());
+            if (!StringUtils.isEmpty(validationRespons)) {
+                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
+                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+            }
+
+ 
+
+            validationRespons = statusValidation(statusArray, storyDomain.getStatus());
+            if (!StringUtils.isEmpty(validationRespons)) {
+                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
+                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+            }
+            
+            mensaggeDinamicValidation[1] = filtervalidation(validationPath, mensaggeDinamicValidation[1]);
+            mensaggeDinamicValidation[2] = "BAD_REQUEST";
+            if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
+                return mensaggeDinamicValidation;
+            }
+        }
+        
+        mensaggeDinamicValidation[1] = validationRespons;
+        return mensaggeDinamicValidation;
+	}
+	
+	private String filtervalidation(String[] validationPath, String string) {
+        String validationRespons = "";
+        for (int i = 0; i < validationPath.length; i++) {
+            if (string.toString().indexOf(validationPath[i]) == -1) {
+
+ 
+
+            } else {
+                if (validationPath[i].equals(string.toString().substring(
+                        string.toString().indexOf(validationPath[i]),
+                        string.toString().indexOf(validationPath[i])
+                                + validationPath[i].length()))) {
+                    if (!(string.toString().indexOf(validationPath[i]) == -1)) {
+                        if (StringUtils.isEmpty(validationRespons)) {
+                            validationRespons = validationPath[i];
+                        }
+                    }
+                }
+            }
+        }
+        return validationRespons;
+    }
+	
+	private boolean userNullTaskValidation(String assigneeId) throws EntityNotFoundException {
+		if (StringUtils.isEmpty(assigneeId)) {
+			return true;
+		} else {
+			if (!usersRepository.existsById(assigneeId))
+				throw new EntityNotFoundException("The user provided does not exist",HttpStatus.CONFLICT,"/stories/");
+			return true;
 		}
-
-		validationRespons = sprintNullValidation(storyDomain.getSprint_id());
-		if (!StringUtils.isEmpty(validationRespons)) {
-			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
+	}
+	private boolean statusTaskValidation(String[] statusArray, String status) {
+		if(StringUtils.isEmpty(status)) {
+			return true;
+		}else {
+		return Arrays.asList(statusArray).contains(status);
 		}
-
-		validationRespons = pointsValidation(storyDomain.getPoints(), pointsArray);
-		if (!StringUtils.isEmpty(validationRespons)) {
-			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
-		}
-
-		validationRespons = proggressValidation(storyDomain.getProgress());
-		if (!StringUtils.isEmpty(validationRespons)) {
-			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
-		}
-
-		validationRespons = userNullValidation(storyDomain.getAssignee_id());
-		if (!StringUtils.isEmpty(validationRespons)) {
-			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
-		}
-
-		validationRespons = statusValidation(statusArray, storyDomain.getStatus());
-		if (!StringUtils.isEmpty(validationRespons)) {
-			mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-			mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
-		}
-		
-		if(storyDomain.getTasks().size()!=0) {
-			validationRespons = statusTaskValidation(statusArray, storyDomain.getTasks().get(storyDomain.getTasks().size()-1).getStatus());
-			if (!StringUtils.isEmpty(validationRespons)) {
-				mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + "for Task " + validationRespons;
-				mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
-			}
-		}
-
-		validationRespons = "";
-		for (int i = 0; i < validationPath.length; i++) {
-			if (mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]) == -1) {
-
-			} else {
-				if (validationPath[i].equals(mensaggeDinamicValidation[1].toString().substring(
-						mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]),
-						mensaggeDinamicValidation[1].toString().indexOf(validationPath[i])
-								+ validationPath[i].length()))) {
-
-					if (!(mensaggeDinamicValidation[1].toString().indexOf(validationPath[i]) == -1)) {
-						if (StringUtils.isEmpty(validationRespons)) {
-							validationRespons = validationPath[i];
-						}
-					}
-				}
-			}
-		}
-		mensaggeDinamicValidation[1] = validationRespons;
-		return mensaggeDinamicValidation;
 	}
 }

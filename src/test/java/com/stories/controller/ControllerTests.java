@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.http.HttpStatus;
 
 import com.stories.exception.EntityNotFoundException;
 import com.stories.service.StoriesServiceImpl;
@@ -92,6 +93,26 @@ public class ControllerTests {
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
 				.content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andExpect(status().isNoContent());
 	}
+	
+	@Test
+    public void deleteTaskTrue() throws Exception {
+        String uri = "/stories/5e7133b6430bf4151ec1e85f/tasks/5e7133b6430bf4151ec1e85f";
+        mockMvc.perform(MockMvcRequestBuilders.delete(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
+                .content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andExpect(status().isNoContent());
+    }
+	
+	@Test(expected = EntityNotFoundException.class)
+ 	public void deleteTaskInvalidId() throws Exception { 		
+	String uri = "/stories/5e7133b6430bf4151ec1e85f/tasks/5e7133b6430bf4151ec1e85f"; 		
+	mockMvc.perform(MockMvcRequestBuilders.delete(uri).contentType(MediaType.APPLICATION_JSON_VALUE) 				
+		.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8") 				
+		.content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andDo(new ResultHandler() { 					
+		@Override 					
+		public void handle(MvcResult mvcResult) throws Exception { 						
+		throw new EntityNotFoundException("Task with the given id was not found.", HttpStatus.CONFLICT,"/tasks/"); 					
+		}}).andExpect(status().isConflict()); 
+	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTestInvalidId() throws Exception {
@@ -141,7 +162,6 @@ public class ControllerTests {
 						throw new EntityNotFoundException("Malformed JSON request", "/stories/");
 					}
 				}).andExpect(status().isBadRequest());
-
 	}
 	
 	@Test()

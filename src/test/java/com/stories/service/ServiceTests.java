@@ -275,6 +275,7 @@ public class ServiceTests {
 		storiesServiceImpl.storyModel.setPoints(-1);
 		storiesServiceImpl.storyModel.setProgress(-1);
 		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
+		when(sprintsClient.existsSprintById(storiesServiceImpl.storyDomain.getSprint_id())).thenReturn(true);
 		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
 				.thenReturn(storiesServiceImpl.storyModel);
 		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
@@ -290,6 +291,7 @@ public class ServiceTests {
 		storiesServiceImpl.storyModel.setPoints(123);
 		storiesServiceImpl.storyModel.setProgress(123);
 		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(true);
+		when(sprintsClient.existsSprintById(storiesServiceImpl.storyDomain.getSprint_id())).thenReturn(true);
 		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
 				.thenReturn(storiesServiceImpl.storyModel);
 		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
