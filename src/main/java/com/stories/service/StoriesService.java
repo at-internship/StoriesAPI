@@ -23,4 +23,6 @@ public interface StoriesService {
 	TasksDomain getTaskById(String id, String _id) throws Exception;
 
 	void deleteTask(String id, String taskId) throws Exception;
+	
+	String createTask(TasksDomain taskDomain, String id) throws Exception;
 }

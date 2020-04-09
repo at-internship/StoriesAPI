@@ -110,5 +110,13 @@ public class StoriesController {
 			@PathVariable("taskId") String taskId) throws Exception {
 		return storyService.getTaskById(storyId, taskId);
 	}
+	
+	@ApiOperation(value = " POST Task ", notes = " This operation will add a Task ")
+	@ApiResponses({ @ApiResponse(code = 201, message = " Success operation "),
+			@ApiResponse(code = 400, message = " Story has an invalid status Json ") })
+	@PostMapping(value = "/{id}/tasks", consumes = "application/json", produces = "application/json")
+	public String createTask(@Valid @RequestBody TasksDomain taskDomain, @PathVariable String id) throws Exception {
+		return storyService.createTask(taskDomain,id);
+	}
 
 }
