@@ -188,9 +188,7 @@ public class StoriesServiceImpl implements StoriesService {
 			}
 			storyModel = storiesRepository.findById(id).get();
 			List<TaskModel> FinalTasksList = new ArrayList<>();
-			List<TaskModel> taskList = new ArrayList<>();
-			taskList = storyModel.getTasks();
-			for(TaskModel tasks: taskList) {
+			for(TaskModel tasks: storyModel.getTasks()) {
                 if(task.get_id().equals(tasks.get_id())) {
                     tasks.set_id(task.get_id());
                     tasks.setName(task.getName());
@@ -198,9 +196,6 @@ public class StoriesServiceImpl implements StoriesService {
                     tasks.setStatus(task.getStatus());
                     tasks.setComments(task.getComments());
                     tasks.setAssignee(task.getAssignee());    
-                }else if(task.getName().equals(tasks.getName())) {
-                	throw new EntityNotFoundException("Task name already exists", HttpStatus.CONFLICT,
-                            "/stories/" + id + "/tasks/" + _id);
                 }
                 FinalTasksList.add(tasks);   
             }
