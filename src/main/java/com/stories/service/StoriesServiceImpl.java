@@ -178,6 +178,11 @@ public class StoriesServiceImpl implements StoriesService {
 			if(taskModel == null) {
     			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
     		}
+			if (!statusTaskValidation(statusArray, task.getStatus())) {
+				throw new EntityNotFoundException(
+		                  "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+		                  "400","/stories/");
+			}
 			if(!StringUtils.isEmpty(task.getAssignee())) {
 				if(!usersRepository.existsById(task.getAssignee())) {
 					throw new EntityNotFoundException("User assignee id does not exist", HttpStatus.CONFLICT, "/stories/" + id + "/tasks/" + _id);
