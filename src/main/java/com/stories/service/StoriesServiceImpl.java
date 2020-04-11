@@ -169,6 +169,48 @@ public class StoriesServiceImpl implements StoriesService {
             }
 		}
 	}
+	
+	@Override
+	public TasksDomain updateTaskById(TasksDomain task, String id, String _id) throws Exception {
+		if(storiesRepository.existsById(id)) {
+			task.set_id(_id);
+			TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
+			if(taskModel == null) {
+    			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
+    		}
+			if(!StringUtils.isEmpty(task.getAssignee())) {
+				if(!usersRepository.existsById(task.getAssignee())) {
+					throw new EntityNotFoundException("User assignee id does not exist", HttpStatus.CONFLICT, "/stories/" + id + "/tasks/" + _id);
+				}
+			}
+			if(StringUtils.isEmpty(task.getName())) {
+				throw new EntityNotFoundException("name is a required field", HttpStatus.BAD_REQUEST, "/stories/" + id + "/tasks/" + _id);
+			}
+			storyModel = storiesRepository.findById(id).get();
+			List<TaskModel> FinalTasksList = new ArrayList<>();
+			List<TaskModel> taskList = new ArrayList<>();
+			taskList = storyModel.getTasks();
+			for(TaskModel tasks: taskList) {
+                if(task.get_id().equals(tasks.get_id())) {
+                    tasks.set_id(task.get_id());
+                    tasks.setName(task.getName());
+                    tasks.setDescription(task.getDescription());
+                    tasks.setStatus(task.getStatus());
+                    tasks.setComments(task.getComments());
+                    tasks.setAssignee(task.getAssignee());    
+                }else if(task.getName().equals(tasks.getName())) {
+                	throw new EntityNotFoundException("Task name already exists", HttpStatus.CONFLICT,
+                            "/stories/" + id + "/tasks/" + _id);
+                }
+                FinalTasksList.add(tasks);   
+            }
+			storyModel.setTasks(FinalTasksList);
+			storiesRepository.save(storyModel);
+    		return task;
+		}else {
+			throw new EntityNotFoundException("Story not found", "/stories/" + id);
+		}
+	}
 
 	@Override
 	public StoryDomain getStoryById(String id) throws Exception {
