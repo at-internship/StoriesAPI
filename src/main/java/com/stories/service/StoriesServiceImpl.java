@@ -187,7 +187,7 @@ public class StoriesServiceImpl implements StoriesService {
 				throw new EntityNotFoundException("name is a required field", HttpStatus.BAD_REQUEST, "/stories/" + id + "/tasks/" + _id);
 			}
 			storyModel = storiesRepository.findById(id).get();
-			List<TaskModel> FinalTasksList = new ArrayList<>();
+			List<TaskModel> updatedTasks = new ArrayList<>();
 			for(TaskModel tasks: storyModel.getTasks()) {
                 if(task.get_id().equals(tasks.get_id())) {
                     tasks.set_id(task.get_id());
@@ -197,9 +197,9 @@ public class StoriesServiceImpl implements StoriesService {
                     tasks.setComments(task.getComments());
                     tasks.setAssignee(task.getAssignee());    
                 }
-                FinalTasksList.add(tasks);   
+                updatedTasks.add(tasks);   
             }
-			storyModel.setTasks(FinalTasksList);
+			storyModel.setTasks(updatedTasks);
 			storiesRepository.save(storyModel);
     		return task;
 		}else {
