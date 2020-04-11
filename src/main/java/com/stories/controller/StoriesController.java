@@ -97,8 +97,8 @@ public class StoriesController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@PutMapping(value = "/{storyId}/tasks/{taskId}", produces = "application/json")
 	@ResponseBody
-	public TasksDomain updateTask(@Valid @RequestBody TasksDomain task, @PathVariable("storyId") String id, @PathVariable("taskId") String _id) throws Exception{
-		return storyService.updateTask(task, id, _id);
+	public TasksDomain updateTaskById(@Valid @RequestBody TasksDomain task, @PathVariable("storyId") String id, @PathVariable("taskId") String _id) throws Exception{
+		return storyService.updateTaskById(task, id, _id);
 	}
 
 	@ApiOperation(value = " GET Tasks ", notes = " This operation will return the tasks of a story ")

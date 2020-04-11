@@ -24,5 +24,5 @@ public interface StoriesService {
 
 	void deleteTask(String id, String taskId) throws Exception;
 	
-	public TasksDomain updateTask(TasksDomain task, String id, String _id) throws Exception;
+	public TasksDomain updateTaskById(TasksDomain task, String id, String _id) throws Exception;
 }

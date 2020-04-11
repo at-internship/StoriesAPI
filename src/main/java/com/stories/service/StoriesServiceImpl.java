@@ -3,9 +3,7 @@ package com.stories.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -130,57 +128,41 @@ public class StoriesServiceImpl implements StoriesService {
 	}
 	
 	@Override
-	public TasksDomain updateTask(TasksDomain task, String id, String _id) throws Exception {
-		if(storiesRepository.existsById(id)) {//Validating that the story exists
+	public TasksDomain updateTaskById(TasksDomain task, String id, String _id) throws Exception {
+		if(storiesRepository.existsById(id)) {
 			task.set_id(_id);
 			TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
-			//Validating that the task exists
 			if(taskModel == null) {
     			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
     		}
-			
-			//Validating assignee
 			if(!StringUtils.isEmpty(task.getAssignee())) {
 				if(!usersRepository.existsById(task.getAssignee())) {
 					throw new EntityNotFoundException("User assignee id does not exist", HttpStatus.CONFLICT, "/stories/" + id + "/tasks/" + _id);
 				}
 			}
-			//Validating that name is not empty
 			if(StringUtils.isEmpty(task.getName())) {
 				throw new EntityNotFoundException("name is a required field", HttpStatus.BAD_REQUEST, "/stories/" + id + "/tasks/" + _id);
 			}
-			//recovering entire story from DB
 			storyModel = storiesRepository.findById(id).get();
-			
 			List<TaskModel> FinalTasksList = new ArrayList<>();
-			//Recovering all tasks in the story
 			List<TaskModel> taskList = new ArrayList<>();
 			taskList = storyModel.getTasks();
-			
-			
 			for(TaskModel tasks: taskList) {
-				
-				//entering changes in the task
                 if(task.get_id().equals(tasks.get_id())) {
                     tasks.set_id(task.get_id());
                     tasks.setName(task.getName());
                     tasks.setDescription(task.getDescription());
                     tasks.setStatus(task.getStatus());
                     tasks.setComments(task.getComments());
-                    tasks.setAssignee(task.getAssignee());
-                    
-                }else if(task.getName().equals(tasks.getName())) {//searching for repeated names
+                    tasks.setAssignee(task.getAssignee());    
+                }else if(task.getName().equals(tasks.getName())) {
                 	throw new EntityNotFoundException("Task name already exists", HttpStatus.CONFLICT,
                             "/stories/" + id + "/tasks/" + _id);
                 }
-                //if there are no repeated names, save the changed task and the other tasks in a new list
                 FinalTasksList.add(tasks);   
             }
-			
-			//saving the entire story with tasks to database
 			storyModel.setTasks(FinalTasksList);
 			storiesRepository.save(storyModel);
-			//returning the task entered by the user
     		return task;
 		}else {
 			throw new EntityNotFoundException("Story not found", "/stories/" + id);
