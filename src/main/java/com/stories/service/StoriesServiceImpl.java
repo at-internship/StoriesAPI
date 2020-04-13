@@ -57,8 +57,8 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
-		storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-		storyDomain.setDue_date(dueDateValidation(storyDomain.getDue_date()));
+		storyDomain.setStart_date(dateValidation(storyDomain.getStart_date()));
+		storyDomain.setDue_date(dateValidation(storyDomain.getDue_date()));
 		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain);
 
 		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
@@ -142,8 +142,8 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
-		storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-		storyDomain.setDue_date(dueDateValidation(storyDomain.getDue_date()));
+		storyDomain.setStart_date(dateValidation(storyDomain.getStart_date()));
+		storyDomain.setDue_date(dateValidation(storyDomain.getDue_date()));
 		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain);
 
 		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
@@ -324,17 +324,11 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 	}
 
-	private LocalDate startDateValidation(LocalDate start_date) {
-		if ((!(start_date == null || (StringUtils.isEmpty(start_date.toString()))))) {
-			return start_date;
-		} else {
-			return LocalDate.now();
-		}
-	}
-
-	private LocalDate dueDateValidation(LocalDate due_date) {
-		if ((!(due_date == null || (StringUtils.isEmpty(due_date.toString()))))) {
-			return due_date;
+	private LocalDate dateValidation(LocalDate date) {
+		if ((!(date == null || (StringUtils.isEmpty(date.toString()))))) {
+			return date;
+		} else if ((!(date == null || (StringUtils.isEmpty(date.toString()))))) {
+			return date;
 		} else {
 			return LocalDate.now();
 		}
