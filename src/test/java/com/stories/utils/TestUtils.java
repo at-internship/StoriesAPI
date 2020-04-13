@@ -166,6 +166,16 @@ public class TestUtils {
 
 		return storyDomain;
 	}
+	
+	public static TasksDomain getTasksDomain() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName(unitTestProperties.TasksdomainName);
+		tasksDomain.setDescription(unitTestProperties.TasksdomainDescription);
+		tasksDomain.setStatus(unitTestProperties.TasksdomainStatus);
+		tasksDomain.setComments(unitTestProperties.TasksdomainComments);
+		tasksDomain.setAssignee(unitTestProperties.TasksdomainAssignee);
+		return tasksDomain;
+	}
  	
  	public static List<TasksDomain> getTasksDomainList(){
  		List<TasksDomain> tasksDomainList= new ArrayList<TasksDomain>();
@@ -179,6 +189,17 @@ public class TestUtils {
  		tasksDomainList.add(tasksDomain);
 		return tasksDomainList;
  	}
+ 	
+ 	public static TaskModel getTasksModel() {
+		TaskModel tasksModel = new TaskModel();
+		tasksModel.set_id(unitTestProperties.TasksModelId);
+		tasksModel.setName(unitTestProperties.TasksdomainName);
+		tasksModel.setDescription(unitTestProperties.TasksdomainDescription);
+		tasksModel.setStatus(unitTestProperties.TasksdomainStatus);
+		tasksModel.setComments(unitTestProperties.TasksdomainComments);
+		tasksModel.setAssignee(unitTestProperties.TasksdomainAssignee);
+		return tasksModel;
+	}
 
 	public static StoryModel getStoryModel() {
 		StoryModel storyModel = new StoryModel();
@@ -201,8 +222,22 @@ public class TestUtils {
 		storyModel.setPriority(unitTestProperties.modelPriority);
 		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
 		storyModel.setHistory(historyList);
+		storyModel.setTasks(getTaskModelList());
 
 		return storyModel;
+	}
+	
+	public static List<TaskModel> getTaskModelList(){
+		List<TaskModel> tasks = new ArrayList<TaskModel>();
+		TaskModel tasksModel = new TaskModel();
+		tasksModel.set_id(unitTestProperties.TasksModelId);
+		tasksModel.setName(unitTestProperties.TasksdomainName);
+		tasksModel.setDescription(unitTestProperties.TasksdomainDescription);
+		tasksModel.setStatus(unitTestProperties.TasksdomainStatus);
+		tasksModel.setComments(unitTestProperties.TasksdomainComments);
+		tasksModel.setAssignee(unitTestProperties.TasksdomainAssignee);
+		tasks.add(tasksModel);
+		return tasks;
 	}
 	
 	public static StoryModel getStoryTaskModel() {

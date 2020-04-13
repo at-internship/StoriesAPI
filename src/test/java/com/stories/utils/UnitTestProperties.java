@@ -34,6 +34,19 @@ public class UnitTestProperties {
 	protected String domainAssigneeId;
 	protected String domainHistory1;
 	protected String domainHistory2;
+	
+	protected String TasksdomainName;
+	protected String TasksdomainDescription;
+	protected String TasksdomainStatus;
+	protected String TasksdomainComments;
+	protected String TasksdomainAssignee;
+	
+	protected String TasksModelId;
+	protected String TasksModelName;
+	protected String TasksModelDescription;
+	protected String TasksModelStatus;
+	protected String TasksModelComments;
+	protected String TasksModelAssignee;
 
 	protected String modelId;
 	protected String modelSprintid;
