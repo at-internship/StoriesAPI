@@ -3,6 +3,10 @@ package com.stories.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -170,22 +174,36 @@ public class ServiceTests {
 		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
 	}
 	
-	@Ignore
 	@Test
 	public void deleteTask() throws Exception {
 		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
 		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(Boolean.TRUE);
-		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
-		when(storiesRepository.findById(storiesServiceImpl.storyModel.get_id()).get()).thenReturn(storiesServiceImpl.storyModel);
-		Mockito.doNothing().when(storiesRepository.save(storiesServiceImpl.storyModel));
+		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
 		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id());
-		
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void deleteTaskNotFoundException() throws Exception {
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(Boolean.TRUE);
+		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id()+"fdsfd");
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTaskException() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(Boolean.FALSE);
-		storiesServiceImpl.deleteTask(unitTestProperties.getUrlId(), null);
+		storiesServiceImpl.deleteTask(unitTestProperties.getUrlId(), storiesServiceImpl.storyModel.get_id());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void deleteTaskNullException() throws Exception {
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		List<TaskModel> task = new ArrayList<>();
+		storiesServiceImpl.storyModel.setTasks(task);
+		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(Boolean.TRUE);
+		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), "");
 	}
 
 	@Test

@@ -57,8 +57,7 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
-		storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-		storyDomain.setDue_date(dueDateValidation(storyDomain.getDue_date()));
+		storyDomain.setStart_date(dateValidation(storyDomain.getStart_date()));
 		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain);
 
 		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
@@ -142,8 +141,7 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Override
 	public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
-		storyDomain.setStart_date(startDateValidation(storyDomain.getStart_date()));
-		storyDomain.setDue_date(dueDateValidation(storyDomain.getDue_date()));
+		storyDomain.setStart_date(dateValidation(storyDomain.getStart_date()));
 		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain);
 
 		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
@@ -255,7 +253,6 @@ public class StoriesServiceImpl implements StoriesService {
 			return results;
 		}
 		throw new EntityNotFoundException("Story not found", "/stories/" + id + "/tasks");
-
 	}
 
 	private String statusValidation(String[] statusArray, String storyStatus) {
@@ -324,17 +321,9 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 	}
 
-	private LocalDate startDateValidation(LocalDate start_date) {
-		if ((!(start_date == null || (StringUtils.isEmpty(start_date.toString()))))) {
-			return start_date;
-		} else {
-			return LocalDate.now();
-		}
-	}
-
-	private LocalDate dueDateValidation(LocalDate due_date) {
-		if ((!(due_date == null || (StringUtils.isEmpty(due_date.toString()))))) {
-			return due_date;
+	private LocalDate dateValidation(LocalDate date) {
+		if ((!(date == null || (StringUtils.isEmpty(date.toString()))))) {
+			return date;
 		} else {
 			return LocalDate.now();
 		}
@@ -345,11 +334,9 @@ public class StoriesServiceImpl implements StoriesService {
 		if (progress < 0) {
 			progressValidation = "The number entered in the progress field is a negative number";
 		}
-
 		if (progress > 100) {
 			progressValidation = "The number entered in the progress field exceeds 100%";
 		}
-
 		if (StringUtils.isEmpty(progressValidation)) {
 			return progressValidation;
 		} else {
@@ -382,8 +369,6 @@ public class StoriesServiceImpl implements StoriesService {
         String validationRespons = "";
         String[] validationPath = { "/Sprints/", "/StoryDomain/", "/Users/", "/stories/" };
 
- 
-
         validationRespons = nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
         if (!StringUtils.isEmpty(validationRespons)) {
             mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
@@ -391,8 +376,6 @@ public class StoriesServiceImpl implements StoriesService {
             mensaggeDinamicValidation[2] = "BAD_REQUEST";
             return mensaggeDinamicValidation;
         }
-
- 
 
         if((!StringUtils.isEmpty(storyDomain.getSprint_id())) || (!StringUtils.isEmpty(storyDomain.getAssignee_id()))) {
             validationRespons = sprintNullValidation(storyDomain.getSprint_id());
@@ -415,8 +398,6 @@ public class StoriesServiceImpl implements StoriesService {
             }
         }
 
- 
-
         if((!StringUtils.isEmpty(storyDomain.getStatus())) || !(StringUtils.isEmpty(storyDomain.getProgress()+"")) || !(StringUtils.isEmpty(storyDomain.getPoints()+""))) {
             validationRespons = pointsValidation(storyDomain.getPoints(), pointsArray);
             if (!StringUtils.isEmpty(validationRespons)) {
@@ -424,15 +405,11 @@ public class StoriesServiceImpl implements StoriesService {
                 mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
             }
 
- 
-
             validationRespons = proggressValidation(storyDomain.getProgress());
             if (!StringUtils.isEmpty(validationRespons)) {
                 mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
                 mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + "/stories/";
             }
-
- 
 
             validationRespons = statusValidation(statusArray, storyDomain.getStatus());
             if (!StringUtils.isEmpty(validationRespons)) {
@@ -446,7 +423,6 @@ public class StoriesServiceImpl implements StoriesService {
                 return mensaggeDinamicValidation;
             }
         }
-        
         mensaggeDinamicValidation[1] = validationRespons;
         return mensaggeDinamicValidation;
 	}
@@ -455,8 +431,6 @@ public class StoriesServiceImpl implements StoriesService {
         String validationRespons = "";
         for (int i = 0; i < validationPath.length; i++) {
             if (string.toString().indexOf(validationPath[i]) == -1) {
-
- 
 
             } else {
                 if (validationPath[i].equals(string.toString().substring(
