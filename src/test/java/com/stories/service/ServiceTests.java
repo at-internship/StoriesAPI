@@ -23,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.stories.domain.StoryDomain;
@@ -204,6 +205,57 @@ public class ServiceTests {
 		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(Boolean.TRUE);
 		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
 		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), "");
+	}
+	
+	@Test
+	public void createTask() throws Exception{
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		taskDomain.setName("Taks");
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(true);
+		when(usersRepository.existsById(taskDomain.getAssignee())).thenReturn(true);
+		when(storiesRepository.findById(unitTestProperties.getModelId()))
+		.thenReturn(java.util.Optional.of(TestUtils.getStoryModel()));
+		when(mapperFacade.map(taskDomain, TaskModel.class)).thenReturn(TestUtils.getTasksModel());
+		when(storiesRepository.save(TestUtils.getStoryModel())).thenReturn(TestUtils.getStoryModel());
+		storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void createTaskStoryExistException() throws Exception{
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(false);
+		when(storiesServiceImpl.createTask(TestUtils.getTasksDomain(), unitTestProperties.getModelId())).
+			thenThrow(new EntityNotFoundException("Story not found", HttpStatus.CONFLICT,"/stories/"));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void createTaskNameException() throws Exception{
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(true);
+		when(storiesServiceImpl.createTask(TestUtils.getTasksDomain(), unitTestProperties.getModelId())).
+		thenThrow(new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').","400","/stories/"));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void createTaskUserExistException() throws Exception{
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		taskDomain.setName("Taks");
+		taskDomain.setAssignee("ss");
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(true);
+		when(usersRepository.existsById(TestUtils.getDummyTasksDomain().getAssignee())).thenReturn(false);
+		when(storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId())).
+			thenThrow(new EntityNotFoundException("Story not found", HttpStatus.CONFLICT,"/stories/"));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void createTaskStatusException() throws Exception{
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		taskDomain.setName("Taks");
+		taskDomain.setStatus("error");
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(true);
+		when(usersRepository.existsById(TestUtils.getDummyTasksDomain().getAssignee())).thenReturn(true);
+		when(storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId())).
+			thenThrow(new EntityNotFoundException(
+	                  "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+	                  "400","/stories/"));
 	}
 
 	@Test

@@ -82,24 +82,28 @@ public class StoriesServiceImpl implements StoriesService {
 	public String createTask(TasksDomain taskDomain, String id) throws Exception {
 		TaskModel taskModel = new TaskModel();
 		   if(storiesRepository.existsById(id)) {
-		      if (userNullTaskValidation(taskDomain.getAssignee())) {
-		         if (statusTaskValidation(statusArray, taskDomain.getStatus())) {
-		            storyModel = storiesRepository.findById(id).get();
-		            List<TaskModel> tasks = storyModel.getTasks();
-		            taskModel = mapperFacade.map(taskDomain, TaskModel.class);
-		            taskModel.set_id(new ObjectId().toString());
-		            tasks.add(taskModel);
-		            storyModel.setTasks(tasks);
-		            storiesRepository.save(storyModel);
-		            return taskModel.get_id();
-		         }else {
-		            throw new EntityNotFoundException(
-		                  "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-		                  "400","/stories/");
-		         }
-		      }else {
-		         throw new EntityNotFoundException("The user provided does not exist", "/users/");
-		      }
+			   if(!StringUtils.isEmpty(taskDomain.getName())) {  
+			      if (userNullTaskValidation(taskDomain.getAssignee())) {
+			         if (statusTaskValidation(statusArray, taskDomain.getStatus())) {
+			            storyModel = storiesRepository.findById(id).get();
+			            List<TaskModel> tasks = storyModel.getTasks();
+			            taskModel = mapperFacade.map(taskDomain, TaskModel.class);
+			            taskModel.set_id(new ObjectId().toString());
+			            tasks.add(taskModel);
+			            storyModel.setTasks(tasks);
+			            storiesRepository.save(storyModel);
+			            return taskModel.get_id();
+			         }else {
+			            throw new EntityNotFoundException(
+			                  "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+			                  "400","/stories/");
+			         }
+			      }else {
+			         throw new EntityNotFoundException("The user provided does not exist", "/users/");
+			      }
+			   }else {
+				   throw new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').","400","/stories/");
+			   }
 		   }else {
 		         throw new EntityNotFoundException("Story not found", HttpStatus.CONFLICT,"/stories/");
 		      }
