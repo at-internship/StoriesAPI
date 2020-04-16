@@ -12,19 +12,19 @@ public interface StoriesService {
 
 	List<StoryDomain> getAllStories() throws Exception;
 
-	String createStory(StoryDomain request) throws Exception;
+	public String createStory(StoryDomain request) throws Exception;
 
 	void deleteStory(String id) throws Exception;
 
 	StoryDomain updateStory(StoryDomain request, String id) throws Exception;
-	
+
 	List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException;
 
 	TasksDomain getTaskById(String id, String _id) throws Exception;
 
 	void deleteTask(String id, String taskId) throws Exception;
-	
-	String createTask(TasksDomain taskDomain, String id) throws Exception;
-	
+
+	public String createTask(TasksDomain taskDomain, String id) throws Exception;
+
 	public TasksDomain updateTaskById(TasksDomain task, String id, String _id) throws Exception;
 }
