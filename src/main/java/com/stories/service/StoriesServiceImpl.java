@@ -105,7 +105,7 @@ public class StoriesServiceImpl implements StoriesService {
 				   throw new EntityNotFoundException("The JSON format provided is invalid, please provide the required field ('Name').","400","/stories/");
 			   }
 		   }else {
-		         throw new EntityNotFoundException("Story not found", HttpStatus.CONFLICT,"/stories/");
+		         throw new EntityNotFoundException("Story not found", "/stories/");
 		      }
 		}
 
