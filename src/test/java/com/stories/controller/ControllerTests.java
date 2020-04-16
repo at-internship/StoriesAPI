@@ -197,7 +197,7 @@ public class ControllerTests {
 		mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
 				.content(testUtils.postStoryValidJson("5e8dc1dfc5b47511cff2c88c"))).andDo(print())
-				.andExpect(status().isOk());
+				.andExpect(status().isCreated());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
