@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.stories.constants.StoriesApiConstants;
 import com.stories.domain.SprintDomain;
 import com.stories.sprintsclient.SprintsClient;
 import com.stories.utils.TestUtils;
@@ -30,6 +31,7 @@ public class SprintsClientTest {
 	UnitTestProperties unitTestProperties;
 
 	private TestUtils testUtils;
+	private StoriesApiConstants storiesApiConstants;
 
 	@Mock
 	private RestTemplate restTemplate;
@@ -37,41 +39,40 @@ public class SprintsClientTest {
 	@InjectMocks
 	private SprintsClient sprintsClient;
 
-	String uriSprintClient = "http://sprints-qa.us-east-2.elasticbeanstalk.com/sprints/";
-
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		testUtils = new TestUtils();
+		storiesApiConstants = new StoriesApiConstants();
 	}
 
 	@Test
 	public void existsSprintById() throws Exception {
 		ResponseEntity<List<SprintDomain>> sprintEntity = new ResponseEntity<List<SprintDomain>>(
 				testUtils.getSprintDomaintList(), HttpStatus.OK);
-		Mockito.when(restTemplate.exchange(uriSprintClient, HttpMethod.GET, null,
+		Mockito.when(restTemplate.exchange(storiesApiConstants.getUriSprintClient(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<SprintDomain>>() {
 				})).thenReturn(sprintEntity);
-		assertEquals(Boolean.TRUE, sprintsClient.existsSprintById("5e827f2f48b0866f87e1cbc2"));
+		assertEquals(storiesApiConstants.getBooleanTrue(), sprintsClient.existsSprintById(storiesApiConstants.getSprintIdValid()));
 	}
 
 	@Test
 	public void noExistsSprintById() throws Exception {
 		ResponseEntity<List<SprintDomain>> sprintEntity = new ResponseEntity<List<SprintDomain>>(
 				testUtils.getSprintDomaintList(), HttpStatus.OK);
-		Mockito.when(restTemplate.exchange(uriSprintClient, HttpMethod.GET, null,
+		Mockito.when(restTemplate.exchange(storiesApiConstants.getUriSprintClient(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<SprintDomain>>() {
 				})).thenReturn(sprintEntity);
-		assertEquals(Boolean.FALSE, sprintsClient.existsSprintById("5e78f5e792675632e42d1a96"));
+		assertEquals(storiesApiConstants.getBooleanFalse(), sprintsClient.existsSprintById(storiesApiConstants.getSprintIdInvalid()));
 	}
 
 	@Test(expected = RestClientException.class)
 	public void existsSprintByIdException() throws Exception {
 		ResponseEntity<List<SprintDomain>> sprintEntity = new ResponseEntity<List<SprintDomain>>(
 				testUtils.getNullSprintDomaintList(), HttpStatus.NOT_FOUND);
-		Mockito.when(restTemplate.exchange(uriSprintClient, HttpMethod.GET, null,
+		Mockito.when(restTemplate.exchange(storiesApiConstants.getUriSprintClient(), HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<SprintDomain>>() {
-				})).thenThrow(new RestClientException("spritns API has no entities"));
+				})).thenThrow(new RestClientException(storiesApiConstants.getMessageSprints()));
 		sprintsClient.existsSprintById("5e78f5e792675632e42d1a96");
 	}
 }
