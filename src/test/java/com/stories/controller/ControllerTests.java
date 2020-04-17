@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.http.HttpStatus;
 
+import com.stories.constants.StoriesApiConstants;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.service.StoriesServiceImpl;
 import com.stories.utils.TestUtils;
@@ -31,161 +32,145 @@ public class ControllerTests {
 	private MockMvc mockMvc;
 
 	private TestUtils testUtils = new TestUtils();
+	private StoriesApiConstants storiesApiConstants = new StoriesApiConstants();
 
 	@Test
 	public void getAllValid() throws Exception {
-		String uri = "/stories/";
-		mockMvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(status().isOk());
+		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriStories())).andExpect(status().isOk());
 	}
 
 	@Test
 	public void getByIdValid() throws Exception {
-		String uri = "/stories/5e7134c9099a9a0ab248c90b";
-		mockMvc.perform(MockMvcRequestBuilders.get(uri).contentType("5e7134c9099a9a0ab248c90b"))
+		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriStory()).contentType(storiesApiConstants.getIdValid()))
 				.andExpect(status().isOk());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void getByIdInvalid() throws Exception {
-		String uri = "/stories/5e6a8441bf#ERFSasda";
-		mockMvc.perform(MockMvcRequestBuilders.get(uri)).andDo(new ResultHandler() {
+		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriGetByIdInvalid())).andDo(new ResultHandler() {
 			@Override
 			public void handle(MvcResult mvcResult) throws Exception {
-				throw new EntityNotFoundException("Story not found", "/stories/");
+				throw new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath());
 			}
 		}).andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void putTestTrue() throws Exception {
-		String uri = "/stories/5e7133b6430bf4151ec1e85f";
-		mockMvc.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriStory()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andExpect(status().isOk());
+				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andExpect(status().isOk());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void putTestInvelidId() throws Exception {
-		String uri = "/stories/5e6a8441bfc6533811235e1";
-		mockMvc.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriGetByIdInvalid()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat("5e6a8441bfc6533811235e1"))).andDo(new ResultHandler() {
+				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Story not found", "/stories/");
+						throw new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath());
 					}
 				}).andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void putTestInvalidJson() throws Exception {
-		String uri = "/stories/5e6a8441bfc6533811235e19";
-		mockMvc.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriStory()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonBadFormat("5e6a8441bfc6533811235e19")))
+				.content(testUtils.setStoryInJsonBadFormat(storiesApiConstants.getIdValid())))
 				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	public void deleteTestTrue() throws Exception {
-		String uri = "/stories/5e7133b6430bf4151ec1e85f";
-		mockMvc.perform(MockMvcRequestBuilders.delete(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.delete(storiesApiConstants.getUriStory()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andExpect(status().isNoContent());
+				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andExpect(status().isNoContent());
 	}
 	
 	@Test
     public void deleteTaskTrue() throws Exception {
-        String uri = "/stories/5e7133b6430bf4151ec1e85f/tasks/5e7133b6430bf4151ec1e85f";
-        mockMvc.perform(MockMvcRequestBuilders.delete(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+        mockMvc.perform(MockMvcRequestBuilders.delete(storiesApiConstants.getUriTask()).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-                .content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andExpect(status().isNoContent());
+                .content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andExpect(status().isNoContent());
     }
 	
 	@Test(expected = EntityNotFoundException.class)
  	public void deleteTaskInvalidId() throws Exception { 		
-	String uri = "/stories/5e7133b6430bf4151ec1e85f/tasks/5e7133b6430bf4151ec1e85f"; 		
-	mockMvc.perform(MockMvcRequestBuilders.delete(uri).contentType(MediaType.APPLICATION_JSON_VALUE) 				
+	mockMvc.perform(MockMvcRequestBuilders.delete(storiesApiConstants.getUriTask()).contentType(MediaType.APPLICATION_JSON_VALUE) 				
 		.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8") 				
-		.content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andDo(new ResultHandler() { 					
+		.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andDo(new ResultHandler() { 					
 		@Override 					
 		public void handle(MvcResult mvcResult) throws Exception { 						
-		throw new EntityNotFoundException("Task with the given id was not found.", HttpStatus.CONFLICT,"/tasks/"); 					
+		throw new EntityNotFoundException(storiesApiConstants.getMessageTask(), HttpStatus.CONFLICT,storiesApiConstants.getPath()); 					
 		}}).andExpect(status().isConflict()); 
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTestInvalidId() throws Exception {
-		String uri = "/stories/5e7133b6430bf4151ec1e85f";
-		mockMvc.perform(MockMvcRequestBuilders.delete(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.delete(storiesApiConstants.getUriStory()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat("5e7133b6430bf4151ec1e85f"))).andDo(new ResultHandler() {
+				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
 						throw new EntityNotFoundException(
-								"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-								"", "/stories/");
+								storiesApiConstants.getMessageStatusInvalid(),
+								storiesApiConstants.getVarEmpty(), 
+								storiesApiConstants.getPath());
 					}
 				}).andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void postTestValidJson() throws Exception {
-		String uri = "/stories/";
-		mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriStories()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.postStoryValidJson("5e7133b6430bf4151ec1e85f"))).andDo(print())
+				.content(testUtils.postStoryValidJson(storiesApiConstants.getIdValid()))).andDo(print())
 				.andExpect(status().isCreated());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void postTestInvalidStatusJson() throws Exception {
-		String uri = "/stories/";
-		mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriStories()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
 				.content(testUtils.postStoryInvalidStatusJson())).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Story has an invalid status Json", "/stories/");
+						throw new EntityNotFoundException(storiesApiConstants.getMessageStoryJson(), storiesApiConstants.getPath());
 					}
 				}).andExpect(status().isBadRequest());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void postTestInvalidJson() throws Exception {
-		String uri = "/stories/";
-		mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriStories()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
 				.content(testUtils.postStoryBadJsonFormat())).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Malformed JSON request", "/stories/");
+						throw new EntityNotFoundException(storiesApiConstants.getMessageMalformedJSON(), storiesApiConstants.getPath());
 					}
 				}).andExpect(status().isBadRequest());
 	}
 	
 	@Test()
 	public void getTaskByStoryTest() throws Exception {
-		String uri = "/stories/5e7134c9099a9a0ab248c90b/tasks/6e413de9099a9a0ab248c90c";
-		mockMvc.perform(MockMvcRequestBuilders.get(uri).contentType("6e413de9099a9a0ab248c90c"))
+		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriTask()).contentType("6e413de9099a9a0ab248c90c"))
 				.andExpect(status().isOk());
-		
 	}
 	
 	@Test
 	public void getTasksByStoryTest() throws Exception {
-		String uri = "/stories/5e7134c9099a9a0ab248c90b/tasks/";
-		mockMvc.perform(MockMvcRequestBuilders.get(uri)).andExpect(status().isOk());
+		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriTasks())).andExpect(status().isOk());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void getTaskByIdInvalid() throws Exception {
-		String uri = "/stories/5e7134c9099a9a0ab248c90b/tasks/6e413de9099a9a0ab248c90c";
-		mockMvc.perform(MockMvcRequestBuilders.get(uri)).andDo(new ResultHandler() {
-			
+		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriTaskInvalid())).andDo(new ResultHandler() {
 			@Override
 			public void handle(MvcResult mvcResult) throws Exception {
-				throw new EntityNotFoundException("Task not found", "/tasks/");
+				throw new EntityNotFoundException(storiesApiConstants.getMessageIdTask(), storiesApiConstants.getPathTask());
 				
 			}
 		}).andExpect(status().isNotFound());
@@ -193,22 +178,20 @@ public class ControllerTests {
 	
 	@Test
 	public void postTestTaskValidJson() throws Exception {
-		String uri = "/stories/5e8dc1ba4ce33c0efc555845/tasks";
-		mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriTasks()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.postStoryValidJson("5e8dc1dfc5b47511cff2c88c"))).andDo(print())
+				.content(testUtils.postStoryValidJson(storiesApiConstants.getIdValid()))).andDo(print())
 				.andExpect(status().isCreated());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void postTaskTestInvalidStatusJson() throws Exception {
-		String uri = "/stories/5e8dc1ba4ce33c0efc555845/tasks";
-		mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriTasks()).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
 				.content(testUtils.postStoryInvalidStatusJson())).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException("Story has an invalid status Json", "/stories/5e8dc1ba4ce33c0efc555845/tasks");
+						throw new EntityNotFoundException(storiesApiConstants.getMessageStoryJson(), storiesApiConstants.getPath());
 					}
 				}).andExpect(status().isBadRequest());
 	}
