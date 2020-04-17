@@ -191,7 +191,7 @@ public class StoriesServiceImpl implements StoriesService {
 				}
 			}
 			if(StringUtils.isEmpty(task.getName())) {
-				throw new EntityNotFoundException("name is a required field", HttpStatus.BAD_REQUEST, "/stories/" + id + "/tasks/" + _id);
+				throw new EntityNotFoundException("name is a required field", "400", "/stories/" + id + "/tasks/" + _id);
 			}
 			storyModel = storiesRepository.findById(id).get();
 			List<TaskModel> updatedTasks = new ArrayList<>();
