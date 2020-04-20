@@ -121,7 +121,7 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public void deleteTask(String id, String taskId) throws Exception {
 		if (!storiesRepository.existsById(id)) {
-			throw new EntityNotFoundException("Story with the given id was not found","/stories/");
+			throw new EntityNotFoundException("Story with the given id was not found", HttpStatus.CONFLICT,"/stories/");
 		} else {
 			storyModel = storiesRepository.findById(id).get();
 			List<TaskModel> tasks = storyModel.getTasks();
