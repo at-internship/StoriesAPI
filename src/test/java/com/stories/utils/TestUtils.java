@@ -340,4 +340,44 @@ public class TestUtils {
 		taskModel.setAssignee("TasksModelAssigneeTest");
 		return taskModel;
 	}
+	
+	public static TasksDomain getUpdateTaskDomain() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName("test");
+		tasksDomain.setDescription("");
+		tasksDomain.setStatus("Working");
+		tasksDomain.setComments("comments");
+		tasksDomain.setAssignee(null);
+		return tasksDomain;
+	}
+	
+	public static TasksDomain getUpdateTaskDomainWrongstatus() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName("test");
+		tasksDomain.setDescription("");
+		tasksDomain.setStatus("Wrong");
+		tasksDomain.setComments("comments");
+		tasksDomain.setAssignee(null);
+		return tasksDomain;
+	}
+	
+	public static TasksDomain getUpdateTaskDomainAssignee() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName("test");
+		tasksDomain.setDescription("");
+		tasksDomain.setStatus("Working");
+		tasksDomain.setComments("comments");
+		tasksDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
+		return tasksDomain;
+	}
+	
+	public static TasksDomain getUpdateTaskDomainNameEmpty() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName(null);
+		tasksDomain.setDescription("");
+		tasksDomain.setStatus("Working");
+		tasksDomain.setComments("comments");
+		tasksDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
+		return tasksDomain;
+	}
 }

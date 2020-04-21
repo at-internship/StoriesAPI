@@ -461,9 +461,7 @@ public class ServiceTests {
 	
 	@Test
 	public void updateTaskbyIdHappyPath() throws Exception{
-		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
-		taskDomain.setStatus("Working");
-		taskDomain.setAssignee(null);
+		TasksDomain taskDomain = testUtils.getUpdateTaskDomain();
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(java.util.Optional.of(testUtils.getStoryTaskModel()));
 		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
@@ -478,16 +476,14 @@ public class ServiceTests {
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskByIdStatusValidation() throws Exception{
-		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
+		TasksDomain taskDomain = testUtils.getUpdateTaskDomainWrongstatus();
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskbyIdInvalidAsignee() throws Exception{
-		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
-		taskDomain.setStatus("Working");
-		taskDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
+		TasksDomain taskDomain = testUtils.getUpdateTaskDomainAssignee();
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(usersRepository.existsById(taskDomain.getAssignee())).thenReturn(storiesApiConstants.getBooleanFalse());
 		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
@@ -495,10 +491,7 @@ public class ServiceTests {
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskbyIdNameEmpty() throws Exception{
-		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
-		taskDomain.setName(null);
-		taskDomain.setStatus("Working");
-		taskDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
+		TasksDomain taskDomain = testUtils.getUpdateTaskDomainNameEmpty();
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(usersRepository.existsById(taskDomain.getAssignee())).thenReturn(storiesApiConstants.getBooleanTrue());
 		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
@@ -506,9 +499,7 @@ public class ServiceTests {
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskbyIdInvalidTask() throws Exception{
-		TasksDomain taskDomain = testUtils.getEmptyTasksDomain();
-		taskDomain.setName("Test");
-		taskDomain.setStatus("Working");
+		TasksDomain taskDomain = testUtils.getUpdateTaskDomain();
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(java.util.Optional.of(testUtils.getStoryTaskModel()));
 		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getInvalidId());
