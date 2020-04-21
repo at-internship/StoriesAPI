@@ -403,7 +403,7 @@ public class ServiceTests {
 	@Test(expected = EntityNotFoundException.class)
 	public void getTasksByStoryFail() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
-        .thenReturn(Boolean.FALSE);
+        .thenReturn(storiesApiConstants.getBooleanFalse());
 		
 		Mockito.when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
         .thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath() + unitTestProperties.getUrlId()));
