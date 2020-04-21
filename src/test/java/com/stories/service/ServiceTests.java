@@ -461,58 +461,56 @@ public class ServiceTests {
 	
 	@Test
 	public void updateTaskbyIdHappyPath() throws Exception{
-		TasksDomain taskDomain = new TasksDomain();
-		taskDomain.setName("New Tasks Luis");
+		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
 		taskDomain.setStatus("Working");
+		taskDomain.setAssignee(null);
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(java.util.Optional.of(testUtils.getStoryTaskModel()));
-		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), "5e8cf37b7a605837de2865ad");
+		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskByIdStoryNotFound() throws Exception{
-		TasksDomain taskDomain = new TasksDomain();
+		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanFalse());
-		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), "5e8cf37b7a605837de2865ad");
+		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskByIdStatusValidation() throws Exception{
-		TasksDomain taskDomain = new TasksDomain();
-		taskDomain.setName("New Tasks Luis");
-		taskDomain.setStatus("Wrong status");
+		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), "5e8cf37b7a605837de2865ad");
+		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskbyIdInvalidAsignee() throws Exception{
-		TasksDomain taskDomain = new TasksDomain();
-		taskDomain.setName("New Tasks Luis");
+		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
 		taskDomain.setStatus("Working");
 		taskDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(usersRepository.existsById(taskDomain.getAssignee())).thenReturn(storiesApiConstants.getBooleanFalse());
-		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), "5e8cf37b7a605837de2865ad");
+		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskbyIdNameEmpty() throws Exception{
-		TasksDomain taskDomain = new TasksDomain();
+		TasksDomain taskDomain = testUtils.getDummyTasksDomain();
+		taskDomain.setName(null);
 		taskDomain.setStatus("Working");
 		taskDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(usersRepository.existsById(taskDomain.getAssignee())).thenReturn(storiesApiConstants.getBooleanTrue());
-		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), "5e8cf37b7a605837de2865ad");
+		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateTaskbyIdInvalidTask() throws Exception{
-		TasksDomain taskDomain = new TasksDomain();
-		taskDomain.setName("New Tasks Luis");
+		TasksDomain taskDomain = testUtils.getEmptyTasksDomain();
+		taskDomain.setName("Test");
 		taskDomain.setStatus("Working");
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(java.util.Optional.of(testUtils.getStoryTaskModel()));
-		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), "5e8cf37b7a605837de2865");
+		storiesServiceImpl.updateTaskById(taskDomain, unitTestProperties.getModelId(), storiesApiConstants.getInvalidId());
 	}
 }

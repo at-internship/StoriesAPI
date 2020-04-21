@@ -203,4 +203,18 @@ public class ControllerTests {
 				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid())))
 				.andExpect(status().isOk());
 	}
+	
+
+	@Test(expected = EntityNotFoundException.class)
+	public void putTasktNotFound() throws Exception {
+		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriTaskInvalid()).contentType(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
+				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andDo(new ResultHandler() {
+					@Override
+					public void handle(MvcResult mvcResult) throws Exception {
+						throw new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath());
+					}
+				}).andExpect(status().isNotFound());
+	}
+	
 }

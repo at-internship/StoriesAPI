@@ -13,6 +13,9 @@ public class StoriesApiConstants {
 	final String uriTasks = "/stories/5e7133b6430bf4151ec1e85f/tasks/";
 	
 	final String idValid = "5e7134c9099a9a0ab248c90b";
+	final String ValidPutTaskId = "5e8cf37b7a605837de2865ad";
+	
+	final String InvalidId = "wrong123";
 	
 	final Boolean booleanTrue = true;
 	final Boolean booleanFalse = false;
