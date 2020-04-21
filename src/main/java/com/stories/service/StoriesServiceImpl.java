@@ -174,42 +174,45 @@ public class StoriesServiceImpl implements StoriesService {
 	
 	@Override
 	public TasksDomain updateTaskById(TasksDomain task, String id, String _id) throws Exception {
-		if(storiesRepository.existsById(id)) {
+		if (storiesRepository.existsById(id)) {
 			task.set_id(_id);
-			TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
-			if(taskModel == null) {
-    			throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
-    		}
 			if (!statusTaskValidation(statusArray, task.getStatus())) {
 				throw new EntityNotFoundException(
-		                  "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
-		                  "400","/stories/");
+						"The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.",
+						"400", "/stories/");
 			}
-			if(!StringUtils.isEmpty(task.getAssignee())) {
-				if(!usersRepository.existsById(task.getAssignee())) {
-					throw new EntityNotFoundException("User assignee id does not exist", HttpStatus.CONFLICT, "/stories/" + id + "/tasks/" + _id);
+			if (!StringUtils.isEmpty(task.getAssignee())) {
+				if (!usersRepository.existsById(task.getAssignee())) {
+					throw new EntityNotFoundException("User assignee id does not exist", HttpStatus.CONFLICT,
+							"/stories/" + id + "/tasks/" + _id);
 				}
 			}
-			if(StringUtils.isEmpty(task.getName())) {
-				throw new EntityNotFoundException("name is a required field", "400", "/stories/" + id + "/tasks/" + _id);
+			if (StringUtils.isEmpty(task.getName())) {
+				throw new EntityNotFoundException("name is a required field", "400",
+						"/stories/" + id + "/tasks/" + _id);
 			}
 			storyModel = storiesRepository.findById(id).get();
 			List<TaskModel> updatedTasks = new ArrayList<>();
-			for(TaskModel tasks: storyModel.getTasks()) {
-                if(task.get_id().equals(tasks.get_id())) {
-                    tasks.set_id(task.get_id());
-                    tasks.setName(task.getName());
-                    tasks.setDescription(task.getDescription());
-                    tasks.setStatus(task.getStatus());
-                    tasks.setComments(task.getComments());
-                    tasks.setAssignee(task.getAssignee());    
-                }
-                updatedTasks.add(tasks);   
-            }
+			boolean taskFoundFlag = false;
+			for (TaskModel tasks : storyModel.getTasks()) {
+				if (task.get_id().equals(tasks.get_id())) {
+					tasks.set_id(task.get_id());
+					tasks.setName(task.getName());
+					tasks.setDescription(task.getDescription());
+					tasks.setStatus(task.getStatus());
+					tasks.setComments(task.getComments());
+					tasks.setAssignee(task.getAssignee());
+					taskFoundFlag = true;
+				}
+				updatedTasks.add(tasks);
+			}
+			if (!taskFoundFlag) {
+				throw new EntityNotFoundException("Task not found", "/stories/" + id + "/tasks/" + _id);
+			}
 			storyModel.setTasks(updatedTasks);
 			storiesRepository.save(storyModel);
-    		return task;
-		}else {
+			return task;
+		} else {
 			throw new EntityNotFoundException("Story not found", "/stories/" + id);
 		}
 	}

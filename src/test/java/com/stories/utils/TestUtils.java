@@ -341,6 +341,46 @@ public class TestUtils {
 		return taskModel;
 	}
 	
+	public static TasksDomain getUpdateTaskDomain() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName("test");
+		tasksDomain.setDescription("");
+		tasksDomain.setStatus("Working");
+		tasksDomain.setComments("comments");
+		tasksDomain.setAssignee(null);
+		return tasksDomain;
+	}
+	
+	public static TasksDomain getUpdateTaskDomainWrongstatus() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName("test");
+		tasksDomain.setDescription("");
+		tasksDomain.setStatus("Wrong");
+		tasksDomain.setComments("comments");
+		tasksDomain.setAssignee(null);
+		return tasksDomain;
+	}
+	
+	public static TasksDomain getUpdateTaskDomainAssignee() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName("test");
+		tasksDomain.setDescription("");
+		tasksDomain.setStatus("Working");
+		tasksDomain.setComments("comments");
+		tasksDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
+		return tasksDomain;
+	}
+	
+	public static TasksDomain getUpdateTaskDomainNameEmpty() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.setName(null);
+		tasksDomain.setDescription("");
+		tasksDomain.setStatus("Working");
+		tasksDomain.setComments("comments");
+		tasksDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
+		return tasksDomain;
+  }
+  
 	public static TaskModel getTaskModelId() {
 		TaskModel taskModel = new TaskModel();
 		taskModel.set_id("5e7668cfacfc726352dc5abc");
