@@ -195,4 +195,12 @@ public class ControllerTests {
 					}
 				}).andExpect(status().isBadRequest());
 	}
+	
+	@Test
+	public void putTaskByIdTest() throws Exception{
+		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriTask()).contentType(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
+				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid())))
+				.andExpect(status().isOk());
+	}
 }
