@@ -9,6 +9,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.stories.exception.ApiError;
@@ -61,5 +62,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex) {
 		return buildResponseEntity(
 				new ApiError(ex.getError(), ex.getStatus(), ex.getMessage(), ex.getPath().toString()));
+	}
+	
+	@Override
+	protected ResponseEntity<Object> handleNoHandlerFoundException(
+	  NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+	 
+	    ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, 404 ,"Story not found", ex.getRequestURL());
+	    return new ResponseEntity<Object>(apiError, apiError.getError());
 	}
 }

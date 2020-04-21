@@ -391,5 +391,4 @@ public class TestUtils {
 		dynamicValidationArray.setPath("/stories/");
 		return dynamicValidationArray;
 	}
-	
 }

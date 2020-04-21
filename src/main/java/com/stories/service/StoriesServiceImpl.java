@@ -132,7 +132,6 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public void deleteTask(String id, String taskId) throws Exception {
 		messageDinamicValidation = dynamicValidation.idValidation(id, taskId);
-
 		if (ObjectUtils.isEmpty(messageDinamicValidation.getMessage())) {
 			if (!storiesRepository.existsById(id)) {
 				throw new EntityNotFoundException("Story with the given id was not found", "/stories/");
@@ -275,7 +274,6 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public TasksDomain getTaskById(String id, String _id) throws Exception {
 		messageDinamicValidation = dynamicValidation.idValidation(id, _id);
-
 		if (ObjectUtils.isEmpty(messageDinamicValidation.getMessage())) {
 			if (storiesRepository.existsById(id)) {
 				TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
@@ -301,7 +299,6 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException {
 		messageDinamicValidation = dynamicValidation.idValidation(id, "");
-
 		if (ObjectUtils.isEmpty(messageDinamicValidation.getMessage())) {
 			if (storiesRepository.existsById(id)) {
 				List<TasksDomain> results = storiesCustomRepository.getTasksByStory(id).getMappedResults();
