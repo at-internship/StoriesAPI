@@ -414,7 +414,7 @@ public class ServiceTests {
 	public void getTaskById() throws Exception {
 		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
 		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
-			.thenReturn(Boolean.TRUE);
+			.thenReturn(storiesApiConstants.getBooleanTrue());
 		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
 			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
 		Mockito.doReturn(testUtils.getTaskModelId()).when(aggregationResultsMock).getUniqueMappedResult();
@@ -439,7 +439,7 @@ public class ServiceTests {
 	public void getTaskByIdNoEquals() throws Exception {
 		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
 		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
-			.thenReturn(Boolean.TRUE);
+			.thenReturn(storiesApiConstants.getBooleanTrue());
 		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
 			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
 		Mockito.doReturn(testUtils.getTaskModelId()).when(aggregationResultsMock).getUniqueMappedResult();
@@ -449,7 +449,7 @@ public class ServiceTests {
 			.thenReturn(testUtils.getDummyTasksDomain());
 		when(storiesRepository.findByTasks__id(unitTestProperties.getUrlId()))
 			.thenReturn(testUtils.getDummyTaskModel());
-		assertEquals("5e8dc1ba4ce33c0efc555845", testUtils.getDummyTaskModel().get_id());
+		assertEquals(storiesApiConstants.getSpecificId(), testUtils.getDummyTaskModel().get_id());
 		assertEquals(testUtils.getDummyTasksDomain(), storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()));
 	}
 	
