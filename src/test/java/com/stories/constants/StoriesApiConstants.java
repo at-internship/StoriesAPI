@@ -39,4 +39,6 @@ public class StoriesApiConstants {
 	final String sprintIdValid = "5e827f2f48b0866f87e1cbc2";
 	final String sprintIdInvalid = "5e78f5e792675632e42d1a96";
 	final String messageSprints = "sprints API has no entities";
+	
+	final String specificId = "5e8dc1ba4ce33c0efc555845";
 }

@@ -379,5 +379,22 @@ public class TestUtils {
 		tasksDomain.setComments("comments");
 		tasksDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
 		return tasksDomain;
+  }
+  
+	public static TaskModel getTaskModelId() {
+		TaskModel taskModel = new TaskModel();
+		taskModel.set_id("5e7668cfacfc726352dc5abc");
+		return taskModel;
+	}
+	
+	public static TaskModel getTaskModelNull() {
+		TaskModel taskModel = new TaskModel();
+		taskModel.set_id(null);
+		taskModel.setName("TaskModelTest");
+		taskModel.setDescription("TasksModelDescriptionTest");
+		taskModel.setStatus("TaskModelStatusTest");
+		taskModel.setComments("TasksModelCommentsTest");
+		taskModel.setAssignee("TasksModelAssigneeTest");
+		return taskModel;
 	}
 }

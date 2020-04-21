@@ -413,21 +413,17 @@ public class ServiceTests {
 	@Test
 	public void getTaskById() throws Exception {
 		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
-		TaskModel taskModel = new TaskModel();
-		taskModel.set_id("5e8dc1ba4ce33c0efc555845");
-		TasksDomain tasksDomain = new TasksDomain();
-		tasksDomain.set_id("5e8dc1ba4ce33c0efc555845");
 		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
 			.thenReturn(storiesApiConstants.getBooleanTrue());
 		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
 			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
-		Mockito.doReturn(taskModel).when(aggregationResultsMock).getUniqueMappedResult();
+		Mockito.doReturn(testUtils.getTaskModelId()).when(aggregationResultsMock).getUniqueMappedResult();
 		when(storiesCustomRepository.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
-			.thenReturn(aggregationResultsMock);
-		when(mapperFacade.map(testUtils.getDummyTaskModel(), TasksDomain.class))
+			.thenReturn(aggregationResultsMock);	
+		when(mapperFacade.map(testUtils.getTaskModelId(), TasksDomain.class))
 			.thenReturn(testUtils.getDummyTasksDomain());
-		when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
-			.thenReturn(testUtils.getDummyTasksDomain());
+		when(storiesRepository.findByTasks__id(unitTestProperties.getUrlId()))
+			.thenReturn(testUtils.getTaskModelId());
 		assertEquals(testUtils.getDummyTasksDomain(), storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()));
 	}
 	
@@ -440,21 +436,34 @@ public class ServiceTests {
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
-	public void getTaskByIdTry() throws Exception {
+	public void getTaskByIdNoEquals() throws Exception {
 		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
-		TaskModel taskModel = new TaskModel();
-		TasksDomain tasksDomain = new TasksDomain();
-		tasksDomain.set_id("5e8dc1ba4ce33c0efc555845");
 		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
 			.thenReturn(storiesApiConstants.getBooleanTrue());
 		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
 			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
-		Mockito.doReturn(taskModel).when(aggregationResultsMock).getUniqueMappedResult();
+		Mockito.doReturn(testUtils.getTaskModelId()).when(aggregationResultsMock).getUniqueMappedResult();
+		when(storiesCustomRepository.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+			.thenReturn(aggregationResultsMock);	
+		when(mapperFacade.map(testUtils.getDummyTaskModel(), TasksDomain.class))
+			.thenReturn(testUtils.getDummyTasksDomain());
+		when(storiesRepository.findByTasks__id(unitTestProperties.getUrlId()))
+			.thenReturn(testUtils.getDummyTaskModel());
+		assertEquals(storiesApiConstants.getSpecificId(), testUtils.getDummyTaskModel().get_id());
+		assertEquals(testUtils.getDummyTasksDomain(), storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getTaskByIdTry() throws Exception {
+		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
+		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+			.thenReturn(storiesApiConstants.getBooleanTrue());
+		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
+			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
+		Mockito.doReturn(testUtils.getTaskModelNull()).when(aggregationResultsMock).getUniqueMappedResult();
 		when(storiesCustomRepository.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
 			.thenReturn(aggregationResultsMock);
 		when(mapperFacade.map(testUtils.getDummyTaskModel(), TasksDomain.class))
-			.thenReturn(testUtils.getDummyTasksDomain());
-		when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
 			.thenReturn(testUtils.getDummyTasksDomain());
 		assertEquals(testUtils.getDummyTasksDomain(), storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()));
 	}
