@@ -602,4 +602,44 @@ public class ServiceTests {
 			.thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
 					dynamicValidationArray.getPath()));
 	}
+	
+	@Test
+	public void updateTaskbyIdHappyPath() throws Exception{
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(java.util.Optional.of(testUtils.getStoryTaskModel()));
+		storiesServiceImpl.updateTaskById(testUtils.getUpdateTaskDomain(), unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateTaskByIdStoryNotFound() throws Exception{
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanFalse());
+		storiesServiceImpl.updateTaskById(testUtils.getDummyTasksDomain(), unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateTaskByIdStatusValidation() throws Exception{
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		storiesServiceImpl.updateTaskById(testUtils.getUpdateTaskDomainWrongstatus(), unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateTaskbyIdInvalidAsignee() throws Exception{
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(usersRepository.existsById(testUtils.getUpdateTaskDomainAssignee().getAssignee())).thenReturn(storiesApiConstants.getBooleanFalse());
+		storiesServiceImpl.updateTaskById(testUtils.getUpdateTaskDomainAssignee(), unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateTaskbyIdNameEmpty() throws Exception{
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(usersRepository.existsById(testUtils.getUpdateTaskDomainNameEmpty().getAssignee())).thenReturn(storiesApiConstants.getBooleanTrue());
+		storiesServiceImpl.updateTaskById(testUtils.getUpdateTaskDomainNameEmpty(), unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateTaskbyIdInvalidTask() throws Exception{
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(java.util.Optional.of(testUtils.getStoryTaskModel()));
+		storiesServiceImpl.updateTaskById(testUtils.getUpdateTaskDomain(), unitTestProperties.getModelId(), storiesApiConstants.getInvalidId());
+	}
 }

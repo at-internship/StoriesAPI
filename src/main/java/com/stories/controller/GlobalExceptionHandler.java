@@ -55,7 +55,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-		return new ResponseEntity<>(apiError, apiError.getError());
+		return new ResponseEntity<>(apiError, HttpStatus.valueOf(apiError.getStatus()));
 	}
 
 	@ExceptionHandler({ EntityNotFoundException.class })
@@ -69,6 +69,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	  NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 	 
 	    ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, 404 ,"Story not found", ex.getRequestURL());
-	    return new ResponseEntity<Object>(apiError, apiError.getError());
+	    return new ResponseEntity<Object>(apiError, HttpStatus.valueOf(apiError.getStatus()));
 	}
 }
