@@ -14,6 +14,7 @@ import com.stories.domain.StoryDomain;
 import com.stories.domain.TasksDomain;
 import com.stories.model.StoryModel;
 import com.stories.model.TaskModel;
+import com.stories.validations.DynamicValidationArray;
 
 @Component
 public class TestUtils {
@@ -340,4 +341,55 @@ public class TestUtils {
 		taskModel.setAssignee("TasksModelAssigneeTest");
 		return taskModel;
 	}
+	
+	public static List<TasksDomain> getListTaskDomain() {
+		List<TasksDomain> tasksModel = new ArrayList<>();
+		TasksDomain taskDomain = new TasksDomain();
+		taskDomain.set_id("5e8dc1ba4ce33c0efc555845");
+		taskDomain.setName("TaskModelTest");
+		taskDomain.setDescription("TasksModelDescriptionTest");
+		taskDomain.setStatus("TaskModelStatusTest");
+		taskDomain.setComments("TasksModelCommentsTest");
+		taskDomain.setAssignee("TasksModelAssigneeTest");
+		tasksModel.add(taskDomain);
+		return tasksModel;
+	}
+	
+	public static List<TaskModel> getListTaskModel() {
+		List<TaskModel> tasksModel = new ArrayList<>();
+		TaskModel taskModel = new TaskModel();
+		taskModel.set_id("5e8dc1ba4ce33c0efc555845");
+		taskModel.setName("TaskModelTest");
+		taskModel.setDescription("TasksModelDescriptionTest");
+		taskModel.setStatus("TaskModelStatusTest");
+		taskModel.setComments("TasksModelCommentsTest");
+		taskModel.setAssignee("TasksModelAssigneeTest");
+		tasksModel.add(taskModel);
+		return tasksModel;
+	}
+	
+	public static DynamicValidationArray getDynamicArray() {
+		DynamicValidationArray dynamicValidationArray = new DynamicValidationArray();
+		dynamicValidationArray.setMessage("");
+		dynamicValidationArray.setStatus("");
+		dynamicValidationArray.setPath("");
+		return dynamicValidationArray;
+	}
+	
+	public static DynamicValidationArray getDynamicArrayBadRequest() {
+		DynamicValidationArray dynamicValidationArray = new DynamicValidationArray();
+		dynamicValidationArray.setMessage("");
+		dynamicValidationArray.setStatus("BAD_REQUEST");
+		dynamicValidationArray.setPath("/stories/");
+		return dynamicValidationArray;
+	}
+	
+	public static DynamicValidationArray getDynamicArrayConflict() {
+		DynamicValidationArray dynamicValidationArray = new DynamicValidationArray();
+		dynamicValidationArray.setMessage("");
+		dynamicValidationArray.setStatus("CONFLICT");
+		dynamicValidationArray.setPath("/stories/");
+		return dynamicValidationArray;
+	}
+	
 }

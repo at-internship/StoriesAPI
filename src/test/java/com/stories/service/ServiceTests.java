@@ -12,6 +12,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfigurat
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -38,6 +40,8 @@ import com.stories.repository.UsersRepository;
 import com.stories.sprintsclient.SprintsClient;
 import com.stories.utils.TestUtils;
 import com.stories.utils.UnitTestProperties;
+import com.stories.validations.DynamicValidation;
+import com.stories.validations.DynamicValidationArray;
 
 import ma.glasnost.orika.MapperFacade;
 
@@ -63,17 +67,22 @@ public class ServiceTests {
 
 	@MockBean
 	SprintsClient sprintsClient;
-
+	
+	@MockBean
+	DynamicValidation dynamicValidation;
+	
 	@InjectMocks
 	StoriesServiceImpl storiesServiceImpl;
-
+	
 	private TestUtils testUtils;
 	private StoriesApiConstants storiesApiConstants;
-
+	private DynamicValidationArray dynamicValidationArray;
+	
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		testUtils = new TestUtils();
+		dynamicValidationArray = new DynamicValidationArray();
 		storiesApiConstants = new StoriesApiConstants();
 	}
 
@@ -81,21 +90,47 @@ public class ServiceTests {
     
 	@Test
 	public void getById() throws Exception {
-		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesRepository.findById(unitTestProperties.getUrlId()))
-				.thenReturn(java.util.Optional.of(TestUtils.getDummyStoryModel()));
-		when(mapperFacade.map(testUtils.getStoryModel(), StoryDomain.class))
-				.thenReturn(testUtils.getDummyStoryDomain());
-		when(storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()))
-				.thenReturn(testUtils.getDummyStoryDomain());
-		assertEquals(testUtils.getDummyStoryDomain(), storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()));
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyDomain.get_id(), validation)).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyDomain.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.findById(storiesServiceImpl.storyDomain.get_id()))
+				.thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		when(mapperFacade.map(storiesServiceImpl.storyModel, StoryDomain.class))
+				.thenReturn(storiesServiceImpl.storyDomain);
+		when(storiesServiceImpl.getStoryById(storiesServiceImpl.storyDomain.get_id()))
+				.thenReturn(storiesServiceImpl.storyDomain);
+		assertEquals(storiesServiceImpl.storyDomain, storiesServiceImpl.getStoryById(storiesServiceImpl.storyDomain.get_id()));
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void getByIdException() throws Exception {
-		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(storiesApiConstants.getBooleanFalse());
-		Mockito.when(storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()))
-				.thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath()));
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyDomain.get_id(), validation)).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyDomain.get_id())).thenReturn(storiesApiConstants.getBooleanFalse());
+		Mockito.when(storiesServiceImpl.getStoryById(storiesServiceImpl.storyDomain.get_id()))
+				.thenThrow(new EntityNotFoundException("Story not found", "/stories/"));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getByIdCharactersException() throws Exception {
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyDomain.get_id(), validation)).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyDomain.get_id())).thenReturn(storiesApiConstants.getBooleanFalse());
+		Mockito.when(storiesServiceImpl.getStoryById(storiesServiceImpl.storyDomain.get_id()))
+				.thenThrow(new EntityNotFoundException("Story not found", "/stories/"));
 	}
 
 	@Test
@@ -113,61 +148,74 @@ public class ServiceTests {
 
 	@Test
 	public void updateStory() throws Exception {
-		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		List<TaskModel> tasksModel = TestUtils.getListTaskModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.storyValidation(storiesServiceImpl.storyDomain, storiesServiceImpl.storyDomain.get_id())).thenReturn(dynamicValidationArray);
+		when(storiesServiceImpl.storiesRepository.findById(storiesServiceImpl.storyDomain.get_id())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(testUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
-		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getModelId());
+		when(storiesRepository.existsById(storiesServiceImpl.storyDomain.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class)).thenReturn(storiesServiceImpl.storyModel);
+		storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, storiesServiceImpl.storyDomain.get_id());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void updateUserException() throws Exception {
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArrayConflict();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.storyValidation(storiesServiceImpl.storyDomain, storiesServiceImpl.storyDomain.get_id())).thenReturn(dynamicValidationArray);
 		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanFalse());
-		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
-	}
-
-	@Test(expected = EntityNotFoundException.class)
-	public void updateStorySprintException() throws Exception {
-		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(storiesApiConstants.getBooleanFalse());
-		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
+		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, storiesServiceImpl.storyDomain.get_id())).
+		thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), HttpStatus.CONFLICT,
+				dynamicValidationArray.getPath()));
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void updateStoryIdException() throws Exception {
-		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.storyValidation(storiesServiceImpl.storyDomain, storiesServiceImpl.storyDomain.get_id())).thenReturn(dynamicValidationArray);
+		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanFalse());
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanFalse());
-		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
+		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, storiesServiceImpl.storyDomain.get_id())).
+		thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+				dynamicValidationArray.getPath()));
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void updateStoryStatusException() throws Exception {
-		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
-		storiesServiceImpl.storyDomain.setStatus("incorrect");
 		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
-		storiesServiceImpl.storyModel.setStatus("incorrect");
-		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(sprintsClient.existsSprintById(storiesServiceImpl.storyDomain.getSprint_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
-				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, storiesServiceImpl.storyModel.get_id()))
-				.thenThrow(new EntityNotFoundException(
-						storiesApiConstants.getMessageStatusInvalid(),
-						storiesApiConstants.getVarEmpty(), 
-						storiesApiConstants.getPath()));
-		storiesServiceImpl.createStory(storiesServiceImpl.storyDomain);
-	}
-
-	@Test(expected = EntityNotFoundException.class)
-	public void updateException() throws Exception {
-		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, testUtils.getStoryModel().get_id()))
-				.thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath()));
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.storyValidation(storiesServiceImpl.storyDomain, storiesServiceImpl.storyDomain.get_id())).thenReturn(dynamicValidationArray);
+		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanFalse());
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanFalse());
+		when(storiesServiceImpl.updateStory(storiesServiceImpl.storyDomain, storiesServiceImpl.storyDomain.get_id())).
+		thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+				dynamicValidationArray.getPath()));
 	}
 
 	@Test
 	public void deleteStory() throws Exception {
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), "")).thenReturn(dynamicValidationArray);
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		Mockito.doNothing().when(storiesRepository).deleteById(unitTestProperties.getUrlId());
 		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
@@ -175,118 +223,189 @@ public class ServiceTests {
 
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteStoryException() throws Exception {
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), "")).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(storiesApiConstants.getBooleanFalse());
+		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void deleteStoryCharactersException() throws Exception {
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), "")).thenReturn(dynamicValidationArray);
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(storiesApiConstants.getBooleanFalse());
 		storiesServiceImpl.deleteStory(unitTestProperties.getUrlId());
 	}
 	
 	@Test
 	public void deleteTask() throws Exception {
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
 		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
-		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id())).thenReturn(dynamicValidationArray);
+		Mockito.when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.findById(storiesServiceImpl.storyModel.get_id())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
 		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTaskNotFoundException() throws Exception {
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
 		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
-		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
-		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id()+storiesApiConstants.getPlusError());
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id() + "asd")).thenReturn(dynamicValidationArray);
+		Mockito.when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.findById(storiesServiceImpl.storyModel.get_id())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id() + "asd");
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTaskException() throws Exception {
-		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(storiesApiConstants.getBooleanFalse());
-		storiesServiceImpl.deleteTask(unitTestProperties.getUrlId(), storiesServiceImpl.storyModel.get_id());
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id())).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanFalse());
+		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTaskNullException() throws Exception {
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
 		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
 		List<TaskModel> task = new ArrayList<>();
 		storiesServiceImpl.storyModel.setTasks(task);
-		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), validation)).thenReturn(dynamicValidationArray);
+		Mockito.when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.findById(storiesServiceImpl.storyModel.get_id())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesApiConstants.getVarEmpty());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void deleteTaskCharactersException() throws Exception {
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		String validation="";
+		List<TaskModel> task = new ArrayList<>();
+		storiesServiceImpl.storyModel.setTasks(task);
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), validation)).thenReturn(dynamicValidationArray);
+		Mockito.when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.findById(storiesServiceImpl.storyModel.get_id())).thenReturn(Optional.of(storiesServiceImpl.storyModel));
 		storiesServiceImpl.deleteTask(storiesServiceImpl.storyModel.get_id(), storiesApiConstants.getVarEmpty());
 	}
 	
 	@Test
 	public void createTask() throws Exception{
 		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		TaskModel taskModel = TestUtils.getTasksModel();
 		taskDomain.setName("Taks");
-		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.taskValidation(taskDomain, storiesServiceImpl.storyModel.get_id(),"")).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(usersRepository.existsById(taskDomain.getAssignee())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesRepository.findById(unitTestProperties.getModelId()))
-		.thenReturn(java.util.Optional.of(TestUtils.getStoryModel()));
-		when(mapperFacade.map(taskDomain, TaskModel.class)).thenReturn(TestUtils.getTasksModel());
-		when(storiesRepository.save(TestUtils.getStoryModel())).thenReturn(TestUtils.getStoryModel());
-		storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId());
+		.thenReturn(Optional.of(storiesServiceImpl.storyModel));
+		when(mapperFacade.map(taskDomain, TaskModel.class)).thenReturn(taskModel);
+		when(storiesRepository.save(storiesServiceImpl.storyModel)).thenReturn(storiesServiceImpl.storyModel);
+		storiesServiceImpl.createTask(taskDomain, storiesServiceImpl.storyModel.get_id());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void createTaskStoryExistException() throws Exception{
-		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanFalse());
-		when(storiesServiceImpl.createTask(TestUtils.getTasksDomain(), unitTestProperties.getModelId())).
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.taskValidation(taskDomain, storiesServiceImpl.storyModel.get_id(),"")).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanFalse());
+		when(storiesServiceImpl.createTask(taskDomain, storiesServiceImpl.storyModel.get_id())).
 			thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), HttpStatus.CONFLICT,storiesApiConstants.getPath()));
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void createTaskNameException() throws Exception{
-		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesServiceImpl.createTask(TestUtils.getTasksDomain(), unitTestProperties.getModelId())).
-		thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageName(),storiesApiConstants.getNumbreError(),storiesApiConstants.getPath()));
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.taskValidation(taskDomain, storiesServiceImpl.storyModel.get_id(),"")).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesServiceImpl.createTask(taskDomain, storiesServiceImpl.storyModel.get_id())).
+			thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+					dynamicValidationArray.getPath()));
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void createTaskUserExistException() throws Exception{
 		TasksDomain taskDomain = TestUtils.getTasksDomain();
-		taskDomain.setName("Taks");
-		taskDomain.setAssignee("ss");
-		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(usersRepository.existsById(TestUtils.getDummyTasksDomain().getAssignee())).thenReturn(storiesApiConstants.getBooleanFalse());
-		when(storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId())).
-			thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), HttpStatus.CONFLICT,storiesApiConstants.getPath()));
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArrayConflict();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.taskValidation(taskDomain, storiesServiceImpl.storyModel.get_id(),"")).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesServiceImpl.createTask(taskDomain, storiesServiceImpl.storyModel.get_id())).
+			thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+					dynamicValidationArray.getPath()));
 	}
 	
-	@Test(expected = EntityNotFoundException.class)
-	public void createTaskStatusException() throws Exception{
-		TasksDomain taskDomain = TestUtils.getTasksDomain();
-		taskDomain.setName("Taks");
-		taskDomain.setStatus("error");
-		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(usersRepository.existsById(TestUtils.getDummyTasksDomain().getAssignee())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId())).
-			thenThrow(new EntityNotFoundException(
-					storiesApiConstants.getMessageStatusInvalid(),
-					storiesApiConstants.getNumbreError(),
-					storiesApiConstants.getPath()));
-	}
-
 	@Test
 	public void createStory() throws Exception {
-		when(mapperFacade.map(TestUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
-		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesRepository.save(TestUtils.getStoryModel())).thenReturn(testUtils.getStoryModel());
-		assertEquals(unitTestProperties.getUrlId(), storiesServiceImpl.createStory(TestUtils.getStoryDomain()));
+		String validation="";
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		storiesServiceImpl.storyDomain.setName("validation");
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.startDate(storiesServiceImpl.storyDomain.getStart_date())).thenReturn(storiesServiceImpl.storyDomain.getStart_date());
+		when(dynamicValidation.startDate(storiesServiceImpl.storyDomain.getDue_date())).thenReturn(storiesServiceImpl.storyDomain.getDue_date());
+		when(dynamicValidation.storyValidation(storiesServiceImpl.storyDomain, validation)).thenReturn(dynamicValidationArray);
+		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class)).thenReturn(storiesServiceImpl.storyModel);
+		when(storiesRepository.save(storiesServiceImpl.storyModel)).thenReturn(storiesServiceImpl.storyModel);
+		when(dynamicValidation.nameValidation(storiesServiceImpl.storyModel)).thenReturn(storiesServiceImpl.storyModel);
+		
+		assertEquals(unitTestProperties.getModelId(), storiesServiceImpl.createStory(storiesServiceImpl.storyDomain));
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void createStoryException() throws Exception {
+		String validation="";
 		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
 		storiesServiceImpl.storyDomain.setStatus("incorrect");
 		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
 		storiesServiceImpl.storyModel.setStatus("incorrect");
-		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(sprintsClient.existsSprintById(storiesServiceImpl.storyDomain.getSprint_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
-				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
-				storiesApiConstants.getMessageStatusInvalid(),
-				storiesApiConstants.getVarEmpty(), 
-				storiesApiConstants.getPath()));
-		storiesServiceImpl.createStory(storiesServiceImpl.storyDomain);
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.startDate(storiesServiceImpl.storyDomain.getStart_date())).thenReturn(storiesServiceImpl.storyDomain.getStart_date());
+		when(dynamicValidation.startDate(storiesServiceImpl.storyDomain.getDue_date())).thenReturn(storiesServiceImpl.storyDomain.getDue_date());
+		when(dynamicValidation.storyValidation(storiesServiceImpl.storyDomain, validation)).thenReturn(dynamicValidationArray);
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+				dynamicValidationArray.getPath()));
 	}
 
 	@Test(expected = EntityNotFoundException.class)
@@ -295,167 +414,174 @@ public class ServiceTests {
 		storiesServiceImpl.storyDomain.setSprint_id("incorrect");
 		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
 		storiesServiceImpl.storyModel.setSprint_id("incorrect");
-		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
-				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain))
-				.thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageSprintId(), storiesApiConstants.getPath()));
-		storiesServiceImpl.createStory(storiesServiceImpl.storyDomain);
+		
+		String validation="";
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		storiesServiceImpl.storyDomain.setStatus("incorrect");
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyModel.setStatus("incorrect");
+		dynamicValidationArray = TestUtils.getDynamicArrayConflict();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.startDate(storiesServiceImpl.storyDomain.getStart_date())).thenReturn(storiesServiceImpl.storyDomain.getStart_date());
+		when(dynamicValidation.startDate(storiesServiceImpl.storyDomain.getDue_date())).thenReturn(storiesServiceImpl.storyDomain.getDue_date());
+		when(dynamicValidation.storyValidation(storiesServiceImpl.storyDomain, validation)).thenReturn(dynamicValidationArray);
+		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+				dynamicValidationArray.getPath()));
 	}
 
-	@Test(expected = EntityNotFoundException.class)
-	public void createStoryNameInvalid() throws Exception {
-		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
-		storiesServiceImpl.storyDomain.setName("");
-		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
-		storiesServiceImpl.storyModel.setName("");
-		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
-				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
-				storiesApiConstants.getMessageName(),
-				storiesApiConstants.getVarEmpty(),
-				storiesApiConstants.getPath()));
-	}
-
-	@Test(expected = EntityNotFoundException.class)
-	public void createStoryStatusInvalid() throws Exception {
-		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
-		storiesServiceImpl.storyDomain.setStatus("");
-		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
-		storiesServiceImpl.storyModel.setStatus("");
-		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
-				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
-				storiesApiConstants.getMessageName(), 
-				storiesApiConstants.getVarEmpty(), 
-				storiesApiConstants.getPath()));
-	}
-
-	@Test(expected = EntityNotFoundException.class)
-	public void createStartDateNull() throws Exception {
-		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
-		storiesServiceImpl.storyDomain.setStart_date(null);
-		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
-		storiesServiceImpl.storyModel.setStart_date(null);
-		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
-				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
-				storiesApiConstants.getMessageName(), 
-				storiesApiConstants.getVarEmpty(), 
-				storiesApiConstants.getPath()));
-	}
-
-	@Test(expected = EntityNotFoundException.class)
-	public void createPointsProggresNegative() throws Exception {
-		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
-		storiesServiceImpl.storyDomain.setPoints(-1);
-		storiesServiceImpl.storyDomain.setProgress(-1);
-		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
-		storiesServiceImpl.storyModel.setPoints(-1);
-		storiesServiceImpl.storyModel.setProgress(-1);
-		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(sprintsClient.existsSprintById(storiesServiceImpl.storyDomain.getSprint_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
-				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
-				storiesApiConstants.getMessageName(), 
-				storiesApiConstants.getVarEmpty(), 
-				storiesApiConstants.getPath()));
-	}
-
-	@Test(expected = EntityNotFoundException.class)
-	public void createPointsProgressInvalid() throws Exception {
-		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
-		storiesServiceImpl.storyDomain.setPoints(123);
-		storiesServiceImpl.storyDomain.setProgress(123);
-		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
-		storiesServiceImpl.storyModel.setPoints(123);
-		storiesServiceImpl.storyModel.setProgress(123);
-		when(usersRepository.existsById(storiesServiceImpl.storyDomain.getAssignee_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(sprintsClient.existsSprintById(storiesServiceImpl.storyDomain.getSprint_id())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(mapperFacade.map(storiesServiceImpl.storyDomain, StoryModel.class))
-				.thenReturn(storiesServiceImpl.storyModel);
-		when(storiesServiceImpl.createStory(storiesServiceImpl.storyDomain)).thenThrow(new EntityNotFoundException(
-				storiesApiConstants.getMessageName(), 
-				storiesApiConstants.getVarEmpty(), 
-				storiesApiConstants.getPath()));
-	}
-	
 	@Test 
 	public void getTasksByStory() throws Exception {
+		String validation="";
+		List<TasksDomain> listTasks = TestUtils.getTasksDomainList();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		storiesServiceImpl.storyDomain.setStatus("incorrect");
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyModel.setStatus("incorrect");
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
 		AggregationResults <TasksDomain> aggregationResultsMock = Mockito.mock(AggregationResults.class);
         Aggregation aggregateMock = Mockito.mock(Aggregation.class);
         
-        when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(storiesApiConstants.getBooleanTrue());
+        when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), validation)).thenReturn(dynamicValidationArray);
+        when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id())).thenReturn(storiesApiConstants.getBooleanTrue());
         Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
         .aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TasksDomain.class));        
-        Mockito.doReturn(testUtils.getTasksDomainList()).when(aggregationResultsMock).getMappedResults();        
-        when(storiesCustomRepository.getTasksByStory(unitTestProperties.getUrlId())).thenReturn(aggregationResultsMock);        
-       when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
-       .thenReturn(testUtils.getTasksDomainList());
+        Mockito.doReturn(listTasks).when(aggregationResultsMock).getMappedResults();        
+        when(storiesCustomRepository.getTasksByStory(storiesServiceImpl.storyModel.get_id())).thenReturn(aggregationResultsMock);        
+       when(storiesServiceImpl.getTasksByStory(storiesServiceImpl.storyModel.get_id()))
+       .thenReturn(listTasks);
         
-    assertEquals(testUtils.getTasksDomainList(), storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()));
+    assertEquals(listTasks, storiesServiceImpl.getTasksByStory(storiesServiceImpl.storyModel.get_id()));
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void getTasksByStoryFail() throws Exception {
+		String validation="";
+		List<TasksDomain> listTasks = TestUtils.getTasksDomainList();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		storiesServiceImpl.storyDomain.setStatus("incorrect");
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyModel.setStatus("incorrect");
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), validation)).thenReturn(dynamicValidationArray);
 		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
         .thenReturn(storiesApiConstants.getBooleanFalse());
-		
 		Mockito.when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
         .thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath() + unitTestProperties.getUrlId()));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getTasksByStoryCharacters() throws Exception {
+		String validation="";
+		List<TasksDomain> listTasks = TestUtils.getTasksDomainList();
+		storiesServiceImpl.storyDomain = TestUtils.getStoryDomain();
+		storiesServiceImpl.storyDomain.setStatus("incorrect");
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		storiesServiceImpl.storyModel.setStatus("incorrect");
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
 		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), validation)).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+        .thenReturn(storiesApiConstants.getBooleanFalse());
+		Mockito.when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
+        .thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+				dynamicValidationArray.getPath()));
 	}
 	
 	@Test
 	public void getTaskById() throws Exception {
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		dynamicValidationArray = TestUtils.getDynamicArray();
 		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
 		TaskModel taskModel = new TaskModel();
 		taskModel.set_id("5e8dc1ba4ce33c0efc555845");
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.set_id("5e8dc1ba4ce33c0efc555845");
-		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id())).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id()))
 			.thenReturn(storiesApiConstants.getBooleanTrue());
 		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
 			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
 		Mockito.doReturn(taskModel).when(aggregationResultsMock).getUniqueMappedResult();
-		when(storiesCustomRepository.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+		when(storiesCustomRepository.getTaskById(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id()))
 			.thenReturn(aggregationResultsMock);
-		when(mapperFacade.map(testUtils.getDummyTaskModel(), TasksDomain.class))
-			.thenReturn(testUtils.getDummyTasksDomain());
-		when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
-			.thenReturn(testUtils.getDummyTasksDomain());
-		assertEquals(testUtils.getDummyTasksDomain(), storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()));
+		when(mapperFacade.map(taskModel, TasksDomain.class))
+			.thenReturn(tasksDomain);
+		when(storiesServiceImpl.getTaskById(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id()))
+			.thenReturn(tasksDomain);
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void getTaskByIdNoStory() throws Exception {
-		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id())).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id()))
 		.thenReturn(storiesApiConstants.getBooleanFalse());
-		Mockito.when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
-			.thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath() + unitTestProperties.getUrlId()));
+		Mockito.when(storiesServiceImpl.getTaskById(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id()))
+			.thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath() + storiesServiceImpl.storyModel.get_id()));
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void getTaskByIdTry() throws Exception {
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		storiesServiceImpl.storyModel = TestUtils.getStoryModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArray();
+		
 		AggregationResults<TaskModel> aggregationResultsMock = Mockito.mock(AggregationResults.class);
 		TaskModel taskModel = new TaskModel();
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.set_id("5e8dc1ba4ce33c0efc555845");
-		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), validation)).thenReturn(dynamicValidationArray);
+		when(storiesRepository.existsById(storiesServiceImpl.storyModel.get_id()))
 			.thenReturn(storiesApiConstants.getBooleanTrue());
 		Mockito.doReturn(aggregationResultsMock).when(mongoTemplate)
 			.aggregate(Mockito.any(Aggregation.class), Mockito.eq("stories"), Mockito.eq(TaskModel.class));
 		Mockito.doReturn(taskModel).when(aggregationResultsMock).getUniqueMappedResult();
-		when(storiesCustomRepository.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+		when(storiesCustomRepository.getTaskById(storiesServiceImpl.storyModel.get_id(), validation))
 			.thenReturn(aggregationResultsMock);
-		when(mapperFacade.map(testUtils.getDummyTaskModel(), TasksDomain.class))
-			.thenReturn(testUtils.getDummyTasksDomain());
-		when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
-			.thenReturn(testUtils.getDummyTasksDomain());
-		assertEquals(testUtils.getDummyTasksDomain(), storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()));
+		when(mapperFacade.map(storiesServiceImpl.storyModel, TasksDomain.class))
+			.thenReturn(tasksDomain);
+		when(storiesServiceImpl.getTaskById(storiesServiceImpl.storyModel.get_id(), validation))
+			.thenReturn(tasksDomain);
+		assertEquals(tasksDomain, storiesServiceImpl.getTaskById(storiesServiceImpl.storyModel.get_id(), validation));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getTaskByIdCharacters() throws Exception {
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id())).thenReturn(dynamicValidationArray);
+		Mockito.when(storiesServiceImpl.getTaskById(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id()))
+			.thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+					dynamicValidationArray.getPath()));
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void getTaskByIdUser() throws Exception {
+		TasksDomain taskDomain = TestUtils.getTasksDomain();
+		storiesServiceImpl.storyModel = TestUtils.getStoryTaskModel();
+		String validation="";
+		dynamicValidationArray = TestUtils.getDynamicArrayBadRequest();
+		dynamicValidationArray.setMessage("asd");
+		
+		when(dynamicValidation.idValidation(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id())).thenReturn(dynamicValidationArray);
+		Mockito.when(storiesServiceImpl.getTaskById(storiesServiceImpl.storyModel.get_id(), storiesServiceImpl.storyModel.getTasks().get(0).get_id()))
+			.thenThrow(new EntityNotFoundException(dynamicValidationArray.getMessage().toString(), "",
+					dynamicValidationArray.getPath()));
 	}
 }
