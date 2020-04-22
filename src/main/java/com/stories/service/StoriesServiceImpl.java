@@ -423,10 +423,10 @@ public class StoriesServiceImpl implements StoriesService {
 	      	}
         }
         if(countValidationPositive > 1) {
-        	mensaggeDinamicValidation[0] = "the following fields have special characters: " + validationRespons;
+        	mensaggeDinamicValidation[0] = "We're not handling special characters, please provide a proper value in the following fields: " + validationRespons;
   		}
   		else if(countValidationPositive == 1){
-  			mensaggeDinamicValidation[0] = "the next field have special characters: " + validationRespons;
+  			mensaggeDinamicValidation[0] = "We're not handling special characters, please provide a proper value in the next field: " + validationRespons;
   		}
 
         if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
@@ -558,10 +558,10 @@ public class StoriesServiceImpl implements StoriesService {
 		      	}
 	        }
 	        if(countValidationPositive > 1) {
-	  			validationRespons = "The following fields have special characters: " + validationRespons;
+	  			validationRespons = "We're not handling special characters, please provide a proper value in the following fields: " + validationRespons;
 	  		}
 	  		else if(countValidationPositive == 1){
-	  			validationRespons = "The next field have special characters: " + validationRespons;
+	  			validationRespons = "We're not handling special characters, please provide a proper value in the next field: " + validationRespons;
 	  		}
 	        
 		return validationRespons;
