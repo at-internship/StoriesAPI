@@ -63,12 +63,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return buildResponseEntity(
 				new ApiError(ex.getError(), ex.getStatus(), ex.getMessage(), ex.getPath().toString()));
 	}
-	
-	@Override
-	protected ResponseEntity<Object> handleNoHandlerFoundException(
-	  NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-	 
-	    ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, 404 ,"Story not found", ex.getRequestURL());
-	    return new ResponseEntity<Object>(apiError, HttpStatus.valueOf(apiError.getStatus()));
-	}
 }
