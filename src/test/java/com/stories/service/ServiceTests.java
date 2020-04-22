@@ -114,6 +114,7 @@ public class ServiceTests {
 	@Test
 	public void updateStory() throws Exception {
 		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(TestUtils.getStoryModel()));
 		when(sprintsClient.existsSprintById(unitTestProperties.getSprintClientId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(mapperFacade.map(testUtils.getStoryDomain(), StoryModel.class)).thenReturn(testUtils.getStoryModel());
@@ -125,7 +126,19 @@ public class ServiceTests {
 		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanFalse());
 		storiesServiceImpl.updateStory(testUtils.getStoryDomain(), unitTestProperties.getUrlId());
 	}
-
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateStorykSpecialChar() throws Exception {
+		when(storiesServiceImpl.updateStory(testUtils.getStoryDomainSpecialChar(), unitTestProperties.getDomainId())).thenThrow(new EntityNotFoundException("The next field have special characters: Status", "", "/stories/"));
+		storiesServiceImpl.updateStory(testUtils.getStoryDomainSpecialChar(), unitTestProperties.getDomainId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateStorySpecialsChars() throws Exception {
+		when(storiesServiceImpl.updateStory(testUtils.getStoryDomainSpecialsChars(), unitTestProperties.getDomainId())).thenThrow(new EntityNotFoundException("The next field have special characters: Status, assignee", "", "/stories/"));
+		storiesServiceImpl.updateStory(testUtils.getStoryDomainSpecialsChars(), unitTestProperties.getDomainId());
+	}
+	
 	@Test(expected = EntityNotFoundException.class)
 	public void updateStorySprintException() throws Exception {
 		when(usersRepository.existsById(unitTestProperties.getModelAssigneeId())).thenReturn(storiesApiConstants.getBooleanTrue());
@@ -222,6 +235,18 @@ public class ServiceTests {
 		when(mapperFacade.map(taskDomain, TaskModel.class)).thenReturn(TestUtils.getTasksModel());
 		when(storiesRepository.save(TestUtils.getStoryModel())).thenReturn(TestUtils.getStoryModel());
 		storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void createTaskSpecialChar() throws Exception {
+		when(storiesServiceImpl.createTask(testUtils.getTaskDomainSpecialChar(), unitTestProperties.getModelId())).thenThrow(new EntityNotFoundException("The next field have special characters: Status", "", "/stories/"));
+		storiesServiceImpl.createTask(testUtils.getTaskDomainSpecialChar(), unitTestProperties.getModelId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void createTaskSpecialsChars() throws Exception {
+		when(storiesServiceImpl.createTask(testUtils.getTaskDomainSpecialsChars(), unitTestProperties.getModelId())).thenThrow(new EntityNotFoundException("The next field have special characters: Status, assignee", "", "/stories/"));
+		storiesServiceImpl.createTask(testUtils.getTaskDomainSpecialsChars(), unitTestProperties.getModelId());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
@@ -473,6 +498,18 @@ public class ServiceTests {
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(java.util.Optional.of(testUtils.getStoryTaskModel()));
 		storiesServiceImpl.updateTaskById(testUtils.getUpdateTaskDomain(), unitTestProperties.getModelId(), storiesApiConstants.getValidPutTaskId());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateStorySpecialChar() throws Exception {
+		when(storiesServiceImpl.updateTaskById(testUtils.getTaskDomainSpecialChar(), unitTestProperties.getModelId(), testUtils.getTaskModelId().get_id())).thenThrow(new EntityNotFoundException("The next field have special characters: Status", "", "/stories/"));
+		storiesServiceImpl.updateTaskById(testUtils.getTaskDomainSpecialChar(), unitTestProperties.getModelId(), testUtils.getTaskModelId().get_id());
+	}
+	
+	@Test(expected = EntityNotFoundException.class)
+	public void updateTaskSpecialsChars() throws Exception {
+		when(storiesServiceImpl.updateTaskById(testUtils.getTaskDomainSpecialsChars(), unitTestProperties.getModelId(), testUtils.getTaskModelId().get_id())).thenThrow(new EntityNotFoundException("The next field have special characters: Status, assignee", "", "/stories/"));
+		storiesServiceImpl.updateTaskById(testUtils.getTaskDomainSpecialsChars(), unitTestProperties.getModelId(), testUtils.getTaskModelId().get_id());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)

@@ -43,9 +43,11 @@ public class StoriesServiceImpl implements StoriesService {
 	private MapperFacade mapperFacade;
 
 	String[] statusArray = { "Refining", "Ready to Work", "Working", "Testing", "Ready to Accept", "Accepted" };
-	String[] DomainValidation = { "Sprint_id", "Technology", "Description", "Acceptance_criteria", "Points", "Progress",
-			"Notes", "Comments", "Start_date", "Due_date", "Priority", "Assignee_id", "History" };
+	String[] storyDomainValidation = { "Story_id", "Sprint_id", "Status", "Priority", "Assignee_id" };
+	String[] taskDomainValidation = { "Story_id", "Task_id", "Status", "assignee" };
 	int[] pointsArray = { 0, 1, 2, 3, 5 };
+	String[] specialCharacters = {"?","!","(",")","$","&","/","@","^",">","<","|","#",";",":","[","]","{","}","+","*","¨","¿","-","=","%",",","'",".","_","°","~"};
+	
 	StoryModel storyModel = new StoryModel();
 	List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 	StoryDomain storyDomain = new StoryDomain();
@@ -58,7 +60,7 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
 		storyDomain.setStart_date(dateValidation(storyDomain.getStart_date()));
-		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain);
+		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain, "");
 
 		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
 			storyModel = mapperFacade.map(storyDomain, StoryModel.class);
@@ -81,6 +83,11 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public String createTask(TasksDomain taskDomain, String id) throws Exception {
 		TaskModel taskModel = new TaskModel();
+		String mensaggeDinamicValidation = TaskSpecialCharacterValidation(taskDomain, id, "");
+		
+		if(!StringUtils.isEmpty(mensaggeDinamicValidation)) {
+			throw new EntityNotFoundException(mensaggeDinamicValidation, "", "/stories/");
+		}
 		   if(storiesRepository.existsById(id)) {
 			   if(!StringUtils.isEmpty(taskDomain.getName())) {  
 			      if (userNullTaskValidation(taskDomain.getAssignee())) {
@@ -146,12 +153,14 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public StoryDomain updateStory(StoryDomain storyDomain, String id) throws Exception {
 		storyDomain.setStart_date(dateValidation(storyDomain.getStart_date()));
-		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain);
+		String[] mensaggeDinamicValidation = dynamicValidation(storyDomain, id);
 
 		if (StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
 			if (storiesRepository.existsById(id)) {
+				List<TaskModel> tasksModel = storiesRepository.findById(id).get().getTasks();
 				storyModel = mapperFacade.map(storyDomain, StoryModel.class);
 				storyModel.set_id(id);
+				storyModel.setTasks(tasksModel);
 				nameValidation(storyModel);
 				storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
 				logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
@@ -174,6 +183,11 @@ public class StoriesServiceImpl implements StoriesService {
 	
 	@Override
 	public TasksDomain updateTaskById(TasksDomain task, String id, String _id) throws Exception {
+		String mensaggeDinamicValidation = TaskSpecialCharacterValidation(task, id, _id);
+		
+		if(!StringUtils.isEmpty(mensaggeDinamicValidation)) {
+			throw new EntityNotFoundException(mensaggeDinamicValidation, "", "/stories/");
+		}
 		if (storiesRepository.existsById(id)) {
 			task.set_id(_id);
 			if (!statusTaskValidation(statusArray, task.getStatus())) {
@@ -375,11 +389,19 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 	}
 
-	private String[] dynamicValidation(StoryDomain storyDomain) {
+	private String[] dynamicValidation(StoryDomain storyDomain, String storyId) {
 		String[] mensaggeDinamicValidation = { "", "" , ""};
         String validationRespons = "";
         String[] validationPath = { "/Sprints/", "/StoryDomain/", "/Users/", "/stories/" };
-
+        int countValidationPositive = 0;
+        
+        List<String> domainList = new ArrayList<>();
+        domainList.add(storyId);
+        domainList.add(storyDomain.getSprint_id());
+        domainList.add(storyDomain.getStatus());
+        domainList.add(storyDomain.getPriority());
+        domainList.add(storyDomain.getAssignee_id());
+        
         validationRespons = nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
         if (!StringUtils.isEmpty(validationRespons)) {
             mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
@@ -388,6 +410,31 @@ public class StoriesServiceImpl implements StoriesService {
             return mensaggeDinamicValidation;
         }
 
+        validationRespons = "";
+        for(int i= 0; i < domainList.size(); i++) {
+	      	if(specialCharacterValidation(domainList.get(i))) {
+	      		countValidationPositive++;
+	      		if (StringUtils.isEmpty(validationRespons)) {
+	      			validationRespons = storyDomainValidation[i];
+	            }
+	      		else {
+	      			validationRespons = validationRespons + ", " + storyDomainValidation[i];
+	      		}
+	      	}
+        }
+        if(countValidationPositive > 1) {
+        	mensaggeDinamicValidation[0] = "We're not handling special characters, please provide a proper value in the following fields: " + validationRespons;
+  		}
+  		else if(countValidationPositive == 1){
+  			mensaggeDinamicValidation[0] = "We're not handling special characters, please provide a proper value in the next field: " + validationRespons;
+  		}
+
+        if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
+        	mensaggeDinamicValidation[1] = "/stories/";
+        	mensaggeDinamicValidation[2] = "BAD_REQUEST";
+        	return mensaggeDinamicValidation;
+        }
+        
         if((!StringUtils.isEmpty(storyDomain.getSprint_id())) || (!StringUtils.isEmpty(storyDomain.getAssignee_id()))) {
             validationRespons = sprintNullValidation(storyDomain.getSprint_id());
             if (!StringUtils.isEmpty(validationRespons)) {
@@ -474,5 +521,49 @@ public class StoriesServiceImpl implements StoriesService {
 		}else {
 		return Arrays.asList(statusArray).contains(status);
 		}
+	}
+	
+	private boolean specialCharacterValidation(String string) {
+		for (int i = 0; i < specialCharacters.length; i++) {
+           if(!StringUtils.isEmpty(string)) {
+        	   if (string.toString().indexOf(specialCharacters[i]) == -1) {
+               	
+               } else {
+               	return true;
+               }
+           }
+        }
+		return false;
+	}
+	
+	private String TaskSpecialCharacterValidation(TasksDomain task, String storyId, String taskId) {
+		int countValidationPositive = 0;
+        String validationRespons = "";
+        
+		List<String> domainList = new ArrayList<>();
+        domainList.add(storyId);
+        domainList.add(taskId);
+        domainList.add(task.getStatus());
+        domainList.add(task.getAssignee());
+	
+	        for(int i= 0; i < domainList.size(); i++) {
+		      	if(specialCharacterValidation(domainList.get(i))) {
+		      		countValidationPositive++;
+		      		if (StringUtils.isEmpty(validationRespons)) {
+		      			validationRespons = taskDomainValidation[i];
+		            }
+		      		else {
+		      			validationRespons = validationRespons + ", " + taskDomainValidation[i];
+		      		}
+		      	}
+	        }
+	        if(countValidationPositive > 1) {
+	  			validationRespons = "We're not handling special characters, please provide a proper value in the following fields: " + validationRespons;
+	  		}
+	  		else if(countValidationPositive == 1){
+	  			validationRespons = "We're not handling special characters, please provide a proper value in the next field: " + validationRespons;
+	  		}
+	        
+		return validationRespons;
 	}
 }
