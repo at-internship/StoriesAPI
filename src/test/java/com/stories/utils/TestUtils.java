@@ -397,4 +397,76 @@ public class TestUtils {
 		taskModel.setAssignee("TasksModelAssigneeTest");
 		return taskModel;
 	}
+	
+	public static TasksDomain getTaskDomainSpecialChar() {
+		TasksDomain taskDomain = new TasksDomain();
+		taskDomain.set_id("5e8dc1ba4ce33c0efc555845");
+		taskDomain.setName("TaskModelTest");
+		taskDomain.setDescription("TasksModelDescriptionTest");
+		taskDomain.setStatus("TaskModelStatusTest_");
+		taskDomain.setComments("TasksModelCommentsTest");
+		taskDomain.setAssignee("TasksModelAssigneeTest");
+		return taskDomain;
+	}
+	
+	public static TasksDomain getTaskDomainSpecialsChars() {
+		TasksDomain taskDomain = new TasksDomain();
+		taskDomain.set_id("5e8dc1ba4ce33c0efc555845");
+		taskDomain.setName("TaskModelTest");
+		taskDomain.setDescription("TasksModelDescriptionTest");
+		taskDomain.setStatus("TaskModelStatusTest_");
+		taskDomain.setComments("TasksModelCommentsTest");
+		taskDomain.setAssignee("TasksModelAssigneeTest_");
+		return taskDomain;
+	}
+	
+	public static StoryDomain getStoryDomainSpecialsChars() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(unitTestProperties.domainPoints);
+		storyDomain.setProgress(unitTestProperties.domainProgress);
+		storyDomain.setStatus(unitTestProperties.domainStatus+"_");
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId+"_");
+		storyDomain.setHistory(historyList);
+
+		return storyDomain;
+	}
+	
+	public static StoryDomain getStoryDomainSpecialChar() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(unitTestProperties.domainPoints);
+		storyDomain.setProgress(unitTestProperties.domainProgress);
+		storyDomain.setStatus(unitTestProperties.domainStatus+"_");
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+
+		return storyDomain;
+	}
 }
