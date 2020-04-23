@@ -227,11 +227,13 @@ public class ServiceTests {
 	@Test
 	public void createTask() throws Exception{
 		TasksDomain taskDomain = TestUtils.getTasksDomain();
-		taskDomain.setName("Taks");
+//		taskDomain.setName("Taks");
+		taskDomain.setStatus("Working");
+		taskDomain.setAssignee("");
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(usersRepository.existsById(taskDomain.getAssignee())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesRepository.findById(unitTestProperties.getModelId()))
-		.thenReturn(java.util.Optional.of(TestUtils.getStoryModel()));
+		.thenReturn(Optional.of(TestUtils.getStoryModel()));
 		when(mapperFacade.map(taskDomain, TaskModel.class)).thenReturn(TestUtils.getTasksModel());
 		when(storiesRepository.save(TestUtils.getStoryModel())).thenReturn(TestUtils.getStoryModel());
 		storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId());
@@ -251,15 +253,23 @@ public class ServiceTests {
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void createTaskStoryExistException() throws Exception{
+		TasksDomain task = testUtils.getTasksDomain();
+		task.setName("");
+		task.setAssignee("");
+		task.setStatus("Working");
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanFalse());
-		when(storiesServiceImpl.createTask(TestUtils.getTasksDomain(), unitTestProperties.getModelId())).
+		when(storiesServiceImpl.createTask(task, unitTestProperties.getModelId())).
 			thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageStory(), HttpStatus.CONFLICT,storiesApiConstants.getPath()));
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void createTaskNameException() throws Exception{
+		TasksDomain task = testUtils.getTasksDomain();
+		task.setName("");
+		task.setAssignee("");
+		task.setStatus("Working");
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
-		when(storiesServiceImpl.createTask(TestUtils.getTasksDomain(), unitTestProperties.getModelId())).
+		when(storiesServiceImpl.createTask(task, unitTestProperties.getModelId())).
 		thenThrow(new EntityNotFoundException(storiesApiConstants.getMessageName(),storiesApiConstants.getNumbreError(),storiesApiConstants.getPath()));
 	}
 	
@@ -267,7 +277,8 @@ public class ServiceTests {
 	public void createTaskUserExistException() throws Exception{
 		TasksDomain taskDomain = TestUtils.getTasksDomain();
 		taskDomain.setName("Taks");
-		taskDomain.setAssignee("ss");
+		taskDomain.setAssignee("TasksDomainAssigneeTest");
+		taskDomain.setStatus("Working");
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(usersRepository.existsById(TestUtils.getDummyTasksDomain().getAssignee())).thenReturn(storiesApiConstants.getBooleanFalse());
 		when(storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId())).
@@ -279,6 +290,7 @@ public class ServiceTests {
 		TasksDomain taskDomain = TestUtils.getTasksDomain();
 		taskDomain.setName("Taks");
 		taskDomain.setStatus("error");
+		taskDomain.setAssignee("");
 		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(usersRepository.existsById(TestUtils.getDummyTasksDomain().getAssignee())).thenReturn(storiesApiConstants.getBooleanTrue());
 		when(storiesServiceImpl.createTask(taskDomain, unitTestProperties.getModelId())).

@@ -169,6 +169,7 @@ public class TestUtils {
 	
 	public static TasksDomain getTasksDomain() {
 		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id(unitTestProperties.TasksdomainId);
 		tasksDomain.setName(unitTestProperties.TasksdomainName);
 		tasksDomain.setDescription(unitTestProperties.TasksdomainDescription);
 		tasksDomain.setStatus(unitTestProperties.TasksdomainStatus);
@@ -193,11 +194,11 @@ public class TestUtils {
  	public static TaskModel getTasksModel() {
 		TaskModel tasksModel = new TaskModel();
 		tasksModel.set_id(unitTestProperties.TasksModelId);
-		tasksModel.setName(unitTestProperties.TasksdomainName);
-		tasksModel.setDescription(unitTestProperties.TasksdomainDescription);
-		tasksModel.setStatus(unitTestProperties.TasksdomainStatus);
-		tasksModel.setComments(unitTestProperties.TasksdomainComments);
-		tasksModel.setAssignee(unitTestProperties.TasksdomainAssignee);
+		tasksModel.setName(unitTestProperties.TasksModelName);
+		tasksModel.setDescription(unitTestProperties.TasksModelDescription);
+		tasksModel.setStatus(unitTestProperties.TasksModelStatus);
+		tasksModel.setComments(unitTestProperties.TasksModelComments);
+		tasksModel.setAssignee(unitTestProperties.TasksModelAssignee);
 		return tasksModel;
 	}
 
@@ -347,17 +348,18 @@ public class TestUtils {
 		tasksDomain.setDescription("");
 		tasksDomain.setStatus("Working");
 		tasksDomain.setComments("comments");
-		tasksDomain.setAssignee(null);
+		tasksDomain.setAssignee("");
 		return tasksDomain;
 	}
 	
 	public static TasksDomain getUpdateTaskDomainWrongstatus() {
 		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id("");
 		tasksDomain.setName("test");
 		tasksDomain.setDescription("");
 		tasksDomain.setStatus("Wrong");
 		tasksDomain.setComments("comments");
-		tasksDomain.setAssignee(null);
+		tasksDomain.setAssignee("");
 		return tasksDomain;
 	}
 	

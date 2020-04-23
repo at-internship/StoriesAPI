@@ -35,6 +35,7 @@ public class UnitTestProperties {
 	protected String domainHistory1;
 	protected String domainHistory2;
 	
+	protected String TasksdomainId;
 	protected String TasksdomainName;
 	protected String TasksdomainDescription;
 	protected String TasksdomainStatus;
