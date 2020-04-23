@@ -27,6 +27,7 @@ import ma.glasnost.orika.MapperFacade;
 
 @Service
 public class StoriesServiceImpl implements StoriesService {
+	//new comment line
 
 	@Autowired
 	StoriesRepository storiesRepository;
