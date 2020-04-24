@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.http.HttpStatus;
 
-import com.stories.constants.StoriesApiConstants;
+import com.stories.constants.StoriesApiTestsConstants;
 import com.stories.exception.EntityNotFoundException;
 import com.stories.service.StoriesServiceImpl;
 import com.stories.utils.TestUtils;
@@ -32,145 +32,144 @@ public class ControllerTests {
 	private MockMvc mockMvc;
 
 	private TestUtils testUtils = new TestUtils();
-	private StoriesApiConstants storiesApiConstants = new StoriesApiConstants();
 
 	@Test
 	public void getAllValid() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriStories())).andExpect(status().isOk());
+		mockMvc.perform(MockMvcRequestBuilders.get(StoriesApiTestsConstants.uriStories)).andExpect(status().isOk());
 	}
 
 	@Test
 	public void getByIdValid() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriStory()).contentType(storiesApiConstants.getIdValid()))
+		mockMvc.perform(MockMvcRequestBuilders.get(StoriesApiTestsConstants.uriStory).contentType(StoriesApiTestsConstants.idValid))
 				.andExpect(status().isOk());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void getByIdInvalid() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriGetByIdInvalid())).andDo(new ResultHandler() {
+		mockMvc.perform(MockMvcRequestBuilders.get(StoriesApiTestsConstants.uriGetByIdInvalid)).andDo(new ResultHandler() {
 			@Override
 			public void handle(MvcResult mvcResult) throws Exception {
-				throw new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath());
+				throw new EntityNotFoundException(StoriesApiTestsConstants.messageStory, StoriesApiTestsConstants.path);
 			}
 		}).andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void putTestTrue() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriStory()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.put(StoriesApiTestsConstants.uriStory).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andExpect(status().isOk());
+				.content(testUtils.setStoryInJsonFormat(StoriesApiTestsConstants.idValid))).andExpect(status().isOk());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void putTestInvelidId() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriGetByIdInvalid()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.put(StoriesApiTestsConstants.uriGetByIdInvalid).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andDo(new ResultHandler() {
+				.content(testUtils.setStoryInJsonFormat(StoriesApiTestsConstants.idValid))).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath());
+						throw new EntityNotFoundException(StoriesApiTestsConstants.messageStory, StoriesApiTestsConstants.path);
 					}
 				}).andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void putTestInvalidJson() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriStory()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.put(StoriesApiTestsConstants.uriStory).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonBadFormat(storiesApiConstants.getIdValid())))
+				.content(testUtils.setStoryInJsonBadFormat(StoriesApiTestsConstants.idValid)))
 				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	public void deleteTestTrue() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.delete(storiesApiConstants.getUriStory()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.delete(StoriesApiTestsConstants.uriStory).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andExpect(status().isNoContent());
+				.content(testUtils.setStoryInJsonFormat(StoriesApiTestsConstants.idValid))).andExpect(status().isNoContent());
 	}
 	
 	@Test
     public void deleteTaskTrue() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(storiesApiConstants.getUriTask()).contentType(MediaType.APPLICATION_JSON_VALUE)
+        mockMvc.perform(MockMvcRequestBuilders.delete(StoriesApiTestsConstants.uriTask).contentType(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-                .content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andExpect(status().isNoContent());
+                .content(testUtils.setStoryInJsonFormat(StoriesApiTestsConstants.idValid))).andExpect(status().isNoContent());
     }
 	
 	@Test(expected = EntityNotFoundException.class)
  	public void deleteTaskInvalidId() throws Exception { 		
-	mockMvc.perform(MockMvcRequestBuilders.delete(storiesApiConstants.getUriTask()).contentType(MediaType.APPLICATION_JSON_VALUE) 				
+	mockMvc.perform(MockMvcRequestBuilders.delete(StoriesApiTestsConstants.uriTask).contentType(MediaType.APPLICATION_JSON_VALUE) 				
 		.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8") 				
-		.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andDo(new ResultHandler() { 					
+		.content(testUtils.setStoryInJsonFormat(StoriesApiTestsConstants.idValid))).andDo(new ResultHandler() { 					
 		@Override 					
 		public void handle(MvcResult mvcResult) throws Exception { 						
-		throw new EntityNotFoundException(storiesApiConstants.getMessageTask(), HttpStatus.CONFLICT,storiesApiConstants.getPath()); 					
+		throw new EntityNotFoundException(StoriesApiTestsConstants.messageTask, HttpStatus.CONFLICT,StoriesApiTestsConstants.path); 					
 		}}).andExpect(status().isConflict()); 
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTestInvalidId() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.delete(storiesApiConstants.getUriStory()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.delete(StoriesApiTestsConstants.uriStory).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andDo(new ResultHandler() {
+				.content(testUtils.setStoryInJsonFormat(StoriesApiTestsConstants.idValid))).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
 						throw new EntityNotFoundException(
-								storiesApiConstants.getMessageStatusInvalid(),
-								storiesApiConstants.getVarEmpty(), 
-								storiesApiConstants.getPath());
+								StoriesApiTestsConstants.messageStatusInvalid,
+								StoriesApiTestsConstants.varEmpty, 
+								StoriesApiTestsConstants.path);
 					}
 				}).andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void postTestValidJson() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriStories()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(StoriesApiTestsConstants.uriStories).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.postStoryValidJson(storiesApiConstants.getIdValid()))).andDo(print())
+				.content(testUtils.postStoryValidJson(StoriesApiTestsConstants.idValid))).andDo(print())
 				.andExpect(status().isCreated());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void postTestInvalidStatusJson() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriStories()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(StoriesApiTestsConstants.uriStories).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
 				.content(testUtils.postStoryInvalidStatusJson())).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException(storiesApiConstants.getMessageStoryJson(), storiesApiConstants.getPath());
+						throw new EntityNotFoundException(StoriesApiTestsConstants.messageStoryJson, StoriesApiTestsConstants.path);
 					}
 				}).andExpect(status().isBadRequest());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
 	public void postTestInvalidJson() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriStories()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(StoriesApiTestsConstants.uriStories).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
 				.content(testUtils.postStoryBadJsonFormat())).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException(storiesApiConstants.getMessageMalformedJSON(), storiesApiConstants.getPath());
+						throw new EntityNotFoundException(StoriesApiTestsConstants.messageMalformedJSON, StoriesApiTestsConstants.path);
 					}
 				}).andExpect(status().isBadRequest());
 	}
 	
 	@Test()
 	public void getTaskByStoryTest() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriTask()).contentType("6e413de9099a9a0ab248c90c"))
+		mockMvc.perform(MockMvcRequestBuilders.get(StoriesApiTestsConstants.uriTask).contentType("6e413de9099a9a0ab248c90c"))
 				.andExpect(status().isOk());
 	}
 	
 	@Test
 	public void getTasksByStoryTest() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriTasks())).andExpect(status().isOk());
+		mockMvc.perform(MockMvcRequestBuilders.get(StoriesApiTestsConstants.uriTasks)).andExpect(status().isOk());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void getTaskByIdInvalid() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get(storiesApiConstants.getUriTaskInvalid())).andDo(new ResultHandler() {
+		mockMvc.perform(MockMvcRequestBuilders.get(StoriesApiTestsConstants.uriTaskInvalid)).andDo(new ResultHandler() {
 			@Override
 			public void handle(MvcResult mvcResult) throws Exception {
-				throw new EntityNotFoundException(storiesApiConstants.getMessageIdTask(), storiesApiConstants.getPathTask());
+				throw new EntityNotFoundException(StoriesApiTestsConstants.messageIdTask, StoriesApiTestsConstants.pathTask);
 				
 			}
 		}).andExpect(status().isNotFound());
@@ -178,41 +177,41 @@ public class ControllerTests {
 	
 	@Test
 	public void postTestTaskValidJson() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriTasks()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(StoriesApiTestsConstants.uriTasks).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.postStoryValidJson(storiesApiConstants.getIdValid()))).andDo(print())
+				.content(testUtils.postStoryValidJson(StoriesApiTestsConstants.idValid))).andDo(print())
 				.andExpect(status().isCreated());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void postTaskTestInvalidStatusJson() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post(storiesApiConstants.getUriTasks()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.post(StoriesApiTestsConstants.uriTasks).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
 				.content(testUtils.postStoryInvalidStatusJson())).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException(storiesApiConstants.getMessageStoryJson(), storiesApiConstants.getPath());
+						throw new EntityNotFoundException(StoriesApiTestsConstants.messageStoryJson, StoriesApiTestsConstants.path);
 					}
 				}).andExpect(status().isBadRequest());
 	}
 	
 	@Test
 	public void putTaskByIdTest() throws Exception{
-		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriTask()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.put(StoriesApiTestsConstants.uriTask).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid())))
+				.content(testUtils.setStoryInJsonFormat(StoriesApiTestsConstants.idValid)))
 				.andExpect(status().isOk());
 	}
 	
 
 	@Test(expected = EntityNotFoundException.class)
 	public void putTasktNotFound() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.put(storiesApiConstants.getUriTaskInvalid()).contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(MockMvcRequestBuilders.put(StoriesApiTestsConstants.uriTaskInvalid).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-				.content(testUtils.setStoryInJsonFormat(storiesApiConstants.getIdValid()))).andDo(new ResultHandler() {
+				.content(testUtils.setStoryInJsonFormat(StoriesApiTestsConstants.idValid))).andDo(new ResultHandler() {
 					@Override
 					public void handle(MvcResult mvcResult) throws Exception {
-						throw new EntityNotFoundException(storiesApiConstants.getMessageStory(), storiesApiConstants.getPath());
+						throw new EntityNotFoundException(StoriesApiTestsConstants.messageStory, StoriesApiTestsConstants.path);
 					}
 				}).andExpect(status().isNotFound());
 	}
