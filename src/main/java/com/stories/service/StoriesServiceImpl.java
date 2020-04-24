@@ -63,10 +63,10 @@ public class StoriesServiceImpl implements StoriesService {
 			String id = nameValidation(storyModel).get_id();
 			return id;
 		} else {
-			if(mensaggeDinamicValidation[2] == StoriesApiConstants.badRequest) {
+			if(mensaggeDinamicValidation[2] == StoriesApiConstants.httpStatusBadRequest) {
                 throw new EntityNotFoundException(mensaggeDinamicValidation[0],"", mensaggeDinamicValidation[1]);
             }
-            else if(mensaggeDinamicValidation[2] == StoriesApiConstants.conflict) {
+            else if(mensaggeDinamicValidation[2] == StoriesApiConstants.httpStatusConflict) {
                 throw new EntityNotFoundException(mensaggeDinamicValidation[0], HttpStatus.CONFLICT, mensaggeDinamicValidation[1]);
             }
             else {
@@ -97,27 +97,27 @@ public class StoriesServiceImpl implements StoriesService {
 			            return taskModel.get_id();
 			         }else {
 			            throw new EntityNotFoundException(
-			            		StoriesApiConstants.exceptionStatusfield,
-			            		StoriesApiConstants.exceptionNumbererror,
+			            		StoriesApiConstants.storyFieldStatusInvalidException,
+			            		StoriesApiConstants.httpCodeStatusBadRequest,
 			            		StoriesApiConstants.pathStories);
 			         }
 			      }else {
-			         throw new EntityNotFoundException(StoriesApiConstants.exceptionUser, StoriesApiConstants.pathStories);
+			         throw new EntityNotFoundException(StoriesApiConstants.taskFieldAssigneeNotFoundException, StoriesApiConstants.pathStories);
 			      }
 			   }else {
-				   throw new EntityNotFoundException(StoriesApiConstants.exceptionNamefieldRequired,
-						   StoriesApiConstants.exceptionNumbererror,
+				   throw new EntityNotFoundException(StoriesApiConstants.taskFieldNameRequiredException,
+						   StoriesApiConstants.httpCodeStatusBadRequest,
 						   StoriesApiConstants.pathStories);
 			   }
 		   }else {
-		         throw new EntityNotFoundException(StoriesApiConstants.exceptionStory, StoriesApiConstants.pathStories);
+		         throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories);
 		      }
 		}
 
 	@Override
 	public void deleteStory(String id) throws Exception {
 		if (!storiesRepository.existsById(id)) {
-			throw new EntityNotFoundException(StoriesApiConstants.exceptionStory,StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException,StoriesApiConstants.pathStories);
 		} else
 			logger.debug("Deleting story with the id: " + id);
 		storiesRepository.deleteById(id);
@@ -126,7 +126,7 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public void deleteTask(String id, String taskId) throws Exception {
 		if (!storiesRepository.existsById(id)) {
-			throw new EntityNotFoundException(StoriesApiConstants.exceptionStory, StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories);
 		} else {
 			storyModel = storiesRepository.findById(id).get();
 			List<TaskModel> tasks = storyModel.getTasks();
@@ -138,13 +138,13 @@ public class StoriesServiceImpl implements StoriesService {
 						storyModel.setTasks(tasks);
 						storiesRepository.save(storyModel);
 					} else if (i == (tasks.size() - 1)) {
-						throw new EntityNotFoundException(StoriesApiConstants.exceptionTask, 
+						throw new EntityNotFoundException(StoriesApiConstants.taskFieldIdNotFoundException, 
 								HttpStatus.CONFLICT,
 								StoriesApiConstants.pathTasks);
 					}
 				}
 			} else {
-				throw new EntityNotFoundException(StoriesApiConstants.exceptionTaskEmpty, StoriesApiConstants.pathTasks);
+				throw new EntityNotFoundException(StoriesApiConstants.storyFieldTasksEmptyException, StoriesApiConstants.pathTasks);
 			}
 		}
 	}
@@ -165,13 +165,13 @@ public class StoriesServiceImpl implements StoriesService {
 				logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
 				return storyDomain;
 			} else {
-				throw new EntityNotFoundException(StoriesApiConstants.exceptionStory, StoriesApiConstants.pathStories);
+				throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories);
 			}
 		} else {
-			if(mensaggeDinamicValidation[2] == StoriesApiConstants.badRequest) {
+			if(mensaggeDinamicValidation[2] == StoriesApiConstants.httpStatusBadRequest) {
                 throw new EntityNotFoundException(mensaggeDinamicValidation[0],"", mensaggeDinamicValidation[1]);
             }
-            else if(mensaggeDinamicValidation[2] == StoriesApiConstants.conflict) {
+            else if(mensaggeDinamicValidation[2] == StoriesApiConstants.httpStatusConflict) {
                 throw new EntityNotFoundException(mensaggeDinamicValidation[0], HttpStatus.CONFLICT, mensaggeDinamicValidation[1]);
             }
             else {
@@ -191,19 +191,19 @@ public class StoriesServiceImpl implements StoriesService {
 			task.set_id(_id);
 			if (!statusTaskValidation(StoriesApiConstants.statusArray, task.getStatus())) {
 				throw new EntityNotFoundException(
-						StoriesApiConstants.exceptionStatusfield,
-						StoriesApiConstants.exceptionNumbererror, 
+						StoriesApiConstants.storyFieldStatusInvalidException,
+						StoriesApiConstants.httpCodeStatusBadRequest, 
 						StoriesApiConstants.pathStories);
 			}
 			if (!StringUtils.isEmpty(task.getAssignee())) {
 				if (!usersRepository.existsById(task.getAssignee())) {
-					throw new EntityNotFoundException(StoriesApiConstants.exceptionUser, HttpStatus.CONFLICT,
+					throw new EntityNotFoundException(StoriesApiConstants.taskFieldAssigneeNotFoundException, HttpStatus.CONFLICT,
 							StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + _id);
 				}
 			}
 			if (StringUtils.isEmpty(task.getName())) {
-				throw new EntityNotFoundException(StoriesApiConstants.exceptionNamefieldRequired, 
-						StoriesApiConstants.exceptionNumbererror,
+				throw new EntityNotFoundException(StoriesApiConstants.taskFieldNameRequiredException, 
+						StoriesApiConstants.httpCodeStatusBadRequest,
 						StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + _id);
 			}
 			storyModel = storiesRepository.findById(id).get();
@@ -222,20 +222,20 @@ public class StoriesServiceImpl implements StoriesService {
 				updatedTasks.add(tasks);
 			}
 			if (!taskFoundFlag) {
-				throw new EntityNotFoundException(StoriesApiConstants.exceptionTask, StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + _id);
+				throw new EntityNotFoundException(StoriesApiConstants.taskFieldIdNotFoundException, StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + _id);
 			}
 			storyModel.setTasks(updatedTasks);
 			storiesRepository.save(storyModel);
 			return task;
 		} else {
-			throw new EntityNotFoundException(StoriesApiConstants.exceptionStory, StoriesApiConstants.pathStories + id);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id);
 		}
 	}
 
 	@Override
 	public StoryDomain getStoryById(String id) throws Exception {
 		if (!storiesRepository.existsById(id))
-			throw new EntityNotFoundException(StoriesApiConstants.exceptionStory, StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories);
 		storyModel = storiesRepository.findById(id).get();
 		storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
 		logger.debug("Getting story with the id: " + id + " - JSON : {}", storyDomain);
@@ -248,7 +248,7 @@ public class StoriesServiceImpl implements StoriesService {
 		List<StoryDomain> allStoriesDomain = new ArrayList<>();
 		allStoriesModel = storiesRepository.findAll();
 		if (allStoriesModel == null)
-			throw new EntityNotFoundException(StoriesApiConstants.exceptionStories, StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storiesNotFoundException, StoriesApiConstants.pathStories);
 		for (int i = 0; i < allStoriesModel.size(); i++) {
 			allStoriesDomain.add(mapperFacade.map(allStoriesModel.get(i), StoryDomain.class));
 		}
@@ -261,16 +261,16 @@ public class StoriesServiceImpl implements StoriesService {
 		if (storiesRepository.existsById(id)) {
 			TaskModel taskModel = storiesCustomRepository.getTaskById(id, _id).getUniqueMappedResult();
 				if (taskModel.get_id() == null) {
-					throw new EntityNotFoundException(StoriesApiConstants.exceptionTask, StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + _id);
+					throw new EntityNotFoundException(StoriesApiConstants.taskFieldIdNotFoundException, StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + _id);
 				}
 				TaskModel storyWithId = storiesRepository.findByTasks__id(_id);
 				if(storyWithId.get_id().equals(id)) {
 					TasksDomain taskDomain = mapperFacade.map(taskModel, TasksDomain.class);
 					return taskDomain;
 				}
-			throw new EntityNotFoundException(StoriesApiConstants.exceptionTask, StoriesApiConstants.pathStories + id);
+			throw new EntityNotFoundException(StoriesApiConstants.taskFieldIdNotFoundException, StoriesApiConstants.pathStories + id);
 		}
-		throw new EntityNotFoundException(StoriesApiConstants.exceptionStory, StoriesApiConstants.pathStories + id);
+		throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id);
 	}
 
 	public List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException {
@@ -278,13 +278,13 @@ public class StoriesServiceImpl implements StoriesService {
 			List<TasksDomain> results = storiesCustomRepository.getTasksByStory(id).getMappedResults();
 			return results;
 		}
-		throw new EntityNotFoundException(StoriesApiConstants.exceptionStory, StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks);
+		throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks);
 	}
 
 	private String statusValidation(String[] statusArray, String storyStatus) {
 		String validationStatus = "";
 		if (!(Arrays.asList(statusArray).contains(storyStatus))) {
-			validationStatus = StoriesApiConstants.exceptionStatusfield;
+			validationStatus = StoriesApiConstants.storyFieldStatusInvalidException;
 		}
 		if (StringUtils.isEmpty(validationStatus)) {
 			return validationStatus;
@@ -298,7 +298,7 @@ public class StoriesServiceImpl implements StoriesService {
 			storiesRepository.save(storyModel);
 			return storyModel;
 		} catch (Exception e) {
-			throw new EntityNotFoundException(StoriesApiConstants.exceptionNamefieldExist, "", StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldNameExistException, "", StoriesApiConstants.pathStories);
 		}
 	}
 
@@ -308,7 +308,7 @@ public class StoriesServiceImpl implements StoriesService {
 
 		} else {
 			if (!usersRepository.existsById(assigneeId))
-				validation = StoriesApiConstants.exceptionStoryAssigne;
+				validation = StoriesApiConstants.storyFieldAssigneDoesntExistException;
 			return validation;
 		}
 		return validation;
@@ -320,7 +320,7 @@ public class StoriesServiceImpl implements StoriesService {
 
 		} else {
 			if (!sprintClient.existsSprintById(sprintId))
-				validation = StoriesApiConstants.exceptionStorySprintId;
+				validation = StoriesApiConstants.storyFieldSprintIdDoesntExistException;
 		}
 		if (StringUtils.isEmpty(validation)) {
 			return validation;
@@ -333,11 +333,11 @@ public class StoriesServiceImpl implements StoriesService {
 		String validationNameStatus = "";
 
 		if (StringUtils.isEmpty(name) && StringUtils.isEmpty(status)) {
-			validationNameStatus = StoriesApiConstants.exceptionNameAndStatusfielsdRequired;
+			validationNameStatus = StoriesApiConstants.storyFieldsNameAndStatusRequiredException;
 		} else if (StringUtils.isEmpty(name)) {
-			validationNameStatus = StoriesApiConstants.exceptionNamefieldRequired;
+			validationNameStatus = StoriesApiConstants.storyFieldNameRequiredException;
 		} else if (StringUtils.isEmpty(status)) {
-			validationNameStatus = StoriesApiConstants.exceptionStatusfieldRequired;
+			validationNameStatus = StoriesApiConstants.storyFieldStatusRequiredException;
 		}
 
 		if (!StringUtils.isEmpty(validationNameStatus)) {
@@ -358,10 +358,10 @@ public class StoriesServiceImpl implements StoriesService {
 	private String proggressValidation(int progress) {
 		String progressValidation = "";
 		if (progress < 0) {
-			progressValidation = StoriesApiConstants.exceptionProgressFieldNegative;
+			progressValidation = StoriesApiConstants.storyFieldProgressNegativeException;
 		}
 		if (progress > 100) {
-			progressValidation = StoriesApiConstants.exceptionProgressFieldExceeds;
+			progressValidation = StoriesApiConstants.storyFieldProgressExceedsException;
 		}
 		if (StringUtils.isEmpty(progressValidation)) {
 			return progressValidation;
@@ -373,13 +373,13 @@ public class StoriesServiceImpl implements StoriesService {
 	private String pointsValidation(int points, int[] pointsArray) {
 		String pointsValidation = "";
 		if (points < 0) {
-			pointsValidation = StoriesApiConstants.exceptionPointsFieldNegative;
+			pointsValidation = StoriesApiConstants.storyFieldPointsNegativeException;
 		} else {
 			for (int i = 0; i < pointsArray.length; i++) {
 				if (points == pointsArray[i]) {
 					break;
 				} else if (i == pointsArray.length - 1) {
-					pointsValidation = StoriesApiConstants.exceptionPointsFieldInvalid;
+					pointsValidation = StoriesApiConstants.storyFieldPointsInvalidException;
 				}
 			}
 		}
@@ -406,7 +406,7 @@ public class StoriesServiceImpl implements StoriesService {
         if (!StringUtils.isEmpty(validationRespons)) {
             mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
             mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
-            mensaggeDinamicValidation[2] = StoriesApiConstants.badRequest;
+            mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusBadRequest;
             return mensaggeDinamicValidation;
         }
 
@@ -415,10 +415,10 @@ public class StoriesServiceImpl implements StoriesService {
 	      	if(specialCharacterValidation(domainList.get(i))) {
 	      		countValidationPositive++;
 	      		if (StringUtils.isEmpty(validationRespons)) {
-	      			validationRespons = StoriesApiConstants.storyDomainValidation[i];
+	      			validationRespons = StoriesApiConstants.storyDomainValidationArray[i];
 	            }
 	      		else {
-	      			validationRespons = validationRespons + ", " + StoriesApiConstants.storyDomainValidation[i];
+	      			validationRespons = validationRespons + ", " + StoriesApiConstants.storyDomainValidationArray[i];
 	      		}
 	      	}
         }
@@ -426,12 +426,12 @@ public class StoriesServiceImpl implements StoriesService {
         	mensaggeDinamicValidation[0] = StoriesApiConstants.exceptionCharactersInFollowingFields + validationRespons;
   		}
   		else if(countValidationPositive == 1){
-  			mensaggeDinamicValidation[0] = StoriesApiConstants.exceptionCharactersInNextField + validationRespons;
+  			mensaggeDinamicValidation[0] = StoriesApiConstants.exceptionCharactersInSpecificField + validationRespons;
   		}
 
         if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
         	mensaggeDinamicValidation[1] = StoriesApiConstants.pathStories;
-        	mensaggeDinamicValidation[2] = StoriesApiConstants.badRequest;
+        	mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusBadRequest;
         	return mensaggeDinamicValidation;
         }
         
@@ -449,8 +449,8 @@ public class StoriesServiceImpl implements StoriesService {
                 mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
             }
             
-            mensaggeDinamicValidation[1] = filtervalidation(StoriesApiConstants.validationPath, mensaggeDinamicValidation[1]);
-            mensaggeDinamicValidation[2] = StoriesApiConstants.conflict;
+            mensaggeDinamicValidation[1] = filtervalidation(StoriesApiConstants.validationPathArray, mensaggeDinamicValidation[1]);
+            mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusConflict;
             if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
                 return mensaggeDinamicValidation;    
             }
@@ -475,8 +475,8 @@ public class StoriesServiceImpl implements StoriesService {
                 mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
             }
             
-            mensaggeDinamicValidation[1] = filtervalidation(StoriesApiConstants.validationPath, mensaggeDinamicValidation[1]);
-            mensaggeDinamicValidation[2] = StoriesApiConstants.badRequest;
+            mensaggeDinamicValidation[1] = filtervalidation(StoriesApiConstants.validationPathArray, mensaggeDinamicValidation[1]);
+            mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusBadRequest;
             if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
                 return mensaggeDinamicValidation;
             }
@@ -511,7 +511,7 @@ public class StoriesServiceImpl implements StoriesService {
 			return true;
 		} else {
 			if (!usersRepository.existsById(assigneeId))
-				throw new EntityNotFoundException(StoriesApiConstants.exceptionUser,HttpStatus.CONFLICT,StoriesApiConstants.pathStories);
+				throw new EntityNotFoundException(StoriesApiConstants.taskFieldAssigneeNotFoundException,HttpStatus.CONFLICT,StoriesApiConstants.pathStories);
 			return true;
 		}
 	}
@@ -524,9 +524,9 @@ public class StoriesServiceImpl implements StoriesService {
 	}
 	
 	private boolean specialCharacterValidation(String string) {
-		for (int i = 0; i < StoriesApiConstants.specialCharacters.length; i++) {
+		for (int i = 0; i < StoriesApiConstants.specialCharactersArray.length; i++) {
            if(!StringUtils.isEmpty(string)) {
-        	   if (string.toString().indexOf(StoriesApiConstants.specialCharacters[i]) == -1) {
+        	   if (string.toString().indexOf(StoriesApiConstants.specialCharactersArray[i]) == -1) {
                	
                } else {
                	return true;
@@ -550,10 +550,10 @@ public class StoriesServiceImpl implements StoriesService {
 		      	if(specialCharacterValidation(domainList.get(i))) {
 		      		countValidationPositive++;
 		      		if (StringUtils.isEmpty(validationRespons)) {
-		      			validationRespons = StoriesApiConstants.taskDomainValidation[i];
+		      			validationRespons = StoriesApiConstants.taskDomainValidationArray[i];
 		            }
 		      		else {
-		      			validationRespons = validationRespons + ", " + StoriesApiConstants.taskDomainValidation[i];
+		      			validationRespons = validationRespons + ", " + StoriesApiConstants.taskDomainValidationArray[i];
 		      		}
 		      	}
 	        }
@@ -561,7 +561,7 @@ public class StoriesServiceImpl implements StoriesService {
 	  			validationRespons = StoriesApiConstants.exceptionCharactersInFollowingFields + validationRespons;
 	  		}
 	  		else if(countValidationPositive == 1){
-	  			validationRespons = StoriesApiConstants.exceptionCharactersInNextField + validationRespons;
+	  			validationRespons = StoriesApiConstants.exceptionCharactersInSpecificField + validationRespons;
 	  		}
 	        
 		return validationRespons;
