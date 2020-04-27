@@ -92,7 +92,7 @@ public class ServiceTests {
 	@Test(expected = EntityNotFoundException.class)
 	public void getByIdException() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId())).thenReturn(StoriesApiTestsConstants.booleanFalse);
-		Mockito.when(storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()))
+		when(storiesServiceImpl.getStoryById(unitTestProperties.getUrlId()))
 				.thenThrow(new EntityNotFoundException(StoriesApiTestsConstants.messageStory, StoriesApiTestsConstants.path));
 	}
 
@@ -105,7 +105,7 @@ public class ServiceTests {
 	@Test(expected = EntityNotFoundException.class)
 	public void getAllStoriesException() throws Exception {
 		when(storiesRepository.findAll()).thenReturn(TestUtils.listStoriesModelNull());
-		Mockito.when(storiesServiceImpl.getAllStories())
+		when(storiesServiceImpl.getAllStories())
 				.thenThrow(new EntityNotFoundException(StoriesApiTestsConstants.messageStories,StoriesApiTestsConstants.path));
 	}
 
@@ -156,14 +156,14 @@ public class ServiceTests {
 	public void updateStoryStatusException() throws Exception {
 		when(usersRepository.existsById(testUtils.getStoryDomainStatusInvalid().getAssignee_id())).thenReturn(StoriesApiTestsConstants.booleanTrue);
 		when(sprintsClient.existsSprintById(testUtils.getStoryDomainStatusInvalid().getSprint_id())).thenReturn(StoriesApiTestsConstants.booleanTrue);
-		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(storiesApiConstants.getBooleanTrue());
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(StoriesApiTestsConstants.booleanTrue);
 		when(mapperFacade.map(testUtils.getStoryDomainStatusInvalid(), StoryModel.class))
 				.thenReturn(testUtils.getStoryModel());
 		when(storiesServiceImpl.updateStory(testUtils.getStoryDomainStatusInvalid(), testUtils.getStoryModel().get_id()))
 				.thenThrow(new EntityNotFoundException(
-						storiesApiConstants.messageStatusInvalid,
-						storiesApiConstants.varEmpty, 
-						storiesApiConstants.path));
+						StoriesApiTestsConstants.messageStatusInvalid,
+						StoriesApiTestsConstants.varEmpty, 
+						StoriesApiTestsConstants.path));
 		storiesServiceImpl.createStory(testUtils.getStoryDomainStatusInvalid());
 	}
 
@@ -188,14 +188,14 @@ public class ServiceTests {
 	
 	@Test
 	public void deleteTask() throws Exception {
-		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(StoriesApiTestsConstants.booleanTrue);
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(StoriesApiTestsConstants.booleanTrue);
 		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(testUtils.getStoryTaskModel()));
 		storiesServiceImpl.deleteTask(testUtils.getStoryTaskModel().get_id(), testUtils.getStoryTaskModel().getTasks().get(0).get_id());
 	}
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTaskNotFoundException() throws Exception {
-		Mockito.when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(StoriesApiTestsConstants.booleanTrue);
+		when(storiesRepository.existsById(unitTestProperties.getModelId())).thenReturn(StoriesApiTestsConstants.booleanTrue);
 		when(storiesRepository.findById(unitTestProperties.getModelId())).thenReturn(Optional.of(testUtils.getStoryTaskModel()));
 		storiesServiceImpl.deleteTask(testUtils.getStoryTaskModel().get_id(), testUtils.getStoryTaskModel().getTasks().get(0).get_id()+StoriesApiTestsConstants.plusError);
 	}
@@ -208,7 +208,7 @@ public class ServiceTests {
 	
 	@Test(expected = EntityNotFoundException.class)
 	public void deleteTaskNullException() throws Exception {
-		Mockito.when(storiesRepository.existsById(testUtils.getStoryTaskNullModel().get_id())).thenReturn(StoriesApiTestsConstants.booleanTrue);
+		when(storiesRepository.existsById(testUtils.getStoryTaskNullModel().get_id())).thenReturn(StoriesApiTestsConstants.booleanTrue);
 		when(storiesRepository.findById(testUtils.getStoryTaskNullModel().get_id())).thenReturn(Optional.of(testUtils.getStoryTaskNullModel()));
 		storiesServiceImpl.deleteTask(unitTestProperties.getModelId(), unitTestProperties.getTasksModelId());
 	}
@@ -378,7 +378,7 @@ public class ServiceTests {
 	public void getTasksByStoryFail() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
         .thenReturn(StoriesApiTestsConstants.booleanFalse);
-		Mockito.when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
+		when(storiesServiceImpl.getTasksByStory(unitTestProperties.getUrlId()))
          .thenThrow(new EntityNotFoundException(StoriesApiTestsConstants.messageStory, StoriesApiTestsConstants.path + unitTestProperties.getUrlId()));
 	}
 	
@@ -403,7 +403,7 @@ public class ServiceTests {
 	public void getTaskByIdNoStory() throws Exception {
 		when(storiesRepository.existsById(unitTestProperties.getUrlId()))
 		.thenReturn(StoriesApiTestsConstants.booleanFalse);
-		Mockito.when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
+		when(storiesServiceImpl.getTaskById(unitTestProperties.getUrlId(), unitTestProperties.getUrlId()))
 			.thenThrow(new EntityNotFoundException(StoriesApiTestsConstants.messageStory, StoriesApiTestsConstants.path + unitTestProperties.getUrlId()));
 	}
 	
