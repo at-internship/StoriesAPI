@@ -290,7 +290,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(validationStatus)) {
 			return validationStatus;
 		} else {
-			return validationStatus + ", ";
+			return validationStatus + " AND ";
 		}
 	}
 	
@@ -310,7 +310,7 @@ public class StoriesServiceImpl implements StoriesService {
 		} else {
 			if (!usersRepository.existsById(assigneeId)) {
 				validation = StoriesApiConstants.storyFieldAssigneDoesntExistException;
-				return validation + ", ";
+				return validation + " AND ";
 			}
 		}
 		return validation;
@@ -327,7 +327,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(validation)) {
 			return validation;
 		} else {
-			return validation + ", ";
+			return validation + " AND ";
 		}
 	}
 
@@ -368,7 +368,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(progressValidation)) {
 			return progressValidation;
 		} else {
-			return progressValidation + ", ";
+			return progressValidation + " AND ";
 		}
 	}
 
@@ -388,7 +388,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(pointsValidation)) {
 			return pointsValidation;
 		} else {
-			return pointsValidation + ", ";
+			return pointsValidation + " AND ";
 		}
 	}
 
@@ -398,10 +398,10 @@ public class StoriesServiceImpl implements StoriesService {
         int countValidationPositive = 0;
         
         List<String> validateSpecialCharacterField  = new ArrayList<>();
-        validateSpecialCharacterField .add(storyId);
-        validateSpecialCharacterField .add(storyDomain.getSprint_id());
-        validateSpecialCharacterField .add(storyDomain.getStatus());
-        validateSpecialCharacterField .add(storyDomain.getAssignee_id());
+        validateSpecialCharacterField.add(storyId);
+        validateSpecialCharacterField.add(storyDomain.getSprint_id());
+        validateSpecialCharacterField.add(storyDomain.getStatus());
+        validateSpecialCharacterField.add(storyDomain.getAssignee_id());
         
         validationRespons = nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
         if (!StringUtils.isEmpty(validationRespons)) {
@@ -412,14 +412,14 @@ public class StoriesServiceImpl implements StoriesService {
         }
 
         validationRespons = "";
-        for(int i= 0; i < validateSpecialCharacterField .size(); i++) {
+        for(int i= 0; i < validateSpecialCharacterField.size(); i++) {
         	boolean err = Pattern.compile("[a-zA-Z0-9]*").matcher(validateSpecialCharacterField.get(i)).matches();
 			if (!err) {
 				countValidationPositive++;
 				if (StringUtils.isEmpty(validationRespons)) {
 					validationRespons = StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
 				} else {
-					validationRespons = validationRespons + ", " + StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
+					validationRespons = validationRespons + " AND " + StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
 				}
 			}
         }
@@ -507,7 +507,7 @@ public class StoriesServiceImpl implements StoriesService {
     }
 	
 	private String endCheckValidation(String validation) {
-		validation = validation.subSequence(0, validation.length()-2).toString();
+		validation = validation.subSequence(0, validation.length()-4).toString();
 		return validation;
 	}
 	
@@ -534,10 +534,10 @@ public class StoriesServiceImpl implements StoriesService {
         String validationRespons = "";
         
 		List<String> validateSpecialCharacterField  = new ArrayList<>();
-		validateSpecialCharacterField .add(storyId);
-		validateSpecialCharacterField .add(taskId);
-		validateSpecialCharacterField .add(task.getStatus());
-		validateSpecialCharacterField .add(task.getAssignee());
+		validateSpecialCharacterField.add(storyId);
+		validateSpecialCharacterField.add(taskId);
+		validateSpecialCharacterField.add(task.getStatus());
+		validateSpecialCharacterField.add(task.getAssignee());
 	
 	        for(int i= 0; i < validateSpecialCharacterField.size(); i++) {
 	        	boolean err = Pattern.compile("[a-zA-Z0-9]*").matcher(validateSpecialCharacterField.get(i)).matches();
@@ -546,7 +546,7 @@ public class StoriesServiceImpl implements StoriesService {
 					if (StringUtils.isEmpty(validationRespons)) {
 						validationRespons = StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
 					} else {
-						validationRespons = validationRespons + ", " + StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
+						validationRespons = validationRespons + " AND " + StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
 					}
 				}
 	        }

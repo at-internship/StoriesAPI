@@ -16,7 +16,7 @@ public class StoriesApiConstants {
 		public static final String pathTasks = "/tasks/";
 		
 		
-		public static final String storyFieldStatusInvalidException = "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'.";
+		public static final String storyFieldStatusInvalidException = "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'";
 		public static final String storyFieldsNameAndStatusRequiredException = "The JSON format provided is invalid, please provide the required fields ('Name','Status').";
 		public static final String storyFieldNameRequiredException = "The JSON format provided is invalid, please provide the required field ('Name').";
 		public static final String storyFieldStatusRequiredException = "The JSON format provided is invalid, please provide the required field ('Status').";

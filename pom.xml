@@ -143,6 +143,7 @@
 						<exclude>**/config/**/*</exclude>
 						<exclude>**/mapper/**/*</exclude>
 						<exclude>**/repository/**/*</exclude>
+						<exclude>**/constants/**/*</exclude>
 						<exclude>**/com/stories/StoriesApplication.class</exclude>
 					</excludes>
 				</configuration>
