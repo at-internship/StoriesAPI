@@ -16,14 +16,14 @@ public class StoriesApiConstants {
 		public static final String pathTasks = "/tasks/";
 		
 		
-		public static final String storyFieldStatusInvalidException = "The Status field should be one of the following options: 'Refining' ,'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'";
-		public static final String storyFieldsNameAndStatusRequiredException = "The JSON format provided is invalid, please provide the required fields ('Name','Status').";
-		public static final String storyFieldNameRequiredException = "The JSON format provided is invalid, please provide the required field ('Name').";
-		public static final String storyFieldStatusRequiredException = "The JSON format provided is invalid, please provide the required field ('Status').";
-		public static final String storyFieldNameExistException = "There is a story with this name already.";
-		public static final String storyFieldTasksEmptyException = "There are not tasks for this user story yet.";
+		public static final String storyFieldStatusInvalidException = "The Status field should be one of the following options: 'Refining', 'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'; but none found";
+		public static final String storyFieldsNameAndStatusRequiredException = "The JSON format provided is invalid, please provide the required fields 'Name','Status'";
+		public static final String storyFieldNameRequiredException = "The JSON format provided is invalid, please provide the required field 'Name'";
+		public static final String storyFieldStatusRequiredException = "The JSON format provided is invalid, please provide the required field 'Status'";
+		public static final String storyFieldNameExistException = "There is a story with this name already";
+		public static final String storyFieldTasksEmptyException = "There are not tasks for this user story yet";
 		public static final String storiesNotFoundException = "Stories not found";
-		public static final String storyFieldIdNotFoundException = "Story with the given id was not found.";
+		public static final String storyFieldIdNotFoundException = "Story not found";
 		public static final String storyFieldSprintIdDoesntExistException = "The id entered in the sprint_id field does not exist";
 		public static final String storyFieldAssigneDoesntExistException = "User assignee_id does not exist";
 		public static final String storyFieldStoryIdSpecialCharacter = "Story not found";
@@ -34,13 +34,10 @@ public class StoriesApiConstants {
 		public static final String storyFieldPointsNegativeException = "The number entered in the points field is a negative number";
 		public static final String storyFieldPointsInvalidException  = "The number entered in the points field does not match a valid story point";
 		
-		public static final String taskFieldAssigneeNotFoundException = "User assignee does not exist";
-		public static final String taskFieldIdNotFoundException = "Task with the given id was not found.";
-		public static final String taskFieldNameRequiredException = "The JSON format provided is invalid, please provide the required field ('Name').";
+		public static final String taskFieldAssigneeNotFoundException = "User assignee_id does not exist";
+		public static final String taskFieldIdNotFoundException = "Task not found";
+		public static final String taskFieldNameRequiredException = "The JSON format provided is invalid, please provide the required field 'Name'";
 		public static final String storyFieldTaskIdSpecialCharacter = "Task not found";
-		
-		public static final String exceptionCharactersInFollowingFields = "We're not handling special characters, please provide a proper value in the following fields: ";
-		public static final String exceptionCharactersInSpecificField = "We're not handling special characters, please provide a proper value in the next field: ";
 		
 		public static final String[] ValidationStorySpecialCharacterMessage = {storyFieldStoryIdSpecialCharacter, storyFieldSprintIdSpecialCharacter, storyFieldStatusInvalidException, storyFieldAssigneSpecialCharacter};
 		public static final String[] ValidationTaskSpecialCharacterMessage = {storyFieldStoryIdSpecialCharacter, storyFieldTaskIdSpecialCharacter, storyFieldStatusInvalidException, storyFieldAssigneSpecialCharacter};
