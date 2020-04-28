@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stories.constants.StoriesApiConstants;
 import com.stories.domain.StoryDomain;
 import com.stories.domain.StoryDomainId;
 import com.stories.domain.TasksDomain;
@@ -37,7 +38,7 @@ public class StoriesController {
 	@Autowired
 	StoriesServiceImpl storyService;
 
-	@ApiOperation(value = " GET Stories ", notes = " This operation will return a list of stories ")
+	@ApiOperation(value = " GET Stories ", notes = StoriesApiConstants.notesInGetStories)
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation ") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping(value = "/", produces = "application/json")
@@ -46,7 +47,7 @@ public class StoriesController {
 		return storyService.getAllStories();
 	}
 
-	@ApiOperation(value = " GET Story ", notes = " This operation will return a of story ")
+	@ApiOperation(value = " GET Story ", notes = StoriesApiConstants.notesInGetStory)
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Story not found ") })
 	@ResponseStatus(value = HttpStatus.OK)
@@ -56,9 +57,10 @@ public class StoriesController {
 		return storyService.getStoryById(id);
 	}
 
-	@ApiOperation(value = " POST Story ", notes = " This operation will add a story ")
+	@ApiOperation(value = " POST Story ", notes = StoriesApiConstants.notesInPostStory)
 	@ApiResponses({ @ApiResponse(code = 201, message = " Success operation "),
-			@ApiResponse(code = 400, message = " Story has an invalid status Json ") })
+			@ApiResponse(code = 400, message = " Story has an invalid status Json "), 
+			@ApiResponse(code= 409, message ="There is a story with this name already.<br>The user provided does not exist.<br>User assignee_id does not exist")})
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping(value = "/", consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -68,25 +70,25 @@ public class StoriesController {
 		return new ResponseEntity<>(storyDomainId, HttpStatus.CREATED);
 	}
 
-	@ApiOperation(value = " DELETE Story ", notes = " This operation will delete a story ")
+	@ApiOperation(value = " DELETE Story ", notes = StoriesApiConstants.notesInDeleteStory)
 	@ApiResponses({ @ApiResponse(code = 204, message = " Success operation "),
-			@ApiResponse(code = 404, message = " Status json state is invalid\", \"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted ") })
+			@ApiResponse(code = 404, message = " Story not found ") })
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/{id}")
 	public void deleteStory(@Valid @PathVariable String id) throws Exception {
 		storyService.deleteStory(id);
 	}
 
-	@ApiOperation(value = " DELETE Task ", notes = " This operation will delete a task ")
+	@ApiOperation(value = " DELETE Task ", notes = StoriesApiConstants.notesInDeleteTask)
 	@ApiResponses({ @ApiResponse(code = 204, message = " Success operation "),
-			@ApiResponse(code = 404, message = " Status json state is invalid\", \"The status should be: Ready to Work, Working, Testing, Ready to Accept or Accepted ") })
+			@ApiResponse(code = 404, message = " Story not found ") })
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/{id}/tasks/{taskId}")
 	public void deleteTask(@Valid @PathVariable String id, @PathVariable String taskId) throws Exception {
 		storyService.deleteTask(id, taskId);
 	}
 
-	@ApiOperation(value = " PUT Story ", notes = " This operation will update a story ")
+	@ApiOperation(value = " PUT Story ", notes = StoriesApiConstants.notesInPutStory)
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Story not found "),
 			@ApiResponse(code = 400, message = " Malformed JSON request ") })
@@ -96,7 +98,7 @@ public class StoriesController {
 		return storyService.updateStory(request, id);
 	}
 
-	@ApiOperation(value = " PUT Task ", notes = "This operation will update a task from a story")
+	@ApiOperation(value = " PUT Task ", notes = StoriesApiConstants.notesInPutTask)
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Task not found ") })
 	@ResponseStatus(value = HttpStatus.OK)
@@ -107,7 +109,7 @@ public class StoriesController {
 		return storyService.updateTaskById(task, id, _id);
 	}
 
-	@ApiOperation(value = " GET Tasks ", notes = " This operation will return the tasks of a story ")
+	@ApiOperation(value = " GET Tasks ", notes = StoriesApiConstants.notesInGetTasks)
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation ") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping(value = "/{id}/tasks", produces = "application/json")
@@ -116,7 +118,7 @@ public class StoriesController {
 		return storyService.getTasksByStory(id);
 	}
 
-	@ApiOperation(value = " GET Task ", notes = "This operation will return a task from a story")
+	@ApiOperation(value = " GET Task ", notes = StoriesApiConstants.notesInGetTask)
 	@ApiResponses({ @ApiResponse(code = 200, message = " Success operation "),
 			@ApiResponse(code = 404, message = " Task not found ") })
 	@ResponseStatus(value = HttpStatus.OK)
@@ -127,9 +129,9 @@ public class StoriesController {
 		return storyService.getTaskById(storyId, taskId);
 	}
 
-	@ApiOperation(value = " POST Task ", notes = " This operation will add a Task ")
+	@ApiOperation(value = " POST Task ", notes = StoriesApiConstants.notesInPostTask)
 	@ApiResponses({ @ApiResponse(code = 201, message = " Success operation "),
-			@ApiResponse(code = 400, message = " Story has an invalid status Json ") })
+			@ApiResponse(code = 400, message = " Task has an invalid status Json ")})
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping(value = "/{id}/tasks", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> createTask(@Valid @RequestBody TasksDomain taskDomain, @PathVariable String id) throws Exception {
