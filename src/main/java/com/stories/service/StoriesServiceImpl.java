@@ -140,7 +140,6 @@ public class StoriesServiceImpl implements StoriesService {
 						storiesRepository.save(storyModel);
 					} else if (i == (tasks.size() - 1)) {
 						throw new EntityNotFoundException(StoriesApiConstants.taskFieldIdNotFoundException, 
-								HttpStatus.CONFLICT,
 								StoriesApiConstants.pathTasks);
 					}
 				}
@@ -299,7 +298,7 @@ public class StoriesServiceImpl implements StoriesService {
 			storiesRepository.save(storyModel);
 			return storyModel;
 		} catch (Exception e) {
-			throw new EntityNotFoundException(StoriesApiConstants.storyFieldNameExistException, "", StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldNameExistException, HttpStatus.CONFLICT, StoriesApiConstants.pathStories);
 		}
 	}
 
