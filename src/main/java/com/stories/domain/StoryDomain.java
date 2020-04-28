@@ -15,7 +15,7 @@ public class StoryDomain {
 	@ApiModelProperty(example="5e827f2f48b0866f87e1cbc2", value="Identifier of the story")
 	private String _id;
 	
-	@ApiModelProperty(example="1", value="Identifier of the sprint")
+	@ApiModelProperty(example="5ea1cabbcafedd13f03bf05c", value="Identifier of the sprint")
 	private String sprint_id;
 	
 	@ApiModelProperty(example="Java", value="Technology used")
@@ -28,13 +28,13 @@ public class StoryDomain {
 	@ApiModelProperty(example="Make new Stories", value="Story description")
 	private String description;
 	
-	@ApiModelProperty(example="1", value="Acceptance criteria of the story")
+	@ApiModelProperty(example="As a website user, I want to able to submit feedback.", value= "Acceptance criteria of the story")
 	private String acceptance_criteria;
 	
 	@ApiModelProperty(example="1", value="Points of the story")
 	private int points;
 	
-	@ApiModelProperty(example="1", value="Progress of the story")
+	@ApiModelProperty(example="10", value="Progress of the story")
 	private int progress;
 	
 	@ApiModelProperty(example="Working", value="Status of the story")
@@ -55,13 +55,13 @@ public class StoryDomain {
 	@ApiModelProperty(example="High", value="Priority of the story")
 	private String priority;
 	
-	@ApiModelProperty(example="1", value="Assignee id of the story")
+	@ApiModelProperty(example="5ea7125ce6cd3109e8bc71c6", value="Identifier of the user")
 	private String assignee_id;
 	
-	@ApiModelProperty(example="1", value="The history of the story")
+	@ApiModelProperty(example="[]", value="The history of the story")
 	private List<String> history;
 	
-	@ApiModelProperty(example="New task", value="The tasks of the story")
+	@ApiModelProperty(example="[]", value="The tasks of the story")
 	private List<TasksDomain> tasks;
 
 	public StoryDomain() {

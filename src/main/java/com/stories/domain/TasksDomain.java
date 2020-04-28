@@ -15,13 +15,13 @@ public class TasksDomain {
 	@ApiModelProperty(example="Create Pull Request to master", value="description of the task")
 	private String description;
 	
-	@ApiModelProperty(example="Done", value="status of the task")
+	@ApiModelProperty(example="Working", value="status of the task")
 	private String status;
 	
 	@ApiModelProperty(example="Waiting for review", value="comments about the task")
 	private String comments;
 	
-	@ApiModelProperty(example="John Wick", value="name of assignee of the task")
+	@ApiModelProperty(example="5ea7125ce6cd3109e8bc71c6", value="Identifier of the user")
 	private String assignee;
 	
 }

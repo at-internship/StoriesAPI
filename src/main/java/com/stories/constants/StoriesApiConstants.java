@@ -15,7 +15,6 @@ public class StoriesApiConstants {
 		public static final String pathStories = "/stories/";
 		public static final String pathTasks = "/tasks/";
 		
-		
 		public static final String storyFieldStatusInvalidException = "The Status field should be one of the following options: 'Refining', 'Ready to Work', 'Working', 'Testing', 'Ready to Accept' or 'Accepted'; but none found";
 		public static final String storyFieldsNameAndStatusRequiredException = "The JSON format provided is invalid, please provide the required fields 'Name','Status'";
 		public static final String storyFieldNameRequiredException = "The JSON format provided is invalid, please provide the required field 'Name'";
@@ -41,5 +40,26 @@ public class StoriesApiConstants {
 		
 		public static final String[] ValidationStorySpecialCharacterMessage = {storyFieldStoryIdSpecialCharacter, storyFieldSprintIdSpecialCharacter, storyFieldStatusInvalidException, storyFieldAssigneSpecialCharacter};
 		public static final String[] ValidationTaskSpecialCharacterMessage = {storyFieldStoryIdSpecialCharacter, storyFieldTaskIdSpecialCharacter, storyFieldStatusInvalidException, storyFieldAssigneSpecialCharacter};
+		
+		public static final String notesInGetStories = "<b> This method will return a list of users stories. </b>";
+		public static final String notesInGetStory = "<b> This method will return a of story. </b>";
+		public static final String notesInPostStory = "<b> This method will create a new user story. </b><br>"
+										+ "<dl> <dt><ul> <b><li> Fields required : </li></b> </ul></dt> "
+										+ "<dd><ol> 		<li> Name </li> "
+										+ 		   			"<li> Status </li> "
+										+ "</ol></dd> </dl><br>"
+										+"<mark>Please don't use an <b>ID</b> field in your request body to create a new Story.</mark>";
+		public static final String notesInDeleteStory = "<b> This method will delete a user story. </b>";
+		public static final String notesInPutStory = "<b> This method will update a user story. </b><br>"
+										+"<mark>Please don't use an <b>ID</b> field in your request body to edit a Story.</mark>";
+		public static final String notesInDeleteTask = "<b> This method will delete a task. </b>";
+		public static final String notesInPutTask = "<b> This method will update a task from a story. </b><br>"
+										+"<mark>Please don't use an <b>ID</b> field in your request body to edit a Task.</mark>";;
+		public static final String notesInGetTasks = "<b> This method will return a list of the tasks of a story. </b>";
+		public static final String notesInGetTask = "<b> This method will return a task from a story. </b>";
+		public static final String notesInPostTask = "<b> This method will create a new task. </b><br>"
+										+ "<dl> <dt><ul> <b><li>Fields required :</li></b> </ul></dt> "
+										+ "<dd><ol> 	   	<li>Name</li> </ol></dd> </dl> <br>"
+										+ "<mark>Please don't use an <b>ID</b> field in your request body to create a new Task.</mark>";
 }		
 		
