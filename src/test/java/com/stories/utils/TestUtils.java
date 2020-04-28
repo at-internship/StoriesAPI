@@ -169,6 +169,7 @@ public class TestUtils {
 	
 	public static TasksDomain getTasksDomain() {
 		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id(unitTestProperties.TasksdomainId);
 		tasksDomain.setName(unitTestProperties.TasksdomainName);
 		tasksDomain.setDescription(unitTestProperties.TasksdomainDescription);
 		tasksDomain.setStatus(unitTestProperties.TasksdomainStatus);
@@ -347,7 +348,7 @@ public class TestUtils {
 		tasksDomain.setDescription("");
 		tasksDomain.setStatus("Working");
 		tasksDomain.setComments("comments");
-		tasksDomain.setAssignee(null);
+		tasksDomain.setAssignee("");
 		return tasksDomain;
 	}
 	
@@ -357,7 +358,7 @@ public class TestUtils {
 		tasksDomain.setDescription("");
 		tasksDomain.setStatus("Wrong");
 		tasksDomain.setComments("comments");
-		tasksDomain.setAssignee(null);
+		tasksDomain.setAssignee("");
 		return tasksDomain;
 	}
 	
@@ -468,5 +469,407 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 
 		return storyDomain;
+	}
+	
+	
+	
+	
+	
+	public static StoryDomain getStoryDomainAssigneInvalid() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(unitTestProperties.domainPoints);
+		storyDomain.setProgress(unitTestProperties.domainProgress);
+		storyDomain.setStatus(unitTestProperties.domainStatus);
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+		return storyDomain;
+	}
+	
+	public static StoryModel getStoryModelAssigneInvalid() {
+		StoryModel storyModel = new StoryModel();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyModel.set_id(unitTestProperties.domainId);
+		storyModel.setSprint_id(unitTestProperties.domainSprintId);
+		storyModel.setTechnology(unitTestProperties.domainTechnology);
+		storyModel.setName(unitTestProperties.domainName);
+		storyModel.setDescription(unitTestProperties.domainDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.domainPoints);
+		storyModel.setProgress(unitTestProperties.domainProgress);
+		storyModel.setStatus(unitTestProperties.domainStatus);
+		storyModel.setNotes(unitTestProperties.domainNotes);
+		storyModel.setComments(unitTestProperties.domainComment);
+		storyModel.setStart_date(unitTestProperties.domainStartDate);
+		storyModel.setDue_date(unitTestProperties.domainDueDate);
+		storyModel.setPriority(unitTestProperties.domainPriority);
+		storyModel.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyModel.setHistory(historyList);
+		return storyModel;
+	}
+	
+	public static StoryDomain getStoryDomainNameInvalid() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName("");
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(unitTestProperties.domainPoints);
+		storyDomain.setProgress(unitTestProperties.domainProgress);
+		storyDomain.setStatus(unitTestProperties.domainStatus);
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+		return storyDomain;
+	}
+	
+	public static StoryModel getStoryModelNameInvalid() {
+		StoryModel storyModel = new StoryModel();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyModel.set_id(unitTestProperties.domainId);
+		storyModel.setSprint_id(unitTestProperties.domainSprintId);
+		storyModel.setTechnology(unitTestProperties.domainTechnology);
+		storyModel.setName("");
+		storyModel.setDescription(unitTestProperties.domainDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.domainPoints);
+		storyModel.setProgress(unitTestProperties.domainProgress);
+		storyModel.setStatus(unitTestProperties.domainStatus);
+		storyModel.setNotes(unitTestProperties.domainNotes);
+		storyModel.setComments(unitTestProperties.domainComment);
+		storyModel.setStart_date(unitTestProperties.domainStartDate);
+		storyModel.setDue_date(unitTestProperties.domainDueDate);
+		storyModel.setPriority(unitTestProperties.domainPriority);
+		storyModel.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyModel.setHistory(historyList);
+		return storyModel;
+	}
+	
+	public static StoryDomain getStoryDomainStatusInvalid() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(unitTestProperties.domainPoints);
+		storyDomain.setProgress(unitTestProperties.domainProgress);
+		storyDomain.setStatus(unitTestProperties.domainStatus+"a");
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+		return storyDomain;
+	}
+	
+	public static StoryModel getStoryModelStatusInvalid() {
+		StoryModel storyModel = new StoryModel();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyModel.set_id(unitTestProperties.domainId);
+		storyModel.setSprint_id(unitTestProperties.domainSprintId);
+		storyModel.setTechnology(unitTestProperties.domainTechnology);
+		storyModel.setName(unitTestProperties.domainName);
+		storyModel.setDescription(unitTestProperties.domainDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.domainPoints);
+		storyModel.setProgress(unitTestProperties.domainProgress);
+		storyModel.setStatus(unitTestProperties.domainStatus+"a");
+		storyModel.setNotes(unitTestProperties.domainNotes);
+		storyModel.setComments(unitTestProperties.domainComment);
+		storyModel.setStart_date(unitTestProperties.domainStartDate);
+		storyModel.setDue_date(unitTestProperties.domainDueDate);
+		storyModel.setPriority(unitTestProperties.domainPriority);
+		storyModel.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyModel.setHistory(historyList);
+		return storyModel;
+	}
+	
+	public static StoryDomain getStoryDomainStatusNull() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(unitTestProperties.domainPoints);
+		storyDomain.setProgress(unitTestProperties.domainProgress);
+		storyDomain.setStatus("");
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+		return storyDomain;
+	}
+	
+	public static StoryModel getStoryModelStatusNull() {
+		StoryModel storyModel = new StoryModel();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyModel.set_id(unitTestProperties.domainId);
+		storyModel.setSprint_id(unitTestProperties.domainSprintId);
+		storyModel.setTechnology(unitTestProperties.domainTechnology);
+		storyModel.setName(unitTestProperties.domainName);
+		storyModel.setDescription(unitTestProperties.domainDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.domainPoints);
+		storyModel.setProgress(unitTestProperties.domainProgress);
+		storyModel.setStatus("");
+		storyModel.setNotes(unitTestProperties.domainNotes);
+		storyModel.setComments(unitTestProperties.domainComment);
+		storyModel.setStart_date(unitTestProperties.domainStartDate);
+		storyModel.setDue_date(unitTestProperties.domainDueDate);
+		storyModel.setPriority(unitTestProperties.domainPriority);
+		storyModel.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyModel.setHistory(historyList);
+		return storyModel;
+	}
+	
+	public static StoryDomain getStoryDomainStarDateNull() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(unitTestProperties.domainPoints);
+		storyDomain.setProgress(unitTestProperties.domainProgress);
+		storyDomain.setStatus(unitTestProperties.domainStatus);
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(null);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+		return storyDomain;
+	}
+	
+	public static StoryModel getStoryModelStarDateNull() {
+		StoryModel storyModel = new StoryModel();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyModel.set_id(unitTestProperties.domainId);
+		storyModel.setSprint_id(unitTestProperties.domainSprintId);
+		storyModel.setTechnology(unitTestProperties.domainTechnology);
+		storyModel.setName(unitTestProperties.domainName);
+		storyModel.setDescription(unitTestProperties.domainDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.modelPoints);
+		storyModel.setProgress(unitTestProperties.modelProgress);
+		storyModel.setStatus(unitTestProperties.modelStatus);
+		storyModel.setNotes(unitTestProperties.domainNotes);
+		storyModel.setComments(unitTestProperties.domainComment);
+		storyModel.setStart_date(null);
+		storyModel.setDue_date(unitTestProperties.domainDueDate);
+		storyModel.setPriority(unitTestProperties.domainPriority);
+		storyModel.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyModel.setHistory(historyList);
+		return storyModel;
+	}
+	
+	public static StoryDomain getStoryDomainPointsProggresNegative() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(-1);
+		storyDomain.setProgress(-1);
+		storyDomain.setStatus(unitTestProperties.domainStatus);
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+		return storyDomain;
+	}
+	
+	public static StoryModel getStoryModelPointsProggresNegative() {
+		StoryModel storyModel = new StoryModel();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyModel.set_id(unitTestProperties.domainId);
+		storyModel.setSprint_id(unitTestProperties.domainSprintId);
+		storyModel.setTechnology(unitTestProperties.domainTechnology);
+		storyModel.setName(unitTestProperties.domainName);
+		storyModel.setDescription(unitTestProperties.domainDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyModel.setPoints(-1);
+		storyModel.setProgress(-1);
+		storyModel.setStatus(unitTestProperties.modelStatus);
+		storyModel.setNotes(unitTestProperties.domainNotes);
+		storyModel.setComments(unitTestProperties.domainComment);
+		storyModel.setStart_date(unitTestProperties.modelStartDate);
+		storyModel.setDue_date(unitTestProperties.domainDueDate);
+		storyModel.setPriority(unitTestProperties.domainPriority);
+		storyModel.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyModel.setHistory(historyList);
+		return storyModel;
+	}
+	
+	public static StoryDomain getStoryDomainPointsProgressInvalid() {
+		StoryDomain storyDomain = new StoryDomain();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyDomain.set_id(unitTestProperties.domainId);
+		storyDomain.setSprint_id(unitTestProperties.domainSprintId);
+		storyDomain.setTechnology(unitTestProperties.domainTechnology);
+		storyDomain.setName(unitTestProperties.domainName);
+		storyDomain.setDescription(unitTestProperties.domainDescription);
+		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyDomain.setPoints(101);
+		storyDomain.setProgress(101);
+		storyDomain.setStatus(unitTestProperties.domainStatus);
+		storyDomain.setNotes(unitTestProperties.domainNotes);
+		storyDomain.setComments(unitTestProperties.domainComment);
+		storyDomain.setStart_date(unitTestProperties.domainStartDate);
+		storyDomain.setDue_date(unitTestProperties.domainDueDate);
+		storyDomain.setPriority(unitTestProperties.domainPriority);
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyDomain.setHistory(historyList);
+		return storyDomain;
+	}
+	
+	public static StoryModel getStoryModelPointsProgressInvalid() {
+		StoryModel storyModel = new StoryModel();
+		List<String> historyList = new ArrayList<>();
+		historyList.add(unitTestProperties.domainHistory1);
+		historyList.add(unitTestProperties.domainHistory2);
+		storyModel.set_id(unitTestProperties.domainId);
+		storyModel.setSprint_id(unitTestProperties.domainSprintId);
+		storyModel.setTechnology(unitTestProperties.domainTechnology);
+		storyModel.setName(unitTestProperties.domainName);
+		storyModel.setDescription(unitTestProperties.domainDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
+		storyModel.setPoints(101);
+		storyModel.setProgress(101);
+		storyModel.setStatus(unitTestProperties.modelStatus);
+		storyModel.setNotes(unitTestProperties.domainNotes);
+		storyModel.setComments(unitTestProperties.domainComment);
+		storyModel.setStart_date(unitTestProperties.modelStartDate);
+		storyModel.setDue_date(unitTestProperties.domainDueDate);
+		storyModel.setPriority(unitTestProperties.domainPriority);
+		storyModel.setAssignee_id(unitTestProperties.domainAssigneeId);
+		storyModel.setHistory(historyList);
+		return storyModel;
+	}
+	
+	
+	public static StoryModel getStoryTaskNullModel() {
+		StoryModel storyModel = new StoryModel();
+		ArrayList<String> historyList = new ArrayList<>();
+		ArrayList<TaskModel> taskList = new ArrayList<>();
+		TaskModel taskModel = new TaskModel();
+		historyList.add(unitTestProperties.modelHistory1);
+		historyList.add(unitTestProperties.modelHistory2);
+		storyModel.set_id(unitTestProperties.modelId);
+		storyModel.setSprint_id(unitTestProperties.modelSprintid);
+		storyModel.setTechnology(unitTestProperties.modelTechnology);
+		storyModel.setName(unitTestProperties.modelName);
+		storyModel.setDescription(unitTestProperties.modelDescription);
+		storyModel.setAcceptance_criteria(unitTestProperties.modelAcceptanceCriteria);
+		storyModel.setPoints(unitTestProperties.modelPoints);
+		storyModel.setProgress(unitTestProperties.modelProgress);
+		storyModel.setStatus(unitTestProperties.modelStatus);
+		storyModel.setNotes(unitTestProperties.modelNotes);
+		storyModel.setComments(unitTestProperties.modelComments);
+		storyModel.setStart_date(unitTestProperties.modelStartDate);
+		storyModel.setDue_date(unitTestProperties.modelDueDate);
+		storyModel.setPriority(unitTestProperties.modelPriority);
+		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
+		storyModel.setHistory(historyList);
+		storyModel.setTasks(taskList);
+		
+		return storyModel;
+	}
+	
+	public static TasksDomain getTasksDomainStatusValid() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id(unitTestProperties.TasksdomainId);
+		tasksDomain.setName(unitTestProperties.TasksdomainName);
+		tasksDomain.setDescription(unitTestProperties.TasksdomainDescription);
+		tasksDomain.setStatus(unitTestProperties.TasksdomainStatus + "asd");
+		tasksDomain.setComments(unitTestProperties.TasksdomainComments);
+		tasksDomain.setAssignee("");
+		return tasksDomain;
+	}
+	
+	public static TasksDomain getTasksNameNullDomain() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id(unitTestProperties.TasksdomainId);
+		tasksDomain.setName("");
+		tasksDomain.setDescription(unitTestProperties.TasksdomainDescription);
+		tasksDomain.setStatus(unitTestProperties.TasksdomainStatus);
+		tasksDomain.setComments(unitTestProperties.TasksdomainComments);
+		tasksDomain.setAssignee(unitTestProperties.TasksdomainAssignee);
+		return tasksDomain;
+	}
+	
+	public static TasksDomain getTasksStatusNullDomain() {
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id(unitTestProperties.TasksdomainId);
+		tasksDomain.setName(unitTestProperties.TasksdomainName);
+		tasksDomain.setDescription(unitTestProperties.TasksdomainDescription);
+		tasksDomain.setStatus("");
+		tasksDomain.setComments(unitTestProperties.TasksdomainComments);
+		tasksDomain.setAssignee(unitTestProperties.TasksdomainAssignee);
+		return tasksDomain;
 	}
 }

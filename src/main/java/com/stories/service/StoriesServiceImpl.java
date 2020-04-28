@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -289,7 +290,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(validationStatus)) {
 			return validationStatus;
 		} else {
-			return validationStatus + ", ";
+			return validationStatus + " AND ";
 		}
 	}
 	
@@ -307,9 +308,10 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(assigneeId)) {
 
 		} else {
-			if (!usersRepository.existsById(assigneeId))
+			if (!usersRepository.existsById(assigneeId)) {
 				validation = StoriesApiConstants.storyFieldAssigneDoesntExistException;
-			return validation;
+				return validation + " AND ";
+			}
 		}
 		return validation;
 	}
@@ -325,7 +327,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(validation)) {
 			return validation;
 		} else {
-			return validation + ", ";
+			return validation + " AND ";
 		}
 	}
 
@@ -366,7 +368,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(progressValidation)) {
 			return progressValidation;
 		} else {
-			return progressValidation + ", ";
+			return progressValidation + " AND ";
 		}
 	}
 
@@ -386,7 +388,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(pointsValidation)) {
 			return pointsValidation;
 		} else {
-			return pointsValidation + ", ";
+			return pointsValidation + " AND ";
 		}
 	}
 
@@ -395,12 +397,11 @@ public class StoriesServiceImpl implements StoriesService {
         String validationRespons = "";
         int countValidationPositive = 0;
         
-        List<String> domainList = new ArrayList<>();
-        domainList.add(storyId);
-        domainList.add(storyDomain.getSprint_id());
-        domainList.add(storyDomain.getStatus());
-        domainList.add(storyDomain.getPriority());
-        domainList.add(storyDomain.getAssignee_id());
+        List<String> validateSpecialCharacterField  = new ArrayList<>();
+        validateSpecialCharacterField.add(storyId);
+        validateSpecialCharacterField.add(storyDomain.getSprint_id());
+        validateSpecialCharacterField.add(storyDomain.getStatus());
+        validateSpecialCharacterField.add(storyDomain.getAssignee_id());
         
         validationRespons = nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
         if (!StringUtils.isEmpty(validationRespons)) {
@@ -411,22 +412,19 @@ public class StoriesServiceImpl implements StoriesService {
         }
 
         validationRespons = "";
-        for(int i= 0; i < domainList.size(); i++) {
-	      	if(specialCharacterValidation(domainList.get(i))) {
-	      		countValidationPositive++;
-	      		if (StringUtils.isEmpty(validationRespons)) {
-	      			validationRespons = StoriesApiConstants.storyDomainValidationArray[i];
-	            }
-	      		else {
-	      			validationRespons = validationRespons + ", " + StoriesApiConstants.storyDomainValidationArray[i];
-	      		}
-	      	}
+        for(int i= 0; i < validateSpecialCharacterField.size(); i++) {
+        	boolean err = Pattern.compile("[a-zA-Z0-9]*").matcher(validateSpecialCharacterField.get(i)).matches();
+			if (!err) {
+				countValidationPositive++;
+				if (StringUtils.isEmpty(validationRespons)) {
+					validationRespons = StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
+				} else {
+					validationRespons = validationRespons + " AND " + StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
+				}
+			}
         }
-        if(countValidationPositive > 1) {
-        	mensaggeDinamicValidation[0] = StoriesApiConstants.exceptionCharactersInFollowingFields + validationRespons;
-  		}
-  		else if(countValidationPositive == 1){
-  			mensaggeDinamicValidation[0] = StoriesApiConstants.exceptionCharactersInSpecificField + validationRespons;
+        if(countValidationPositive >= 1) {
+        	mensaggeDinamicValidation[0] = validationRespons;
   		}
 
         if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
@@ -452,6 +450,7 @@ public class StoriesServiceImpl implements StoriesService {
             mensaggeDinamicValidation[1] = filtervalidation(StoriesApiConstants.validationPathArray, mensaggeDinamicValidation[1]);
             mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusConflict;
             if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
+            	mensaggeDinamicValidation[0] = endCheckValidation(mensaggeDinamicValidation[0]);
                 return mensaggeDinamicValidation;    
             }
         }
@@ -478,6 +477,7 @@ public class StoriesServiceImpl implements StoriesService {
             mensaggeDinamicValidation[1] = filtervalidation(StoriesApiConstants.validationPathArray, mensaggeDinamicValidation[1]);
             mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusBadRequest;
             if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
+            	mensaggeDinamicValidation[0] = endCheckValidation(mensaggeDinamicValidation[0]);
                 return mensaggeDinamicValidation;
             }
         }
@@ -506,6 +506,11 @@ public class StoriesServiceImpl implements StoriesService {
         return validationRespons;
     }
 	
+	private String endCheckValidation(String validation) {
+		validation = validation.subSequence(0, validation.length()-4).toString();
+		return validation;
+	}
+	
 	private boolean userNullTaskValidation(String assigneeId) throws EntityNotFoundException {
 		if (StringUtils.isEmpty(assigneeId)) {
 			return true;
@@ -515,6 +520,7 @@ public class StoriesServiceImpl implements StoriesService {
 			return true;
 		}
 	}
+	
 	private boolean statusTaskValidation(String[] statusArray, String status) {
 		if(StringUtils.isEmpty(status)) {
 			return true;
@@ -523,46 +529,27 @@ public class StoriesServiceImpl implements StoriesService {
 		}
 	}
 	
-	private boolean specialCharacterValidation(String string) {
-		for (int i = 0; i < StoriesApiConstants.specialCharactersArray.length; i++) {
-           if(!StringUtils.isEmpty(string)) {
-        	   if (string.toString().indexOf(StoriesApiConstants.specialCharactersArray[i]) == -1) {
-               	
-               } else {
-               	return true;
-               }
-           }
-        }
-		return false;
-	}
-	
 	private String TaskSpecialCharacterValidation(TasksDomain task, String storyId, String taskId) {
 		int countValidationPositive = 0;
         String validationRespons = "";
         
-		List<String> domainList = new ArrayList<>();
-        domainList.add(storyId);
-        domainList.add(taskId);
-        domainList.add(task.getStatus());
-        domainList.add(task.getAssignee());
+		List<String> validateSpecialCharacterField  = new ArrayList<>();
+		validateSpecialCharacterField.add(storyId);
+		validateSpecialCharacterField.add(taskId);
+		validateSpecialCharacterField.add(task.getStatus());
+		validateSpecialCharacterField.add(task.getAssignee());
 	
-	        for(int i= 0; i < domainList.size(); i++) {
-		      	if(specialCharacterValidation(domainList.get(i))) {
-		      		countValidationPositive++;
-		      		if (StringUtils.isEmpty(validationRespons)) {
-		      			validationRespons = StoriesApiConstants.taskDomainValidationArray[i];
-		            }
-		      		else {
-		      			validationRespons = validationRespons + ", " + StoriesApiConstants.taskDomainValidationArray[i];
-		      		}
-		      	}
+	        for(int i= 0; i < validateSpecialCharacterField.size(); i++) {
+	        	boolean err = Pattern.compile("[a-zA-Z0-9]*").matcher(validateSpecialCharacterField.get(i)).matches();
+				if (!err) {
+					countValidationPositive++;
+					if (StringUtils.isEmpty(validationRespons)) {
+						validationRespons = StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
+					} else {
+						validationRespons = validationRespons + " AND " + StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
+					}
+				}
 	        }
-	        if(countValidationPositive > 1) {
-	  			validationRespons = StoriesApiConstants.exceptionCharactersInFollowingFields + validationRespons;
-	  		}
-	  		else if(countValidationPositive == 1){
-	  			validationRespons = StoriesApiConstants.exceptionCharactersInSpecificField + validationRespons;
-	  		}
 	        
 		return validationRespons;
 	}
