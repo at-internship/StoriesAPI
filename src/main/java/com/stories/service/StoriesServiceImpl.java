@@ -94,6 +94,7 @@ public class StoriesServiceImpl implements StoriesService {
 			            taskModel.set_id(new ObjectId().toString());
 			            tasks.add(taskModel);
 			            storyModel.setTasks(tasks);
+			            logger.debug("Creating task for the US: "+ storyModel.get_id() +"with the json: "+ taskModel);
 			            storiesRepository.save(storyModel);
 			            return taskModel.get_id();
 			         }else {
@@ -135,7 +136,7 @@ public class StoriesServiceImpl implements StoriesService {
 				for (int i = 0; i < tasks.size(); i++) {
 					if (tasks.get(i).get_id().toString().equals(taskId)) {
 						tasks.remove(i);
-						logger.debug("Deleting task with the id: " + taskId);
+						logger.debug("Deleting task: "+ taskId +" of the US: "+ storyModel.get_id());
 						storyModel.setTasks(tasks);
 						storiesRepository.save(storyModel);
 					} else if (i == (tasks.size() - 1)) {
@@ -226,6 +227,7 @@ public class StoriesServiceImpl implements StoriesService {
 			}
 			storyModel.setTasks(updatedTasks);
 			storiesRepository.save(storyModel);
+			logger.debug("Updating task: " + id + " of the US: "+ storyModel.get_id() +" with the JSON: "+ task);
 			return task;
 		} else {
 			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id);
@@ -266,6 +268,7 @@ public class StoriesServiceImpl implements StoriesService {
 				TaskModel storyWithId = storiesRepository.findByTasks__id(_id);
 				if(storyWithId.get_id().equals(id)) {
 					TasksDomain taskDomain = mapperFacade.map(taskModel, TasksDomain.class);
+					logger.debug("Getting task: " + _id + " of the US: " + id + ", task JSON : {}", taskDomain);
 					return taskDomain;
 				}
 			throw new EntityNotFoundException(StoriesApiConstants.taskFieldIdNotFoundException, StoriesApiConstants.pathStories + id);
@@ -276,6 +279,7 @@ public class StoriesServiceImpl implements StoriesService {
 	public List<TasksDomain> getTasksByStory(String id) throws EntityNotFoundException {
 		if (storiesRepository.existsById(id)) {
 			List<TasksDomain> results = storiesCustomRepository.getTasksByStory(id).getMappedResults();
+			logger.debug("Getting all tasks of the US: " + id + " - JSON : {}", results);
 			return results;
 		}
 		throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks);
