@@ -478,27 +478,6 @@ public class StoriesServiceImpl implements StoriesService {
         return mensaggeDinamicValidation;
 	}
 	
-	private String filtervalidation(String[] validationPath, String string) {
-        String validationRespons = "";
-        for (int i = 0; i < validationPath.length; i++) {
-            if (string.toString().indexOf(validationPath[i]) == -1) {
-
-            } else {
-                if (validationPath[i].equals(string.toString().substring(
-                        string.toString().indexOf(validationPath[i]),
-                        string.toString().indexOf(validationPath[i])
-                                + validationPath[i].length()))) {
-                    if (!(string.toString().indexOf(validationPath[i]) == -1)) {
-                        if (StringUtils.isEmpty(validationRespons)) {
-                            validationRespons = validationPath[i];
-                        }
-                    }
-                }
-            }
-        }
-        return validationRespons;
-    }
-	
 	private String endCheckValidation(String validation) {
 		validation = validation.subSequence(0, validation.length()-4).toString();
 		return validation;
