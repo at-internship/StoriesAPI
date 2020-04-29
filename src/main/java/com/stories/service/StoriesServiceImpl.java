@@ -111,14 +111,14 @@ public class StoriesServiceImpl implements StoriesService {
 						   StoriesApiConstants.pathStories);
 			   }
 		   }else {
-		         throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories);
+		         throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks);
 		      }
 		}
 
 	@Override
 	public void deleteStory(String id) throws Exception {
 		if (!storiesRepository.existsById(id)) {
-			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException,StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException,StoriesApiConstants.pathStories + id);
 		} else
 			logger.debug("Deleting story with the id: " + id);
 		storiesRepository.deleteById(id);
@@ -127,7 +127,7 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public void deleteTask(String id, String taskId) throws Exception {
 		if (!storiesRepository.existsById(id)) {
-			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id);
 		} else {
 			storyModel = storiesRepository.findById(id).get();
 			List<TaskModel> tasks = storyModel.getTasks();
@@ -140,7 +140,7 @@ public class StoriesServiceImpl implements StoriesService {
 						storiesRepository.save(storyModel);
 					} else if (i == (tasks.size() - 1)) {
 						throw new EntityNotFoundException(StoriesApiConstants.taskFieldIdNotFoundException, 
-								StoriesApiConstants.pathTasks);
+								StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + taskId);
 					}
 				}
 			} else {
@@ -165,7 +165,7 @@ public class StoriesServiceImpl implements StoriesService {
 				logger.debug("Updating story with the id: " + id + " - JSON : {}", storyDomain);
 				return storyDomain;
 			} else {
-				throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories);
+				throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id);
 			}
 		} else {
 			if(mensaggeDinamicValidation[2] == StoriesApiConstants.httpStatusBadRequest) {
@@ -235,7 +235,7 @@ public class StoriesServiceImpl implements StoriesService {
 	@Override
 	public StoryDomain getStoryById(String id) throws Exception {
 		if (!storiesRepository.existsById(id))
-			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories);
+			throw new EntityNotFoundException(StoriesApiConstants.storyFieldIdNotFoundException, StoriesApiConstants.pathStories + id);
 		storyModel = storiesRepository.findById(id).get();
 		storyDomain = mapperFacade.map(storyModel, StoryDomain.class);
 		logger.debug("Getting story with the id: " + id + " - JSON : {}", storyDomain);
@@ -405,7 +405,7 @@ public class StoriesServiceImpl implements StoriesService {
         validationRespons = nameStatusNullValidation(storyDomain.getName(), storyDomain.getStatus());
         if (!StringUtils.isEmpty(validationRespons)) {
             mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-            mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
+            mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories + storyId;
             mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusBadRequest;
             return mensaggeDinamicValidation;
         }
@@ -427,7 +427,7 @@ public class StoriesServiceImpl implements StoriesService {
   		}
 
         if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
-        	mensaggeDinamicValidation[1] = StoriesApiConstants.pathStories;
+        	mensaggeDinamicValidation[1] = StoriesApiConstants.pathStories + storyId;
         	mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusBadRequest;
         	return mensaggeDinamicValidation;
         }
@@ -436,17 +436,14 @@ public class StoriesServiceImpl implements StoriesService {
             validationRespons = sprintNullValidation(storyDomain.getSprint_id());
             if (!StringUtils.isEmpty(validationRespons)) {
                 mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
-                
             }
             
             validationRespons = userNullValidation(storyDomain.getAssignee_id());
             if (!StringUtils.isEmpty(validationRespons)) {
                 mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
             }
             
-            mensaggeDinamicValidation[1] = filtervalidation(StoriesApiConstants.validationPathArray, mensaggeDinamicValidation[1]);
+            mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories + storyId;
             mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusConflict;
             if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
             	mensaggeDinamicValidation[0] = endCheckValidation(mensaggeDinamicValidation[0]);
@@ -458,22 +455,19 @@ public class StoriesServiceImpl implements StoriesService {
             validationRespons = pointsValidation(storyDomain.getPoints(), StoriesApiConstants.pointsArray);
             if (!StringUtils.isEmpty(validationRespons)) {
                 mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
             }
 
             validationRespons = proggressValidation(storyDomain.getProgress());
             if (!StringUtils.isEmpty(validationRespons)) {
                 mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
             }
 
             validationRespons = statusValidation(StoriesApiConstants.statusArray, storyDomain.getStatus());
             if (!StringUtils.isEmpty(validationRespons)) {
                 mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
-                mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories;
             }
             
-            mensaggeDinamicValidation[1] = filtervalidation(StoriesApiConstants.validationPathArray, mensaggeDinamicValidation[1]);
+            mensaggeDinamicValidation[1] = mensaggeDinamicValidation[1] + StoriesApiConstants.pathStories + storyId;
             mensaggeDinamicValidation[2] = StoriesApiConstants.httpStatusBadRequest;
             if(!StringUtils.isEmpty(mensaggeDinamicValidation[0])) {
             	mensaggeDinamicValidation[0] = endCheckValidation(mensaggeDinamicValidation[0]);
