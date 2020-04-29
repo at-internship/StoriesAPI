@@ -14,13 +14,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.stories.constants.StoriesApiTestsConstants;
@@ -39,8 +39,8 @@ import com.stories.utils.UnitTestProperties;
 import ma.glasnost.orika.MapperFacade;
 
 @SpringBootTest
+@ContextConfiguration
 @ExtendWith(SpringExtension.class)
-@AutoConfigureMockMvc
 public class ServiceTests {
 
 	@MockBean
