@@ -23,6 +23,7 @@ import com.stories.repository.StoriesCustomRepository;
 import com.stories.repository.StoriesRepository;
 import com.stories.repository.UsersRepository;
 import com.stories.sprintsclient.SprintsClient;
+import com.stories.usersclient.UsersClient;
 
 import io.micrometer.core.instrument.util.StringUtils;
 import ma.glasnost.orika.MapperFacade;
@@ -52,6 +53,9 @@ public class StoriesServiceImpl implements StoriesService {
 
 	@Autowired
 	SprintsClient sprintClient;
+	
+	@Autowired
+	UsersClient userClient;
 
 	@Override
 	public String createStory(StoryDomain storyDomain) throws Exception {
@@ -94,7 +98,7 @@ public class StoriesServiceImpl implements StoriesService {
 			            taskModel.set_id(new ObjectId().toString());
 			            tasks.add(taskModel);
 			            storyModel.setTasks(tasks);
-			            logger.debug("Creating task for the US: "+ storyModel.get_id() +"with the json: "+ taskModel);
+			            logger.debug("Creating task for the US: "+ storyModel.get_id() +" with the json: "+ taskModel);
 			            storiesRepository.save(storyModel);
 			            return taskModel.get_id();
 			         }else {
@@ -197,7 +201,7 @@ public class StoriesServiceImpl implements StoriesService {
 						StoriesApiConstants.pathStories);
 			}
 			if (!StringUtils.isEmpty(task.getAssignee())) {
-				if (!usersRepository.existsById(task.getAssignee())) {
+				if (!userClient.existUserById(task.getAssignee())) {
 					throw new EntityNotFoundException(StoriesApiConstants.taskFieldAssigneeNotFoundException, HttpStatus.CONFLICT,
 							StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + _id);
 				}
@@ -311,7 +315,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(assigneeId)) {
 
 		} else {
-			if (!usersRepository.existsById(assigneeId)) {
+			if (!userClient.existUserById(assigneeId)) {
 				validation = StoriesApiConstants.storyFieldAssigneDoesntExistException;
 				return validation + " AND ";
 			}
@@ -439,7 +443,7 @@ public class StoriesServiceImpl implements StoriesService {
         if((!StringUtils.isEmpty(storyDomain.getSprint_id())) || (!StringUtils.isEmpty(storyDomain.getAssignee_id()))) {
             validationRespons = sprintNullValidation(storyDomain.getSprint_id());
             if (!StringUtils.isEmpty(validationRespons)) {
-                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
+                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] +  validationRespons;
             }
             
             validationRespons = userNullValidation(storyDomain.getAssignee_id());
@@ -482,27 +486,6 @@ public class StoriesServiceImpl implements StoriesService {
         return mensaggeDinamicValidation;
 	}
 	
-	private String filtervalidation(String[] validationPath, String string) {
-        String validationRespons = "";
-        for (int i = 0; i < validationPath.length; i++) {
-            if (string.toString().indexOf(validationPath[i]) == -1) {
-
-            } else {
-                if (validationPath[i].equals(string.toString().substring(
-                        string.toString().indexOf(validationPath[i]),
-                        string.toString().indexOf(validationPath[i])
-                                + validationPath[i].length()))) {
-                    if (!(string.toString().indexOf(validationPath[i]) == -1)) {
-                        if (StringUtils.isEmpty(validationRespons)) {
-                            validationRespons = validationPath[i];
-                        }
-                    }
-                }
-            }
-        }
-        return validationRespons;
-    }
-	
 	private String endCheckValidation(String validation) {
 		validation = validation.subSequence(0, validation.length()-4).toString();
 		return validation;
@@ -512,7 +495,7 @@ public class StoriesServiceImpl implements StoriesService {
 		if (StringUtils.isEmpty(assigneeId)) {
 			return true;
 		} else {
-			if (!usersRepository.existsById(assigneeId))
+			if (!userClient.existUserById(assigneeId))
 				throw new EntityNotFoundException(StoriesApiConstants.taskFieldAssigneeNotFoundException,HttpStatus.CONFLICT,StoriesApiConstants.pathStories);
 			return true;
 		}
