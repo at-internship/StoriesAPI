@@ -24,6 +24,7 @@ public class StoriesApiConstants {
 		public static final String storiesNotFoundException = "Stories not found";
 		public static final String storyFieldIdNotFoundException = "Story not found";
 		public static final String storyFieldSprintIdDoesntExistException = "The id entered in the sprint_id field does not exist";
+		public static final String storyFieldUserIdDoesntExistException = "The id entered in the sprint_id field does not exist";
 		public static final String storyFieldAssigneDoesntExistException = "User assignee_id does not exist";
 		public static final String storyFieldStoryIdSpecialCharacter = "Story not found";
 		public static final String storyFieldSprintIdSpecialCharacter = "The id entered in the sprint_id field does not exist";

@@ -1,4 +1,4 @@
-package com.stories.service;
+package com.stories.sprintsClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -51,7 +51,8 @@ public class SprintsClientTest {
 		Mockito.when(restTemplate.exchange(StoriesApiTestsConstants.uriSprintClient, HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<SprintDomain>>() {
 				})).thenReturn(sprintEntity);
-		assertEquals(StoriesApiTestsConstants.booleanTrue, sprintsClient.existsSprintById(StoriesApiTestsConstants.sprintIdValid));
+		assertEquals(StoriesApiTestsConstants.booleanTrue,
+				sprintsClient.existsSprintById(StoriesApiTestsConstants.sprintIdValid));
 	}
 
 	@Test
@@ -61,7 +62,8 @@ public class SprintsClientTest {
 		Mockito.when(restTemplate.exchange(StoriesApiTestsConstants.uriSprintClient, HttpMethod.GET, null,
 				new ParameterizedTypeReference<List<SprintDomain>>() {
 				})).thenReturn(sprintEntity);
-		assertEquals(StoriesApiTestsConstants.booleanFalse, sprintsClient.existsSprintById(StoriesApiTestsConstants.sprintIdInvalid));
+		assertEquals(StoriesApiTestsConstants.booleanFalse,
+				sprintsClient.existsSprintById(StoriesApiTestsConstants.sprintIdInvalid));
 	}
 
 	@Test(expected = RestClientException.class)

@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.stories.domain.SprintDomain;
 import com.stories.domain.StoryDomain;
 import com.stories.domain.TasksDomain;
+import com.stories.domain.UserDomain;
 import com.stories.model.StoryModel;
 import com.stories.model.TaskModel;
 
@@ -19,6 +19,7 @@ import com.stories.model.TaskModel;
 public class TestUtils {
 
 	private static UnitTestProperties unitTestProperties;
+
 	@Autowired
 	private TestUtils(UnitTestProperties unitTestProperties) {
 		TestUtils.unitTestProperties = unitTestProperties;
@@ -51,12 +52,12 @@ public class TestUtils {
 		List<SprintDomain> storyDomain = new ArrayList<SprintDomain>();
 		return storyDomain;
 	}
-	
+
 	public TasksDomain getEmptyTasksDomain() {
 		TasksDomain tasksDomain = new TasksDomain();
 		return tasksDomain;
 	}
-	
+
 	public TaskModel getEmptyTasksModel() {
 		TaskModel taskModel = new TaskModel();
 		return taskModel;
@@ -82,7 +83,7 @@ public class TestUtils {
 	}
 
 	public String postStoryBadJsonFormat() {
-		return "{\"sprint_id\":\"UUID\", \"technology\":\"Javas\",\"name\":\"Create Stories POST endpoint\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\"%,\"progress\":885, \"status\":\"working\",\"notes\":\"\",\"comments\":\"Test\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"High\", \"assignee_id\":\"UUID\",\"history\":[\"\",\"\"]}";
+		return "{\"sprint_id\":\"UUID\", \"technology\":\"Javas\",\"name\":\"Create Stories POST endpoint\", \"description\":\"\",\"acceptance_criteria\":\"\",\"points\":\"213\",\"progress\":885, \"status\":\"working\",\"notes\":\"\",\"comments\":\"Test\", \"start_date\":\"2020-08-25\",\"due_date\":\"2020-08-25\",\"priority\":\"High\", \"assignee_id\":\"UUID\",\"history\":[\"\",\"\"]}";
 	}
 
 	public String getByid() {
@@ -112,7 +113,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-		
+
 	public static StoryModel getDummyStoryModel() {
 		ArrayList<String> historyList = new ArrayList<>();
 		historyList.add(unitTestProperties.modelHistory1);
@@ -136,7 +137,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-	
+
 	public static List<StoryModel> listStoriesModelNull() {
 		List<StoryModel> storiesModel = new ArrayList<StoryModel>();
 		storiesModel = null;
@@ -166,7 +167,7 @@ public class TestUtils {
 
 		return storyDomain;
 	}
-	
+
 	public static TasksDomain getTasksDomain() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.set_id(unitTestProperties.TasksdomainId);
@@ -177,21 +178,21 @@ public class TestUtils {
 		tasksDomain.setAssignee(unitTestProperties.TasksdomainAssignee);
 		return tasksDomain;
 	}
- 	
- 	public static List<TasksDomain> getTasksDomainList(){
- 		List<TasksDomain> tasksDomainList= new ArrayList<TasksDomain>();
- 		TasksDomain tasksDomain = new TasksDomain();
- 		tasksDomain.set_id(unitTestProperties.domainId);
- 		tasksDomain.setName(unitTestProperties.domainName);
- 		tasksDomain.setDescription(unitTestProperties.domainDescription);
- 		tasksDomain.setStatus(unitTestProperties.domainStatus);
- 		tasksDomain.setComments(unitTestProperties.domainComment);
- 		tasksDomain.setAssignee(unitTestProperties.domainAssigneeId);
- 		tasksDomainList.add(tasksDomain);
+
+	public static List<TasksDomain> getTasksDomainList() {
+		List<TasksDomain> tasksDomainList = new ArrayList<TasksDomain>();
+		TasksDomain tasksDomain = new TasksDomain();
+		tasksDomain.set_id(unitTestProperties.domainId);
+		tasksDomain.setName(unitTestProperties.domainName);
+		tasksDomain.setDescription(unitTestProperties.domainDescription);
+		tasksDomain.setStatus(unitTestProperties.domainStatus);
+		tasksDomain.setComments(unitTestProperties.domainComment);
+		tasksDomain.setAssignee(unitTestProperties.domainAssigneeId);
+		tasksDomainList.add(tasksDomain);
 		return tasksDomainList;
- 	}
- 	
- 	public static TaskModel getTasksModel() {
+	}
+
+	public static TaskModel getTasksModel() {
 		TaskModel tasksModel = new TaskModel();
 		tasksModel.set_id(unitTestProperties.TasksModelId);
 		tasksModel.setName(unitTestProperties.TasksdomainName);
@@ -227,8 +228,8 @@ public class TestUtils {
 
 		return storyModel;
 	}
-	
-	public static List<TaskModel> getTaskModelList(){
+
+	public static List<TaskModel> getTaskModelList() {
 		List<TaskModel> tasks = new ArrayList<TaskModel>();
 		TaskModel tasksModel = new TaskModel();
 		tasksModel.set_id(unitTestProperties.TasksModelId);
@@ -240,7 +241,7 @@ public class TestUtils {
 		tasks.add(tasksModel);
 		return tasks;
 	}
-	
+
 	public static StoryModel getStoryTaskModel() {
 		StoryModel storyModel = new StoryModel();
 		ArrayList<String> historyList = new ArrayList<>();
@@ -270,7 +271,7 @@ public class TestUtils {
 		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
 		storyModel.setHistory(historyList);
 		storyModel.setTasks(taskList);
-		
+
 		return storyModel;
 	}
 
@@ -313,13 +314,36 @@ public class TestUtils {
 		sprintDomainList.add(sprintDomain);
 		return sprintDomainList;
 	}
-	
+
 	public static List<SprintDomain> getNullSprintDomaintList() {
 		List<SprintDomain> sprintDomainList = new ArrayList<SprintDomain>();
 		sprintDomainList.add(null);
 		return sprintDomainList;
 	}
-	
+
+	public static List<UserDomain> getUserDomainList() {
+		List<UserDomain> userDomainList = new ArrayList<UserDomain>();
+		UserDomain userDomain = new UserDomain();
+		userDomain.setUserId("5ea7125ce6cd3109e8bc71c6");
+		userDomain.setFirstName("Armando");
+		userDomain.setLastName("Sanchez");
+		userDomain.setEmail("armandosz@outlook.com");
+		userDomain.setPhone("3123231");
+		userDomain.setStartDate("2020-04-29T23:49:44.215Z");
+		userDomain.setEndDate("2020-04-29T23:49:44.215Z");
+		userDomain.setActiveTechnology("Java");
+		userDomain.setStatus("active");
+		userDomain.setRole("Intern");
+		userDomainList.add(userDomain);
+		return userDomainList;
+	}
+
+	public static List<UserDomain> getNullUserDomaintList() {
+		List<UserDomain> userDomainList = new ArrayList<UserDomain>();
+		userDomainList.add(null);
+		return userDomainList;
+	}
+
 	public static TasksDomain getDummyTasksDomain() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.set_id("5e8dc1ba4ce33c0efc555845");
@@ -330,7 +354,7 @@ public class TestUtils {
 		tasksDomain.setAssignee("TasksDomainAssigneeTest");
 		return tasksDomain;
 	}
-	
+
 	public static TaskModel getDummyTaskModel() {
 		TaskModel taskModel = new TaskModel();
 		taskModel.set_id("5e8dc1ba4ce33c0efc555845");
@@ -341,7 +365,7 @@ public class TestUtils {
 		taskModel.setAssignee("TasksModelAssigneeTest");
 		return taskModel;
 	}
-	
+
 	public static TasksDomain getUpdateTaskDomain() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.setName("test");
@@ -351,7 +375,7 @@ public class TestUtils {
 		tasksDomain.setAssignee("");
 		return tasksDomain;
 	}
-	
+
 	public static TasksDomain getUpdateTaskDomainWrongstatus() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.setName("test");
@@ -361,7 +385,7 @@ public class TestUtils {
 		tasksDomain.setAssignee("");
 		return tasksDomain;
 	}
-	
+
 	public static TasksDomain getUpdateTaskDomainAssignee() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.setName("test");
@@ -371,7 +395,7 @@ public class TestUtils {
 		tasksDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
 		return tasksDomain;
 	}
-	
+
 	public static TasksDomain getUpdateTaskDomainNameEmpty() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.setName(null);
@@ -380,14 +404,14 @@ public class TestUtils {
 		tasksDomain.setComments("comments");
 		tasksDomain.setAssignee("5e6bbc854244ac0cbc8df65d");
 		return tasksDomain;
-  }
-  
+	}
+
 	public static TaskModel getTaskModelId() {
 		TaskModel taskModel = new TaskModel();
 		taskModel.set_id("5e7668cfacfc726352dc5abc");
 		return taskModel;
 	}
-	
+
 	public static TaskModel getTaskModelNull() {
 		TaskModel taskModel = new TaskModel();
 		taskModel.set_id(null);
@@ -398,7 +422,7 @@ public class TestUtils {
 		taskModel.setAssignee("TasksModelAssigneeTest");
 		return taskModel;
 	}
-	
+
 	public static TasksDomain getTaskDomainSpecialChar() {
 		TasksDomain taskDomain = new TasksDomain();
 		taskDomain.set_id("5e8dc1ba4ce33c0efc555845");
@@ -409,7 +433,7 @@ public class TestUtils {
 		taskDomain.setAssignee("TasksModelAssigneeTest");
 		return taskDomain;
 	}
-	
+
 	public static TasksDomain getTaskDomainSpecialsChars() {
 		TasksDomain taskDomain = new TasksDomain();
 		taskDomain.set_id("5e8dc1ba4ce33c0efc555845");
@@ -420,7 +444,7 @@ public class TestUtils {
 		taskDomain.setAssignee("TasksModelAssigneeTest_");
 		return taskDomain;
 	}
-	
+
 	public static StoryDomain getStoryDomainSpecialsChars() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -434,18 +458,18 @@ public class TestUtils {
 		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
 		storyDomain.setPoints(unitTestProperties.domainPoints);
 		storyDomain.setProgress(unitTestProperties.domainProgress);
-		storyDomain.setStatus(unitTestProperties.domainStatus+"_");
+		storyDomain.setStatus(unitTestProperties.domainStatus + "_");
 		storyDomain.setNotes(unitTestProperties.domainNotes);
 		storyDomain.setComments(unitTestProperties.domainComment);
 		storyDomain.setStart_date(unitTestProperties.domainStartDate);
 		storyDomain.setDue_date(unitTestProperties.domainDueDate);
 		storyDomain.setPriority(unitTestProperties.domainPriority);
-		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId+"_");
+		storyDomain.setAssignee_id(unitTestProperties.domainAssigneeId + "_");
 		storyDomain.setHistory(historyList);
 
 		return storyDomain;
 	}
-	
+
 	public static StoryDomain getStoryDomainSpecialChar() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -459,7 +483,7 @@ public class TestUtils {
 		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
 		storyDomain.setPoints(unitTestProperties.domainPoints);
 		storyDomain.setProgress(unitTestProperties.domainProgress);
-		storyDomain.setStatus(unitTestProperties.domainStatus+"_");
+		storyDomain.setStatus(unitTestProperties.domainStatus + "_");
 		storyDomain.setNotes(unitTestProperties.domainNotes);
 		storyDomain.setComments(unitTestProperties.domainComment);
 		storyDomain.setStart_date(unitTestProperties.domainStartDate);
@@ -470,11 +494,7 @@ public class TestUtils {
 
 		return storyDomain;
 	}
-	
-	
-	
-	
-	
+
 	public static StoryDomain getStoryDomainAssigneInvalid() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -498,7 +518,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-	
+
 	public static StoryModel getStoryModelAssigneInvalid() {
 		StoryModel storyModel = new StoryModel();
 		List<String> historyList = new ArrayList<>();
@@ -522,7 +542,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-	
+
 	public static StoryDomain getStoryDomainNameInvalid() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -546,7 +566,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-	
+
 	public static StoryModel getStoryModelNameInvalid() {
 		StoryModel storyModel = new StoryModel();
 		List<String> historyList = new ArrayList<>();
@@ -570,7 +590,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-	
+
 	public static StoryDomain getStoryDomainStatusInvalid() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -584,7 +604,7 @@ public class TestUtils {
 		storyDomain.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
 		storyDomain.setPoints(unitTestProperties.domainPoints);
 		storyDomain.setProgress(unitTestProperties.domainProgress);
-		storyDomain.setStatus(unitTestProperties.domainStatus+"a");
+		storyDomain.setStatus(unitTestProperties.domainStatus + "a");
 		storyDomain.setNotes(unitTestProperties.domainNotes);
 		storyDomain.setComments(unitTestProperties.domainComment);
 		storyDomain.setStart_date(unitTestProperties.domainStartDate);
@@ -594,7 +614,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-	
+
 	public static StoryModel getStoryModelStatusInvalid() {
 		StoryModel storyModel = new StoryModel();
 		List<String> historyList = new ArrayList<>();
@@ -608,7 +628,7 @@ public class TestUtils {
 		storyModel.setAcceptance_criteria(unitTestProperties.domainAcceptanceCriteria);
 		storyModel.setPoints(unitTestProperties.domainPoints);
 		storyModel.setProgress(unitTestProperties.domainProgress);
-		storyModel.setStatus(unitTestProperties.domainStatus+"a");
+		storyModel.setStatus(unitTestProperties.domainStatus + "a");
 		storyModel.setNotes(unitTestProperties.domainNotes);
 		storyModel.setComments(unitTestProperties.domainComment);
 		storyModel.setStart_date(unitTestProperties.domainStartDate);
@@ -618,7 +638,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-	
+
 	public static StoryDomain getStoryDomainStatusNull() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -642,7 +662,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-	
+
 	public static StoryModel getStoryModelStatusNull() {
 		StoryModel storyModel = new StoryModel();
 		List<String> historyList = new ArrayList<>();
@@ -666,7 +686,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-	
+
 	public static StoryDomain getStoryDomainStarDateNull() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -690,7 +710,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-	
+
 	public static StoryModel getStoryModelStarDateNull() {
 		StoryModel storyModel = new StoryModel();
 		List<String> historyList = new ArrayList<>();
@@ -714,7 +734,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-	
+
 	public static StoryDomain getStoryDomainPointsProggresNegative() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -738,7 +758,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-	
+
 	public static StoryModel getStoryModelPointsProggresNegative() {
 		StoryModel storyModel = new StoryModel();
 		List<String> historyList = new ArrayList<>();
@@ -762,7 +782,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-	
+
 	public static StoryDomain getStoryDomainPointsProgressInvalid() {
 		StoryDomain storyDomain = new StoryDomain();
 		List<String> historyList = new ArrayList<>();
@@ -786,7 +806,7 @@ public class TestUtils {
 		storyDomain.setHistory(historyList);
 		return storyDomain;
 	}
-	
+
 	public static StoryModel getStoryModelPointsProgressInvalid() {
 		StoryModel storyModel = new StoryModel();
 		List<String> historyList = new ArrayList<>();
@@ -810,8 +830,7 @@ public class TestUtils {
 		storyModel.setHistory(historyList);
 		return storyModel;
 	}
-	
-	
+
 	public static StoryModel getStoryTaskNullModel() {
 		StoryModel storyModel = new StoryModel();
 		ArrayList<String> historyList = new ArrayList<>();
@@ -836,10 +855,10 @@ public class TestUtils {
 		storyModel.setAssignee_id(unitTestProperties.modelAssigneeId);
 		storyModel.setHistory(historyList);
 		storyModel.setTasks(taskList);
-		
+
 		return storyModel;
 	}
-	
+
 	public static TasksDomain getTasksDomainStatusValid() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.set_id(unitTestProperties.TasksdomainId);
@@ -850,7 +869,7 @@ public class TestUtils {
 		tasksDomain.setAssignee("");
 		return tasksDomain;
 	}
-	
+
 	public static TasksDomain getTasksNameNullDomain() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.set_id(unitTestProperties.TasksdomainId);
@@ -861,7 +880,7 @@ public class TestUtils {
 		tasksDomain.setAssignee(unitTestProperties.TasksdomainAssignee);
 		return tasksDomain;
 	}
-	
+
 	public static TasksDomain getTasksStatusNullDomain() {
 		TasksDomain tasksDomain = new TasksDomain();
 		tasksDomain.set_id(unitTestProperties.TasksdomainId);

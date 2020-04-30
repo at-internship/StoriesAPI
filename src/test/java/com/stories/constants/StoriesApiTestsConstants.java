@@ -34,9 +34,13 @@ public class StoriesApiTestsConstants {
 	public static final String varEmpty = "";
 	
 	public static final String uriSprintClient = "http://sprints-qa.us-east-2.elasticbeanstalk.com/sprints/";
+	public static final String uriUserClient = "http://sourcescusersapi-test.us-west-1.elasticbeanstalk.com/api/users/";
 	public static final String sprintIdValid = "5e827f2f48b0866f87e1cbc2";
 	public static final String sprintIdInvalid = "5e78f5e792675632e42d1a96";
+	public static final String userIdValid = "5ea7125ce6cd3109e8bc71c6";
+	public static final String userIdInvalid = "5ea7125ce6cd3109e8bc71cf";
 	public static final String messageSprints = "sprints API has no entities";
+	public static final String messageUsers = "users API has no entities";
 	
 	public static final String specificId = "5e8dc1ba4ce33c0efc555845";
 }
