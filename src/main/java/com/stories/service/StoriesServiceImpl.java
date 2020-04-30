@@ -443,7 +443,7 @@ public class StoriesServiceImpl implements StoriesService {
         if((!StringUtils.isEmpty(storyDomain.getSprint_id())) || (!StringUtils.isEmpty(storyDomain.getAssignee_id()))) {
             validationRespons = sprintNullValidation(storyDomain.getSprint_id());
             if (!StringUtils.isEmpty(validationRespons)) {
-                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] + validationRespons;
+                mensaggeDinamicValidation[0] = mensaggeDinamicValidation[0] +  validationRespons;
             }
             
             validationRespons = userNullValidation(storyDomain.getAssignee_id());
