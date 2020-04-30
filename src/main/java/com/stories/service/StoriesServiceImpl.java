@@ -98,7 +98,7 @@ public class StoriesServiceImpl implements StoriesService {
 			            taskModel.set_id(new ObjectId().toString());
 			            tasks.add(taskModel);
 			            storyModel.setTasks(tasks);
-			            logger.debug("Creating task for the US: "+ storyModel.get_id() +"with the json: "+ taskModel);
+			            logger.debug("Creating task for the US: "+ storyModel.get_id() +" with the json: "+ taskModel);
 			            storiesRepository.save(storyModel);
 			            return taskModel.get_id();
 			         }else {
@@ -201,7 +201,7 @@ public class StoriesServiceImpl implements StoriesService {
 						StoriesApiConstants.pathStories);
 			}
 			if (!StringUtils.isEmpty(task.getAssignee())) {
-				if (!usersRepository.existsById(task.getAssignee())) {
+				if (!userClient.existUserById(task.getAssignee())) {
 					throw new EntityNotFoundException(StoriesApiConstants.taskFieldAssigneeNotFoundException, HttpStatus.CONFLICT,
 							StoriesApiConstants.pathStories + id + StoriesApiConstants.pathTasks + _id);
 				}

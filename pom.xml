@@ -145,6 +145,7 @@
 						<exclude>**/repository/**/*</exclude>
 						<exclude>**/constants/**/*</exclude>
 						<exclude>**/com/stories/StoriesApplication.class</exclude>
+						<exclude>**/com/stories/controller/GlobalExceptionHandler.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>
