@@ -45,7 +45,7 @@ AWS EB (QA Enviroment) - [http://stories-qa.us-east-2.elasticbeanstalk.com/stori
 
 ## Documentation
 
-Swagger - [http://stories-qa.us-east-2.elasticbeanstalk.com/swagger-ui.html#/](http://stories-qa.us-east-2.elasticbeanstalk.com/swagger-ui.html#/)
+Swagger - [http://stories-qa.us-east-2.elasticbeanstalk.com/swagger-ui.html#/Microservices_STORY/](http://stories-qa.us-east-2.elasticbeanstalk.com/swagger-ui.html#/Microservices_STORY)
 
 ## Status
 Actuator - [http://stories-qa.us-east-2.elasticbeanstalk.com/actuator/health](http://stories-qa.us-east-2.elasticbeanstalk.com/actuator/health)
