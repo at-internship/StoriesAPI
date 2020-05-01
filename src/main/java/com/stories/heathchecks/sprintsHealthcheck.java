@@ -15,39 +15,33 @@ import com.stories.domain.SprintDomain;
 
 @Component
 public class sprintsHealthcheck implements HealthIndicator {
-	
+
 	private final String message_key = "Sprints API ";
 	RestTemplate restTemplate = new RestTemplate();
-	
+
 	@Override
 	public Health health() {
-		if(!isRunningUsersAPI()) {
+		if (!isRunningUsersAPI()) {
 			return Health.down().withDetail(message_key, "Not Available").build();
 		}
-		 return Health.up().withDetail(message_key, "Available").build();
+		return Health.up().withDetail(message_key, "Available").build();
 	}
-	
-	private Boolean isRunningUsersAPI() {
+
+	public Boolean isRunningUsersAPI() {
 		String uri = "http://sprints-qa.us-east-2.elasticbeanstalk.com/sprints/";
 		Boolean isRunning = false;
 		try {
 			ResponseEntity<List<SprintDomain>> sprintsResponse = restTemplate.exchange(uri, HttpMethod.GET, null,
 					new ParameterizedTypeReference<List<SprintDomain>>() {
 					});
-
-			if (sprintsResponse != null && sprintsResponse.hasBody()) {
-				List<SprintDomain> sprints = sprintsResponse.getBody();
-				for (int i = 0; i < sprints.size(); i++) {
-					String id = sprints.get(0).getId();
-					if (id.equals(sprints.get(i).getId())) {
-						isRunning = true;
-						break;
-					}
-				}
+			if (sprintsResponse != null & sprintsResponse.hasBody()) {
+				isRunning = true;
 			}
 		} catch (RestClientException e) {
 			return isRunning;
+		} catch (Exception e) {
+			return isRunning;
 		}
-        return isRunning;
-    }
+		return isRunning;
+	}
 }

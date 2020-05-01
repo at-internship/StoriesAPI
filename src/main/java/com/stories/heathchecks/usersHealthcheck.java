@@ -17,35 +17,30 @@ import com.stories.domain.UserDomain;
 public class usersHealthcheck implements HealthIndicator {
 	private final String message_key = "Users API";
 	RestTemplate restTemplate = new RestTemplate();
-	
+
 	@Override
 	public Health health() {
-		if(!isRunningUsersAPI()) {
+		if (!isRunningUsersAPI()) {
 			return Health.down().withDetail(message_key, "Not Available").build();
 		}
-		 return Health.up().withDetail(message_key, "Available").build();
+		return Health.up().withDetail(message_key, "Available").build();
 	}
-	
-	private Boolean isRunningUsersAPI() {
+
+	public Boolean isRunningUsersAPI() {
 		String uri = "http://sourcescusersapi-test.us-west-1.elasticbeanstalk.com/api/users/";
-        Boolean isRunning = false;
-        try {
+		Boolean isRunning = false;
+		try {
 			ResponseEntity<List<UserDomain>> usersResponse = restTemplate.exchange(uri, HttpMethod.GET, null,
 					new ParameterizedTypeReference<List<UserDomain>>() {
 					});
-			if (usersResponse != null && usersResponse.hasBody()) {
-				List<UserDomain> users = usersResponse.getBody();
-				String id = users.get(0).getUserId();
-				for (int i = 0; i < users.size(); i++) {
-					if (id.equals(users.get(i).getUserId())) {
-						isRunning = true;
-						break;
-					}
-				}
+			if (usersResponse != null & usersResponse.hasBody()) {
+				isRunning = true;
 			}
 		} catch (RestClientException e) {
 			return isRunning;
+		} catch (Exception e) {
+			return isRunning;
 		}
-        return isRunning;
-    }
+		return isRunning;
+	}
 }
