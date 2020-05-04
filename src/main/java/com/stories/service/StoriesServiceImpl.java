@@ -420,7 +420,7 @@ public class StoriesServiceImpl implements StoriesService {
 
         validationRespons = "";
         for(int i= 0; i < validateSpecialCharacterField.size(); i++) {
-        	boolean err = Pattern.compile("[a-zA-Z0-9]*").matcher(validateSpecialCharacterField.get(i)).matches();
+        	boolean err = Pattern.compile("[a-zA-Z0-9\\s]*").matcher(validateSpecialCharacterField.get(i)).matches();
 			if (!err) {
 				countValidationPositive++;
 				if (StringUtils.isEmpty(validationRespons)) {
@@ -520,7 +520,7 @@ public class StoriesServiceImpl implements StoriesService {
 		validateSpecialCharacterField.add(task.getAssignee());
 	
 	        for(int i= 0; i < validateSpecialCharacterField.size(); i++) {
-	        	boolean err = Pattern.compile("[a-zA-Z0-9]*").matcher(validateSpecialCharacterField.get(i)).matches();
+	        	boolean err = Pattern.compile("[a-zA-Z0-9\\s]*").matcher(validateSpecialCharacterField.get(i)).matches();
 				if (!err) {
 					countValidationPositive++;
 					if (StringUtils.isEmpty(validationRespons)) {
