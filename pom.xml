@@ -107,6 +107,13 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
+        
+        <dependency>
+		  <groupId>org.apache.maven.plugins</groupId>
+		  <artifactId>maven-surefire-plugin</artifactId>
+		  <version>3.0.0-M4</version>
+		  <type>maven-plugin</type>
+		</dependency>
 
 		<dependency>
 			<groupId>com.github.kongchen</groupId>
