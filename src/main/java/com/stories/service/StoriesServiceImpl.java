@@ -420,15 +420,17 @@ public class StoriesServiceImpl implements StoriesService {
 
         validationRespons = "";
         for(int i= 0; i < validateSpecialCharacterField.size(); i++) {
-        	boolean err = Pattern.compile("[a-zA-Z0-9\\s]*").matcher(validateSpecialCharacterField.get(i)).matches();
-			if (!err) {
-				countValidationPositive++;
-				if (StringUtils.isEmpty(validationRespons)) {
-					validationRespons = StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
-				} else {
-					validationRespons = validationRespons + " AND " + StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
+        	if(validateSpecialCharacterField.get(i) != null) {
+        		boolean err = Pattern.compile("[a-zA-Z0-9\\s]*").matcher(validateSpecialCharacterField.get(i)).matches();
+				if (!err) {
+					countValidationPositive++;
+					if (StringUtils.isEmpty(validationRespons)) {
+						validationRespons = StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
+					} else {
+						validationRespons = validationRespons + " AND " + StoriesApiConstants.ValidationStorySpecialCharacterMessage[i];
+					}
 				}
-			}
+        	}
         }
         if(countValidationPositive >= 1) {
         	mensaggeDinamicValidation[0] = validationRespons;
@@ -520,15 +522,17 @@ public class StoriesServiceImpl implements StoriesService {
 		validateSpecialCharacterField.add(task.getAssignee());
 	
 	        for(int i= 0; i < validateSpecialCharacterField.size(); i++) {
-	        	boolean err = Pattern.compile("[a-zA-Z0-9\\s]*").matcher(validateSpecialCharacterField.get(i)).matches();
-				if (!err) {
-					countValidationPositive++;
-					if (StringUtils.isEmpty(validationRespons)) {
-						validationRespons = StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
-					} else {
-						validationRespons = validationRespons + " AND " + StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
+	        	if(validateSpecialCharacterField.get(i) != null) {
+		        	boolean err = Pattern.compile("[a-zA-Z0-9\\s]*").matcher(validateSpecialCharacterField.get(i)).matches();
+					if (!err) {
+						countValidationPositive++;
+						if (StringUtils.isEmpty(validationRespons)) {
+							validationRespons = StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
+						} else {
+							validationRespons = validationRespons + " AND " + StoriesApiConstants.ValidationTaskSpecialCharacterMessage[i];
+						}
 					}
-				}
+	        	}
 	        }
 	        
 		return validationRespons;
