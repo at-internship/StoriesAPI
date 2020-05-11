@@ -13,7 +13,7 @@
 	</parent>
 	<groupId>com.stories</groupId>
 	<artifactId>stories</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<name>stories</name>
 	<description>Stories application</description>
 
